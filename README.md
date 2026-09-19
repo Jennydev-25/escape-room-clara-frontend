@@ -1,63 +1,25 @@
-# .
+# 🔍 El Último Archivo de Clara — Frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+> Si estás buscando a Clara, estás empezando por el final.
 
-## Recommended IDE Setup
+**Aplicación web** construida con **Vue 3** para _El último archivo de Clara_, un escape room narrativo de investigación. Desarrollada con **Vite**, **Vue Router** y **Pinia**, estilizada con **Tailwind CSS**, consume la API REST del backend con **axios** y está verificada con **Vitest** y **Playwright**.
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+---
 
-## Recommended Browser Setup
+## 📑 Índice
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+- [Descripción](#-descripción)
+- [Tecnologías](#-tecnologías)
+- [Autora](#-autora)
 
-## Customize configuration
+---
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+## 📋 Descripción
 
-## Project Setup
+Interfaz web del escape room _El último archivo de Clara_. Es la contraparte frontend de [`escape-room-clara-backend`](https://github.com/Jennydev-25/escape-room-clara-backend), con quien se comunica mediante una API REST autenticada con JWT.
 
-```sh
-npm install
-```
+El proyecto sigue una arquitectura por vistas y componentes reutilizables, con gestión de estado centralizada en Pinia y estilos con utilidades de **Tailwind CSS** en vez de CSS a medida. Testeado con **TDD** en la lógica de negocio mediante **Vitest**, con cobertura medida con `@vitest/coverage-v8`, y con tests end-to-end de los flujos completos de usuario mediante **Playwright**.
 
-### Compile and Hot-Reload for Development
+[Volver al índice](#-índice)
 
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Run Unit Tests with [Vitest](https://vitest.dev/)
-
-```sh
-npm run test:unit
-```
-
-### Run End-to-End Tests with [Playwright](https://playwright.dev)
-
-```sh
-# Install browsers for the first run
-npx playwright install
-
-# When testing on CI, must build the project first
-npm run build
-
-# Runs the end-to-end tests
-npm run test:e2e
-# Runs the tests only on Chromium
-npm run test:e2e -- --project=chromium
-# Runs the tests of a specific file
-npm run test:e2e -- tests/example.spec.ts
-# Runs the tests in debug mode
-npm run test:e2e -- --debug
-```
+---
