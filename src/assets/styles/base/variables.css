@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Flamenco:wght@300;400&family=Federo&family=Syne:wght@400;500;600;700;800&family=Courier+Prime:wght@400;700&display=swap');
+
+@theme {
+  /* Colors */
+  --color-clara-bg: #0d1917;
+  --color-clara-bg-2: #142521;
+  --color-clara-card: #1c332d;
+  --color-clara-line: #4a7c6e;
+  --color-clara-text: #eef1ea;
+  --color-clara-text-dim: #a9c2b8;
+  --color-clara-accent: #c98a35;
+  --color-clara-accent-hi: #e3a752;
+  --color-clara-ink: #201004;
+  --color-clara-rust: #b2502e;
+
+  /* Typography */
+  --font-display: "Flamenco", serif;
+  --font-body: "Federo", sans-serif;
+  --font-label: "Syne", sans-serif;
+  --font-mono: "Courier Prime", monospace;
+}
