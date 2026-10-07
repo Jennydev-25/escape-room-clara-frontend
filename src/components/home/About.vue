@@ -17,7 +17,7 @@ const statRows = [
 </script>
 
 <template>
-    <section class="about relative overflow-hidden bg-surface px-6 pt-16 sm:pt-24">
+    <section class="about relative overflow-hidden px-6 pt-16 sm:pt-24">
         <div class="about__container mx-auto flex max-w-6xl flex-col gap-12 sm:flex-row sm:items-center sm:gap-16">
             <div class="about__media mx-auto flex flex-col items-center">
                 <img src="@/assets/imgs/home/about.png" alt=""
