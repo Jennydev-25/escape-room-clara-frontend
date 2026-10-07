@@ -2,16 +2,16 @@
 
 @theme {
   /* Colors */
-  --color-clara-bg: #0d1917;
-  --color-clara-bg-2: #142521;
-  --color-clara-card: #1c332d;
-  --color-clara-line: #4a7c6e;
-  --color-clara-text: #eef1ea;
-  --color-clara-text-dim: #a9c2b8;
-  --color-clara-accent: #c98a35;
-  --color-clara-accent-hi: #e3a752;
-  --color-clara-ink: #201004;
-  --color-clara-rust: #b2502e;
+  --color-surface: #0d1917;
+  --color-surface-container: #142521;
+  --color-surface-container-high: #1c332d;
+  --color-outline: #4a7c6e;
+  --color-on-surface: #eef1ea;
+  --color-on-surface-variant: #a9c2b8;
+  --color-primary: #c98a35;
+  --color-primary-hover: #e3a752;
+  --color-on-primary: #201004;
+  --color-error: #b2502e;
 
   /* Typography */
   --font-display: "Flamenco", serif;

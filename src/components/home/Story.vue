@@ -1,8 +1,8 @@
 <template>
-    <section class="story relative overflow-hidden bg-clara-bg px-6 pt-16 sm:pt-24">
+    <section class="story relative overflow-hidden bg-surface px-6 pt-16 sm:pt-24">
         <div class="story__container mx-auto flex max-w-6xl flex-col gap-12 sm:flex-row sm:items-center sm:gap-16">
-            <div class="story__content flex flex-1 flex-col gap-6 text-clara-text-dim">
-                <h2 class="story__heading font-display text-2xl text-clara-text sm:text-3xl">
+            <div class="story__content flex flex-1 flex-col gap-6 text-on-surface-variant">
+                <h2 class="story__heading font-display text-2xl text-on-surface sm:text-3xl">
                     Un pueblo pesquero. Un incendio. Una historia sin resolver.
                 </h2>
 
@@ -32,7 +32,7 @@
                     Entiende todo lo que ella entendió. Termina lo que ella empezó.
                 </p>
 
-                <p class="story__question font-display text-xl italic text-clara-accent sm:text-2xl">
+                <p class="story__question font-display text-xl italic text-primary sm:text-2xl">
                     ¿Descubrirás la verdad?
                 </p>
             </div>

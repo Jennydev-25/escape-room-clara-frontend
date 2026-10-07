@@ -17,7 +17,7 @@ const statRows = [
 </script>
 
 <template>
-    <section class="about relative overflow-hidden bg-clara-bg px-6 pt-16 sm:pt-24">
+    <section class="about relative overflow-hidden bg-surface px-6 pt-16 sm:pt-24">
         <div class="about__container mx-auto flex max-w-6xl flex-col gap-12 sm:flex-row sm:items-center sm:gap-16">
             <div class="about__media mx-auto flex flex-col items-center">
                 <img src="@/assets/imgs/home/about.png" alt=""
@@ -29,12 +29,12 @@ const statRows = [
                         <div v-for="stat in row" :key="stat.label"
                             class="about__stat flex w-20 flex-col items-center gap-2 text-center">
                             <component :is="stat.icon"
-                                class="about__stat-icon h-8 w-8 text-clara-accent transition-transform duration-200 hover:scale-110" />
-                            <span v-if="stat.value" class="about__stat-value font-mono text-2xl text-clara-text">
+                                class="about__stat-icon h-8 w-8 text-primary transition-transform duration-200 hover:scale-110" />
+                            <span v-if="stat.value" class="about__stat-value font-mono text-2xl text-on-surface">
                                 {{ stat.value }}
                             </span>
                             <span
-                                class="about__stat-label font-label text-xs uppercase tracking-widest text-clara-text-dim">
+                                class="about__stat-label font-label text-xs uppercase tracking-widest text-on-surface-variant">
                                 {{ stat.label }}
                             </span>
                         </div>
@@ -42,8 +42,8 @@ const statRows = [
                 </div>
             </div>
 
-            <div class="about__content flex flex-1 flex-col gap-6 text-clara-text-dim">
-                <h2 class="about__heading font-display text-2xl text-clara-text sm:text-3xl">
+            <div class="about__content flex flex-1 flex-col gap-6 text-on-surface-variant">
+                <h2 class="about__heading font-display text-2xl text-on-surface sm:text-3xl">
                     No es un juego de adivinar. Es una investigación.
                 </h2>
 
@@ -77,7 +77,7 @@ const statRows = [
                     yo disfruté creándolo.
                 </p>
 
-                <p class="about__closing font-display text-xl italic text-clara-accent sm:text-2xl">
+                <p class="about__closing font-display text-xl italic text-primary sm:text-2xl">
                     Gracias por darle una oportunidad a esta historia.
                 </p>
             </div>
