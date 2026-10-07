@@ -13,8 +13,8 @@
             </p>
 
             <button type="button"
-                class="contact__cta font-label mt-4 border border-primary px-8 py-3 uppercase tracking-widest text-primary transition-colors hover:bg-primary hover:text-on-primary">
-                Escríbeme
+                class="contact__cta font-label mt-4 rounded-md border border-primary px-8 py-3 uppercase tracking-widest text-primary transition-colors hover:bg-primary hover:text-on-primary">
+                Escríbenos
             </button>
         </div>
     </section>
