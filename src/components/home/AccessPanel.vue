@@ -29,7 +29,7 @@ function close() {
   >
     <div
       v-if="open"
-      class="access-panel fixed right-4 top-1/2 z-30 w-[90%] max-w-sm -translate-y-1/2 rounded-2xl border border-white/20 bg-surface/15 p-6 shadow-2xl backdrop-blur-2xl backdrop-saturate-150 sm:right-8 lg:right-16"
+      class="access-panel absolute right-4 top-1/2 z-30 w-[90%] max-w-sm -translate-y-1/2 rounded-2xl border border-white/20 bg-surface/15 p-6 shadow-2xl backdrop-blur-2xl backdrop-saturate-150 sm:right-8 lg:right-16"
       role="dialog"
       aria-labelledby="access-panel-title"
     >
