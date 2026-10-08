@@ -20,9 +20,9 @@ function close() {
 
 <template>
   <Transition
-    enter-active-class="transition duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-reduce:transition-none"
-    enter-from-class="opacity-0 scale-95 translate-y-2"
-    enter-to-class="opacity-100 scale-100 translate-y-0"
+    enter-active-class="transition duration-1000 ease-out motion-reduce:transition-none"
+    enter-from-class="opacity-0 scale-95 translate-x-8"
+    enter-to-class="opacity-100 scale-100 translate-x-0"
     leave-active-class="transition duration-200 ease-out motion-reduce:transition-none"
     leave-from-class="opacity-100 scale-100"
     leave-to-class="opacity-0 scale-95"

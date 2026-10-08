@@ -11,7 +11,7 @@ const emit = defineEmits(['abrir-acceso'])
 
 <template>  
     <section
-        class="hero relative flex min-h-screen w-full items-center justify-center overflow-hidden transition-[padding] duration-500 ease-out before:absolute before:inset-0 before:z-10 before:bg-linear-to-r before:from-surface/85 before:via-surface/60 before:to-surface/15 before:content-[''] motion-reduce:transition-none"
+        class="hero relative flex min-h-screen w-full items-center justify-center overflow-hidden transition-[padding] duration-1000 ease-out before:absolute before:inset-0 before:z-10 before:bg-linear-to-r before:from-surface/85 before:via-surface/60 before:to-surface/15 before:content-[''] motion-reduce:transition-none"
     :class="panelOpen ? 'lg:pr-120' : ''">
         <img src="@/assets/imgs/home/hero.png" alt=""
             class="hero__bg absolute inset-0 z-0 h-full w-full object-cover" />
