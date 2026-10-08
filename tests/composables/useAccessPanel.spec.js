@@ -21,4 +21,12 @@ describe('useAccessPanel', () => {
         expect(open.value).toBe(true)
         expect(tab.value).toBe('login')
     })
+
+    it('closePanel closes the panel without changing the active tab', () => {
+        const { open, tab, openPanel, closePanel } = useAccessPanel()
+        openPanel('register')
+        closePanel()
+        expect(open.value).toBe(false)
+        expect(tab.value).toBe('register')
+    })
 })
