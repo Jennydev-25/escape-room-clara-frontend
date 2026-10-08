@@ -2,6 +2,8 @@
 import { ref, computed } from 'vue'
 import { Eye, EyeOff } from '@lucide/vue'
 
+defineOptions({ inheritAttrs: false })
+
 const model = defineModel({ type: String, default: '' })
 
 const visible = ref(false)
@@ -15,7 +17,7 @@ function toggleVisible() {
 
 <template>
     <div class="password-field relative">
-        <input :type="type" v-model="model">
+        <input :type="type" v-model="model" v-bind="$attrs">
         <button type="button" class="password-field__toggle" @click="toggleVisible">
             <component :is="visible ? Eye : EyeOff" />
         </button>
