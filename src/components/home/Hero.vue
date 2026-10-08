@@ -4,9 +4,7 @@ import { useAccessPanel } from '@/composables/useAccessPanel'
 
 const { open: accessPanelOpen, tab: accessPanelTab, openPanel } = useAccessPanel()
 
-function abrirAcceso(tab) {
-    openPanel(tab)
-}
+defineExpose({ openPanel })
 </script>
 
 <template>  
@@ -25,7 +23,7 @@ function abrirAcceso(tab) {
                 Lo que ella no llegó a contar, alguien tiene que terminarlo...
             </p>
 
-            <button type="button" @click="abrirAcceso('register')"
+            <button type="button" @click="openPanel('register')"
                 class="hero__cta font-label mt-4 rounded-md border border-primary px-8 py-3 uppercase tracking-widest text-primary transition-colors hover:bg-primary hover:text-on-primary">
                 Investigar
             </button>
