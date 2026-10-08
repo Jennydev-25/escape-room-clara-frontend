@@ -4,5 +4,10 @@ export function useAccessPanel() {
     const open = ref(false)
     const tab = ref('login')
 
-    return { open, tab }
+    function openPanel(initialTab) {
+        tab.value = initialTab
+        open.value = true
+    }
+
+    return { open, tab, openPanel }
 }
