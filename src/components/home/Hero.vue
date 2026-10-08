@@ -11,7 +11,7 @@ defineExpose({ openPanel })
     <section
         class="hero relative flex min-h-screen w-full items-center justify-center overflow-hidden transition-[padding] duration-1000 ease-out before:absolute before:inset-0 before:z-10 before:bg-linear-to-r before:from-surface/85 before:via-surface/60 before:to-surface/15 before:content-[''] motion-reduce:transition-none"
     :class="accessPanelOpen ? 'lg:pr-120' : ''">
-        <img src="@/assets/imgs/home/hero.png" alt=""
+        <img src="@/assets/images/home/hero.png" alt=""
             class="hero__bg absolute inset-0 z-0 h-full w-full object-cover" />
 
         <div class="hero__content relative z-20 flex flex-col items-center gap-6 px-6 text-center">

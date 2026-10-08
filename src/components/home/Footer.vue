@@ -7,7 +7,7 @@
         >
             <div class="footer__brand flex items-center gap-3">
                 <img
-                    src="@/assets/imgs/home/logo.png"
+                    src="@/assets/images/home/logo.png"
                     alt=""
                     class="footer__logo h-14 w-14 shrink-0 object-contain"
                 >

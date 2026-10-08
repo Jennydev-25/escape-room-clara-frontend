@@ -35,7 +35,7 @@ onUnmounted(() => {
         >
             <a href="#" class="header__brand shrink-0" aria-label="Ir al inicio">
                 <img
-                    src="@/assets/imgs/home/logo.png"
+                    src="@/assets/images/home/logo.png"
                     alt="El último archivo de Clara"
                     class="header__logo h-10 w-10 object-contain"
                 >

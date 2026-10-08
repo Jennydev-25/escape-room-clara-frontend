@@ -38,11 +38,11 @@
             </div>
 
             <div class="story__photos relative mx-auto w-72 sm:w-80 md:w-96">
-                <img src="@/assets/imgs/home/story-harbor.png" alt=""
+                <img src="@/assets/images/home/story-harbor.png" alt=""
                     class="story__photo relative z-0 w-full -rotate-6 shadow-xl" />
-                <img src="@/assets/imgs/home/story-fire.png" alt=""
+                <img src="@/assets/images/home/story-fire.png" alt=""
                     class="story__photo absolute left-0 top-0 z-10 w-full translate-x-4 translate-y-6 rotate-3 shadow-xl" />
-                <img src="@/assets/imgs/home/story-laptop.png" alt=""
+                <img src="@/assets/images/home/story-laptop.png" alt=""
                     class="story__photo absolute left-0 top-0 z-20 w-full translate-x-8 translate-y-12 -rotate-2 shadow-xl" />
             </div>
         </div>

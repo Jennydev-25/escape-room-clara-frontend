@@ -20,7 +20,7 @@ const statRows = [
     <section id="sobre-el-juego" class="about relative overflow-hidden px-6 pt-16 sm:pt-24">
         <div class="about__container mx-auto flex max-w-6xl flex-col gap-12 sm:flex-row sm:items-center sm:gap-16">
             <div class="about__media mx-auto flex flex-col items-center">
-                <img src="@/assets/imgs/home/about.png" alt=""
+                <img src="@/assets/images/home/about.png" alt=""
                     class="about__photo w-72 shrink-0 shadow-xl sm:w-80 md:w-96" />
 
                 <div class="about__stats mt-8 flex flex-col items-center gap-6">
