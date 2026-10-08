@@ -9,5 +9,9 @@ export function useAccessPanel() {
         open.value = true
     }
 
-    return { open, tab, openPanel }
+    function closePanel() {
+        open.value = false
+    }
+
+    return { open, tab, openPanel, closePanel }
 }
