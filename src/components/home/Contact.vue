@@ -39,7 +39,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <section
+    <section id="contacto"
         class="contact relative flex min-h-136 flex-col justify-center overflow-hidden px-6 pt-16 sm:pt-24 pb-16 sm:pb-24 transition-[padding] duration-1000 ease-out motion-reduce:transition-none"
         :class="showForm ? 'lg:pr-120' : ''"
     >
