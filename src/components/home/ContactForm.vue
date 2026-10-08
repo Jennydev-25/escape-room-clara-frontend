@@ -9,26 +9,28 @@ defineEmits(['submit'])
 
 <template>
     <form class="contact-form flex flex-col gap-4" @submit.prevent="$emit('submit')">
-        <div class="contact-form__field flex flex-col gap-1">
-            <label for="contact-name">Nombre</label>
-            <input
-                id="contact-name"
-                type="text"
-                required
-                v-model="name"
-                class="w-full rounded-md border border-outline bg-surface-container px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
-            >
-        </div>
+        <div class="contact-form__row grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div class="contact-form__field flex flex-col gap-1">
+                <label for="contact-name">Nombre</label>
+                <input
+                    id="contact-name"
+                    type="text"
+                    required
+                    v-model="name"
+                    class="w-full rounded-md border border-outline bg-surface-container px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
+                >
+            </div>
 
-        <div class="contact-form__field flex flex-col gap-1">
-            <label for="contact-email">Email</label>
-            <input
-                id="contact-email"
-                type="email"
-                required
-                v-model="email"
-                class="w-full rounded-md border border-outline bg-surface-container px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
-            >
+            <div class="contact-form__field flex flex-col gap-1">
+                <label for="contact-email">Email</label>
+                <input
+                    id="contact-email"
+                    type="email"
+                    required
+                    v-model="email"
+                    class="w-full rounded-md border border-outline bg-surface-container px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
+                >
+            </div>
         </div>
 
         <div class="contact-form__field flex flex-col gap-1">
@@ -50,7 +52,7 @@ defineEmits(['submit'])
             <label for="contact-message">Mensaje</label>
             <textarea
                 id="contact-message"
-                rows="4"
+                rows="3"
                 required
                 v-model="message"
                 class="w-full rounded-md border border-outline bg-surface-container px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
