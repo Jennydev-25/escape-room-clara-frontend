@@ -17,9 +17,18 @@ function toggleVisible() {
 
 <template>
     <div class="password-field relative">
-        <input :type="type" v-model="model" v-bind="$attrs">
-        <button type="button" class="password-field__toggle" @click="toggleVisible">
-            <component :is="visible ? Eye : EyeOff" />
+        <input
+            :type="type"
+            v-model="model"
+            v-bind="$attrs"
+            class="w-full rounded-md border border-outline bg-surface-container px-3 py-2 pr-10 text-on-surface focus:border-primary focus:outline-none"
+        >
+        <button
+            type="button"
+            class="password-field__toggle absolute right-2 top-1/2 -translate-y-1/2 text-on-surface-variant transition-colors hover:text-on-surface"
+            @click="toggleVisible"
+        >
+            <component :is="visible ? Eye : EyeOff" :size="18" />
         </button>
     </div>
 </template>
