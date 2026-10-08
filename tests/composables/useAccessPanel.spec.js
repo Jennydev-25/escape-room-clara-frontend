@@ -7,4 +7,11 @@ describe('useAccessPanel', () => {
         expect(open.value).toBe(false)
         expect(tab.value).toBe('login')
     })
+
+    it('openPanel opens the panel on the given tab', () => {
+        const { open, tab, openPanel } = useAccessPanel()
+        openPanel('register')
+        expect(open.value).toBe(true)
+        expect(tab.value).toBe('register')
+    })
 })
