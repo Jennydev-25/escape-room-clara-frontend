@@ -12,7 +12,13 @@ defineEmits(['submit'])
     <form class="register-form flex flex-col gap-4" @submit.prevent="$emit('submit')">
         <div class="register-form__field flex flex-col gap-1">
             <label for="register-email">Email</label>
-            <input id="register-email" type="email" required v-model="email">
+            <input
+                id="register-email"
+                type="email"
+                required
+                v-model="email"
+                class="w-full rounded-md border border-outline bg-surface-container px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
+            >
         </div>
 
         <div class="register-form__field flex flex-col gap-1">
