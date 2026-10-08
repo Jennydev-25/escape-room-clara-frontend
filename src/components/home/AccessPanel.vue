@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
-import LoginForm from './LoginForm.vue'
-import RegisterForm from './RegisterForm.vue'
+import LoginForm from '@/components/auth/LoginForm.vue'
+import RegisterForm from '@/components/auth/RegisterForm.vue'
 
 const open = defineModel('open', { type: Boolean, default: false })
 const tab = defineModel('tab', { type: String, default: 'login' })

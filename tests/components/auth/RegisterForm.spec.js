@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import RegisterForm from '@/components/home/RegisterForm.vue'
+import RegisterForm from '@/components/auth/RegisterForm.vue'
 
 describe('RegisterForm', () => {
     it('hides the confirm password field until the password field is focused', async () => {
