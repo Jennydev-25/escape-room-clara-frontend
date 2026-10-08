@@ -4,11 +4,12 @@ import { createPinia } from 'pinia'
 import Lenis from 'lenis'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { TextPlugin } from 'gsap/TextPlugin'
 
 import App from './App.vue'
 import router from './router'
 
-gsap.registerPlugin(ScrollTrigger)
+gsap.registerPlugin(ScrollTrigger, TextPlugin)
 
 const lenis = new Lenis()
 lenis.on('scroll', ScrollTrigger.update)
