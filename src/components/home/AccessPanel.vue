@@ -4,6 +4,7 @@ import LoginForm from '@/components/auth/LoginForm.vue'
 import RegisterForm from '@/components/auth/RegisterForm.vue'
 import AuthRepository from '@/core/apis/auth/AuthRepository'
 import AuthService from '@/core/apis/auth/AuthService'
+import { useAuthStore } from '@/stores/auth'
 
 const open = defineModel('open', { type: Boolean, default: false })
 const tab = defineModel('tab', { type: String, default: 'login' })
@@ -16,6 +17,7 @@ const registerPassword = ref('')
 const registerConfirmPassword = ref('')
 
 const authService = new AuthService(new AuthRepository())
+const authStore = useAuthStore()
 const registerStatus = ref(null)
 
 async function handleRegisterSubmit({ recaptchaToken }) {
@@ -30,6 +32,12 @@ async function handleRegisterSubmit({ recaptchaToken }) {
     } catch (error) {
         registerStatus.value = { type: 'error', message: error.message }
     }
+}
+
+async function handleLoginSubmit() {
+    const login = await authService.login(loginEmail.value, loginPassword.value)
+    authStore.setSession(login.getToken(), login.getRefreshToken())
+    close()
 }
 
 function close() {
@@ -104,6 +112,7 @@ function close() {
           v-if="tab === 'login'"
           v-model:email="loginEmail"
           v-model:password="loginPassword"
+          @submit="handleLoginSubmit"
         />
         <RegisterForm
           v-else
