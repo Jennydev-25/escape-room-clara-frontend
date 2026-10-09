@@ -100,6 +100,16 @@ describe('AccessPanel', () => {
         expect(wrapper.emitted('update:open')[0]).toEqual([false])
     })
 
+    it('shows an error message when the login request fails', async () => {
+        login.mockRejectedValueOnce(new Error('¡Ups! Algo salió mal'))
+        const wrapper = mount(AccessPanel, { props: { open: true } })
+
+        await wrapper.findComponent(LoginForm).vm.$emit('submit')
+        await Promise.resolve()
+
+        expect(wrapper.find('.access-panel__feedback').text()).toBe('¡Ups! Algo salió mal')
+    })
+
     it('switches between the login and register tabs', async () => {
         const wrapper = mount(AccessPanel, { props: { open: true } })
 
