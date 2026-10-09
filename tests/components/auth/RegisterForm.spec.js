@@ -1,13 +1,14 @@
 import { describe, it, expect, vi } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { mount, flushPromises } from '@vue/test-utils'
 import RegisterForm from '@/components/auth/RegisterForm.vue'
 
 const renderWidget = vi.fn().mockResolvedValue(1)
+const getToken = vi.fn()
 
 vi.mock('@/composables/useRecaptcha', () => ({
     useRecaptcha: () => ({
         renderWidget,
-        getToken: vi.fn(),
+        getToken,
         reset: vi.fn(),
     }),
 }))
@@ -26,5 +27,15 @@ describe('RegisterForm', () => {
         const wrapper = mount(RegisterForm)
 
         expect(renderWidget).toHaveBeenCalledWith(wrapper.find('#register-recaptcha').element)
+    })
+
+    it('emits the recaptcha token on submit', async () => {
+        getToken.mockReturnValue('mocked-token')
+        const wrapper = mount(RegisterForm)
+        await flushPromises()
+
+        await wrapper.find('form').trigger('submit.prevent')
+
+        expect(wrapper.emitted('submit')[0]).toEqual([{ recaptchaToken: 'mocked-token' }])
     })
 })
