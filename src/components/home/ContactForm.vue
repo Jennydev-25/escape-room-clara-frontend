@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, useTemplateRef } from 'vue'
+import { nextTick, ref, useTemplateRef } from 'vue'
 import { useRecaptcha } from '@/composables/useRecaptcha'
 
 const name = defineModel('name', { type: String, default: '' })
@@ -9,15 +9,19 @@ const message = defineModel('message', { type: String, default: '' })
 
 const { renderWidget, getToken } = useRecaptcha()
 const recaptchaContainer = useTemplateRef('recaptchaContainer')
+const recaptchaVisible = ref(false)
 let recaptchaWidgetId = null
-
-onMounted(async () => {
-    recaptchaWidgetId = await renderWidget(recaptchaContainer.value)
-})
 
 const emit = defineEmits(['submit'])
 
-function handleSubmit() {
+async function handleSubmit() {
+    if (!recaptchaVisible.value) {
+        recaptchaVisible.value = true
+        await nextTick()
+        recaptchaWidgetId = await renderWidget(recaptchaContainer.value)
+        return
+    }
+
     emit('submit', { recaptchaToken: getToken(recaptchaWidgetId) })
 }
 </script>
@@ -74,7 +78,7 @@ function handleSubmit() {
             ></textarea>
         </div>
 
-        <div id="contact-recaptcha" ref="recaptchaContainer" class="contact-form__recaptcha"></div>
+        <div v-if="recaptchaVisible" id="contact-recaptcha" ref="recaptchaContainer" class="contact-form__recaptcha"></div>
 
         <button type="submit" class="contact-form__submit mt-2 rounded-md border border-primary px-6 py-2 uppercase tracking-widest text-primary transition-colors hover:bg-primary hover:text-on-primary">
             Enviar mensaje

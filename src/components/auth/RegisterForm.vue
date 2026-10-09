@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, useTemplateRef } from 'vue'
+import { nextTick, ref, useTemplateRef } from 'vue'
 import PasswordField from '@/shared/PasswordField.vue'
 import { useRecaptcha } from '@/composables/useRecaptcha'
 
@@ -9,17 +9,18 @@ const confirmPassword = defineModel('confirmPassword', { type: String, default: 
 
 const confirmPasswordVisible = ref(false)
 
-function revealConfirmPassword() {
-    confirmPasswordVisible.value = true
-}
-
 const { renderWidget, getToken } = useRecaptcha()
 const recaptchaContainer = useTemplateRef('recaptchaContainer')
 let recaptchaWidgetId = null
 
-onMounted(async () => {
-    recaptchaWidgetId = await renderWidget(recaptchaContainer.value)
-})
+async function revealConfirmPassword() {
+    confirmPasswordVisible.value = true
+
+    if (recaptchaWidgetId === null) {
+        await nextTick()
+        recaptchaWidgetId = await renderWidget(recaptchaContainer.value)
+    }
+}
 
 const emit = defineEmits(['submit'])
 
@@ -57,7 +58,7 @@ function handleSubmit() {
             <PasswordField id="register-confirm-password" required minlength="8" v-model="confirmPassword" />
         </div>
 
-        <div id="register-recaptcha" ref="recaptchaContainer" class="register-form__recaptcha"></div>
+        <div v-if="confirmPasswordVisible" id="register-recaptcha" ref="recaptchaContainer" class="register-form__recaptcha"></div>
 
         <button type="submit" class="register-form__submit mt-2 rounded-md border border-primary px-6 py-2 uppercase tracking-widest text-primary transition-colors hover:bg-primary hover:text-on-primary">
             Crear cuenta
