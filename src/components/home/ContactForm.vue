@@ -7,7 +7,7 @@ const email = defineModel('email', { type: String, default: '' })
 const type = defineModel('type', { type: String, default: '' })
 const message = defineModel('message', { type: String, default: '' })
 
-const { renderWidget } = useRecaptcha()
+const { renderWidget, getToken } = useRecaptcha()
 const recaptchaContainer = useTemplateRef('recaptchaContainer')
 let recaptchaWidgetId = null
 
@@ -15,11 +15,15 @@ onMounted(async () => {
     recaptchaWidgetId = await renderWidget(recaptchaContainer.value)
 })
 
-defineEmits(['submit'])
+const emit = defineEmits(['submit'])
+
+function handleSubmit() {
+    emit('submit', { recaptchaToken: getToken(recaptchaWidgetId) })
+}
 </script>
 
 <template>
-    <form class="contact-form flex flex-col gap-4" @submit.prevent="$emit('submit')">
+    <form class="contact-form flex flex-col gap-4" @submit.prevent="handleSubmit">
         <div class="contact-form__row grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div class="contact-form__field flex flex-col gap-1">
                 <label for="contact-name">Nombre</label>
