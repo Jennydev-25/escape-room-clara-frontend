@@ -59,10 +59,16 @@ describe('AccessPanel', () => {
         expect(wrapper.find('.access-panel__feedback').text()).toBe('¡Ups! Algo salió mal')
     })
 
-    it('renders the login form by default', () => {
+    it('renders the login form by default and binds its fields', async () => {
         const wrapper = mount(AccessPanel, { props: { open: true } })
 
         expect(wrapper.findComponent(LoginForm).exists()).toBe(true)
+
+        await wrapper.find('#login-email').setValue('test@test.com')
+        await wrapper.find('#login-password').setValue('Test1234')
+
+        expect(wrapper.find('#login-email').element.value).toBe('test@test.com')
+        expect(wrapper.find('#login-password').element.value).toBe('Test1234')
     })
 
     it('switches between the login and register tabs', async () => {
