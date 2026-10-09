@@ -17,8 +17,7 @@ export function useScrollSpy(sectionIds) {
         })
 
         sectionIds.forEach((id) => {
-            const el = document.getElementById(id)
-            if (el) observer.observe(el)
+            observer.observe(document.getElementById(id))
         })
     })
 
