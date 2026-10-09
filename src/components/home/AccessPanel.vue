@@ -2,6 +2,8 @@
 import { ref } from 'vue'
 import LoginForm from '@/components/auth/LoginForm.vue'
 import RegisterForm from '@/components/auth/RegisterForm.vue'
+import AuthRepository from '@/core/apis/auth/AuthRepository'
+import AuthService from '@/core/apis/auth/AuthService'
 
 const open = defineModel('open', { type: Boolean, default: false })
 const tab = defineModel('tab', { type: String, default: 'login' })
@@ -12,6 +14,23 @@ const loginPassword = ref('')
 const registerEmail = ref('')
 const registerPassword = ref('')
 const registerConfirmPassword = ref('')
+
+const authService = new AuthService(new AuthRepository())
+const registerStatus = ref(null)
+
+async function handleRegisterSubmit({ recaptchaToken }) {
+    try {
+        const register = await authService.register({
+            email: registerEmail.value,
+            password: registerPassword.value,
+            confirmPassword: registerConfirmPassword.value,
+            recaptchaToken,
+        })
+        registerStatus.value = { type: 'success', message: register.getMessage() }
+    } catch (error) {
+        registerStatus.value = { type: 'error', message: error.message }
+    }
+}
 
 function close() {
     open.value = false
@@ -70,6 +89,16 @@ function close() {
         </button>
       </div>
 
+      <p
+        v-if="registerStatus"
+        class="access-panel__feedback mt-4"
+        :class="registerStatus.type === 'success' ? 'text-primary' : 'text-error'"
+        role="status"
+        aria-live="polite"
+      >
+        {{ registerStatus.message }}
+      </p>
+
       <div class="access-panel__content mt-6">
         <LoginForm
           v-if="tab === 'login'"
@@ -81,6 +110,7 @@ function close() {
           v-model:email="registerEmail"
           v-model:password="registerPassword"
           v-model:confirmPassword="registerConfirmPassword"
+          @submit="handleRegisterSubmit"
         />
       </div>
     </div>

@@ -1,14 +1,29 @@
 <script setup>
+import { onMounted, useTemplateRef } from 'vue'
+import { useRecaptcha } from '@/composables/useRecaptcha'
+
 const name = defineModel('name', { type: String, default: '' })
 const email = defineModel('email', { type: String, default: '' })
 const type = defineModel('type', { type: String, default: '' })
 const message = defineModel('message', { type: String, default: '' })
 
-defineEmits(['submit'])
+const { renderWidget, getToken } = useRecaptcha()
+const recaptchaContainer = useTemplateRef('recaptchaContainer')
+let recaptchaWidgetId = null
+
+onMounted(async () => {
+    recaptchaWidgetId = await renderWidget(recaptchaContainer.value)
+})
+
+const emit = defineEmits(['submit'])
+
+function handleSubmit() {
+    emit('submit', { recaptchaToken: getToken(recaptchaWidgetId) })
+}
 </script>
 
 <template>
-    <form class="contact-form flex flex-col gap-4" @submit.prevent="$emit('submit')">
+    <form class="contact-form flex flex-col gap-4" @submit.prevent="handleSubmit">
         <div class="contact-form__row grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div class="contact-form__field flex flex-col gap-1">
                 <label for="contact-name">Nombre</label>
@@ -58,6 +73,8 @@ defineEmits(['submit'])
                 class="w-full rounded-md border border-outline bg-surface-container px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
             ></textarea>
         </div>
+
+        <div id="contact-recaptcha" ref="recaptchaContainer" class="contact-form__recaptcha"></div>
 
         <button type="submit" class="contact-form__submit mt-2 rounded-md border border-primary px-6 py-2 uppercase tracking-widest text-primary transition-colors hover:bg-primary hover:text-on-primary">
             Enviar mensaje
