@@ -17,6 +17,14 @@ describe('Integration - Auth Service', () => {
         })).rejects.toThrow('¡Ups! Algo salió mal')
     })
 
+    test('login should throw \'¡Ups! Algo salió mal\' when the uri is invalid', async () => {
+        const repository = new AuthRepository()
+        repository.uri = ''
+        const service = new AuthService(repository)
+
+        await expect(service.login('test@test.com', 'Test1234')).rejects.toThrow('¡Ups! Algo salió mal')
+    })
+
 })
 
 describe('Unit - Auth Service', () => {
@@ -35,6 +43,18 @@ describe('Unit - Auth Service', () => {
         })
 
         expect(register.getMessage()).toBe('User stored successfully')
+    })
+
+    test('login should map the backend response to a LoginModel on success', async () => {
+        const fakeRepository = {
+            login: () => Promise.resolve({ token: 'jwt-token', refreshToken: 'refresh-token' })
+        }
+        const service = new AuthService(fakeRepository)
+
+        const login = await service.login('test@test.com', 'Test1234')
+
+        expect(login.getToken()).toBe('jwt-token')
+        expect(login.getRefreshToken()).toBe('refresh-token')
     })
 
 })

@@ -5,11 +5,21 @@ import LoginForm from '@/components/auth/LoginForm.vue'
 import RegisterForm from '@/components/auth/RegisterForm.vue'
 
 const register = vi.fn().mockResolvedValue({ getMessage: () => 'User stored successfully' })
+const login = vi.fn().mockResolvedValue({
+    getToken: () => 'jwt-token',
+    getRefreshToken: () => 'refresh-token',
+})
+const setSession = vi.fn()
 
 vi.mock('@/core/apis/auth/AuthService', () => ({
     default: class {
         register = register
+        login = login
     },
+}))
+
+vi.mock('@/stores/auth', () => ({
+    useAuthStore: () => ({ setSession }),
 }))
 
 vi.mock('@/composables/useRecaptcha', () => ({
@@ -25,6 +35,11 @@ describe('AccessPanel', () => {
     beforeEach(() => {
         register.mockClear()
         register.mockResolvedValue({ getMessage: () => 'User stored successfully' })
+        login.mockClear()
+        login.mockResolvedValue({
+            getToken: () => 'jwt-token',
+            getRefreshToken: () => 'refresh-token',
+        })
     })
 
     it('registers the user with the form data and the recaptcha token on register submit', async () => {
@@ -69,6 +84,30 @@ describe('AccessPanel', () => {
 
         expect(wrapper.find('#login-email').element.value).toBe('test@test.com')
         expect(wrapper.find('#login-password').element.value).toBe('Test1234')
+    })
+
+    it('logs in with the form data and closes the panel on submit', async () => {
+        const wrapper = mount(AccessPanel, { props: { open: true } })
+
+        await wrapper.find('#login-email').setValue('test@test.com')
+        await wrapper.find('#login-password').setValue('Test1234')
+
+        await wrapper.findComponent(LoginForm).vm.$emit('submit')
+
+        expect(login).toHaveBeenCalledWith('test@test.com', 'Test1234')
+        expect(setSession).toHaveBeenCalledWith('jwt-token', 'refresh-token')
+        await Promise.resolve()
+        expect(wrapper.emitted('update:open')[0]).toEqual([false])
+    })
+
+    it('shows an error message when the login request fails', async () => {
+        login.mockRejectedValueOnce(new Error('¡Ups! Algo salió mal'))
+        const wrapper = mount(AccessPanel, { props: { open: true } })
+
+        await wrapper.findComponent(LoginForm).vm.$emit('submit')
+        await Promise.resolve()
+
+        expect(wrapper.find('.access-panel__feedback').text()).toBe('¡Ups! Algo salió mal')
     })
 
     it('switches between the login and register tabs', async () => {

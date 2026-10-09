@@ -4,6 +4,7 @@ import LoginForm from '@/components/auth/LoginForm.vue'
 import RegisterForm from '@/components/auth/RegisterForm.vue'
 import AuthRepository from '@/core/apis/auth/AuthRepository'
 import AuthService from '@/core/apis/auth/AuthService'
+import { useAuthStore } from '@/stores/auth'
 
 const open = defineModel('open', { type: Boolean, default: false })
 const tab = defineModel('tab', { type: String, default: 'login' })
@@ -16,7 +17,8 @@ const registerPassword = ref('')
 const registerConfirmPassword = ref('')
 
 const authService = new AuthService(new AuthRepository())
-const registerStatus = ref(null)
+const authStore = useAuthStore()
+const status = ref(null)
 
 async function handleRegisterSubmit({ recaptchaToken }) {
     try {
@@ -26,9 +28,19 @@ async function handleRegisterSubmit({ recaptchaToken }) {
             confirmPassword: registerConfirmPassword.value,
             recaptchaToken,
         })
-        registerStatus.value = { type: 'success', message: register.getMessage() }
+        status.value = { type: 'success', message: register.getMessage() }
     } catch (error) {
-        registerStatus.value = { type: 'error', message: error.message }
+        status.value = { type: 'error', message: error.message }
+    }
+}
+
+async function handleLoginSubmit() {
+    try {
+        const login = await authService.login(loginEmail.value, loginPassword.value)
+        authStore.setSession(login.getToken(), login.getRefreshToken())
+        close()
+    } catch (error) {
+        status.value = { type: 'error', message: error.message }
     }
 }
 
@@ -90,13 +102,13 @@ function close() {
       </div>
 
       <p
-        v-if="registerStatus"
+        v-if="status"
         class="access-panel__feedback mt-4"
-        :class="registerStatus.type === 'success' ? 'text-primary' : 'text-error'"
+        :class="status.type === 'success' ? 'text-primary' : 'text-error'"
         role="status"
         aria-live="polite"
       >
-        {{ registerStatus.message }}
+        {{ status.message }}
       </p>
 
       <div class="access-panel__content mt-6">
@@ -104,6 +116,7 @@ function close() {
           v-if="tab === 'login'"
           v-model:email="loginEmail"
           v-model:password="loginPassword"
+          @submit="handleLoginSubmit"
         />
         <RegisterForm
           v-else
