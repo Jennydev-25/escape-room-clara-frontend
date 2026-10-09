@@ -18,3 +18,23 @@ describe('Integration - Auth Service', () => {
     })
 
 })
+
+describe('Unit - Auth Service', () => {
+
+    test('register should map the backend response to a RegisterModel on success', async () => {
+        const fakeRepository = {
+            register: () => Promise.resolve({ message: 'User stored successfully' })
+        }
+        const service = new AuthService(fakeRepository)
+
+        const register = await service.register({
+            email: 'test@test.com',
+            password: 'Test1234',
+            confirmPassword: 'Test1234',
+            recaptchaToken: 'token'
+        })
+
+        expect(register.getMessage()).toBe('User stored successfully')
+    })
+
+})
