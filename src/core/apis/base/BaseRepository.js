@@ -21,7 +21,7 @@ export default class BaseRepository {
             const data = await response.json()
             return data
         } catch (error) {
-            throw new Error("Algo paso")
+            throw new Error("¡Ups! Algo salió mal")
         }
     }
 
@@ -30,7 +30,7 @@ export default class BaseRepository {
             const response = await axios.get(this.uri)
             return response.data
         } catch (error) {
-            throw new Error("Algo paso")
+            throw new Error("¡Ups! Algo salió mal")
         }
     }
 
@@ -49,7 +49,7 @@ export default class BaseRepository {
             const data = await response.json()
             return data
         } catch (error) {
-            throw new Error("Algo paso")
+            throw new Error("¡Ups! Algo salió mal")
         }
     }
 
