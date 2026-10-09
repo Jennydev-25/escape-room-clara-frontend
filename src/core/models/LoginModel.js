@@ -13,4 +13,8 @@ export default class LoginModel {
         return this.refreshToken
     }
 
+    static create(dto, mapper) {
+        return new LoginModel(mapper.token(dto), mapper.refreshToken(dto))
+    }
+
 }
