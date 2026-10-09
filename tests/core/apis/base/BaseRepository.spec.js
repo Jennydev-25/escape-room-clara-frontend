@@ -14,6 +14,13 @@ describe('BaseRepository', () => {
         await expect(repository.get()).rejects.toThrow('¡Ups! Algo salió mal')
     })
 
+    test('get should throw \'¡Ups! Algo salió mal\' when the backend responds with an error status', async () => {
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false }))
+        const repository = new BaseRepository('http://localhost:8080/api/v1')
+
+        await expect(repository.get()).rejects.toThrow('¡Ups! Algo salió mal')
+    })
+
     test('get should return the response data when the backend responds with success', async () => {
         vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
             ok: true,
