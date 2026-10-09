@@ -12,7 +12,9 @@ export function useScrollSpy(sectionIds) {
     }
 
     onMounted(() => {
-        observer = new IntersectionObserver(handleIntersect)
+        observer = new IntersectionObserver(handleIntersect, {
+            rootMargin: '-40% 0px -40% 0px',
+        })
 
         sectionIds.forEach((id) => {
             const el = document.getElementById(id)
