@@ -1,6 +1,7 @@
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref, useTemplateRef } from 'vue'
 import PasswordField from '@/shared/PasswordField.vue'
+import { useRecaptcha } from '@/composables/useRecaptcha'
 
 const email = defineModel('email', { type: String, default: '' })
 const password = defineModel('password', { type: String, default: '' })
@@ -11,6 +12,14 @@ const confirmPasswordVisible = ref(false)
 function revealConfirmPassword() {
     confirmPasswordVisible.value = true
 }
+
+const { renderWidget } = useRecaptcha()
+const recaptchaContainer = useTemplateRef('recaptchaContainer')
+let recaptchaWidgetId = null
+
+onMounted(async () => {
+    recaptchaWidgetId = await renderWidget(recaptchaContainer.value)
+})
 
 defineEmits(['submit'])
 </script>
@@ -43,6 +52,8 @@ defineEmits(['submit'])
             <label for="register-confirm-password">Confirma tu contraseña</label>
             <PasswordField id="register-confirm-password" required minlength="8" v-model="confirmPassword" />
         </div>
+
+        <div id="register-recaptcha" ref="recaptchaContainer" class="register-form__recaptcha"></div>
 
         <button type="submit" class="register-form__submit mt-2 rounded-md border border-primary px-6 py-2 uppercase tracking-widest text-primary transition-colors hover:bg-primary hover:text-on-primary">
             Crear cuenta
