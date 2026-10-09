@@ -15,4 +15,10 @@ describe('BaseRepository', () => {
         await expect(repository.getAxios()).rejects.toThrow('¡Ups! Algo salió mal')
     })
 
+    test('getUri should return the uri passed to the constructor', () => {
+        const repository = new BaseRepository('http://localhost:8080/api/v1')
+
+        expect(repository.getUri()).toBe('http://localhost:8080/api/v1')
+    })
+
 })
