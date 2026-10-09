@@ -6,7 +6,9 @@ import { useAccessPanel } from '@/composables/useAccessPanel'
 
 const { open: accessPanelOpen, tab: accessPanelTab, openPanel } = useAccessPanel()
 
+const heroSection = useTemplateRef('heroSection')
 const heroBg = useTemplateRef('heroBg')
+const heroContent = useTemplateRef('heroContent')
 const heroTitleTyped = useTemplateRef('heroTitleTyped')
 const heroTagline = useTemplateRef('heroTagline')
 const heroCta = useTemplateRef('heroCta')
@@ -58,6 +60,7 @@ const LAMP_FLICKER_PATTERNS = [
 
 let flickerStopped = false
 let activeFlickerTween = null
+let heroParallaxTrigger = null
 
 function playFlickerSequence() {
     if (flickerStopped) return
@@ -94,17 +97,35 @@ onMounted(() => {
     } else {
         heroBg.value.addEventListener('load', playIntro, { once: true })
     }
+
+    // Parallax de verdad: la foto hace zoom y sube despacio, el contenido sube
+    // más rápido y se desvanece. Al ir a distinta velocidad se nota la profundidad.
+    const parallaxTimeline = gsap.timeline({
+        scrollTrigger: {
+            trigger: heroSection.value,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: true,
+            onUpdate: positionLampGlow,
+        }
+    })
+        .to(heroBg.value, { scale: 1.15, y: -40, ease: 'none' }, 0)
+        .to(heroContent.value, { y: -70, opacity: 0, ease: 'none' }, 0)
+
+    heroParallaxTrigger = parallaxTimeline.scrollTrigger
 })
 
 onUnmounted(() => {
     window.removeEventListener('resize', positionLampGlow)
     flickerStopped = true
     activeFlickerTween?.kill()
+    heroParallaxTrigger?.kill()
 })
 </script>
 
 <template>  
     <section
+        ref="heroSection"
         class="hero relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden transition-[padding] duration-1000 ease-out before:absolute before:inset-0 before:z-10 before:bg-linear-to-r before:from-surface/85 before:via-surface/60 before:to-surface/15 before:content-[''] motion-reduce:transition-none"
     :class="accessPanelOpen ? 'lg:pr-120' : ''">
         <img ref="heroBg" src="@/assets/images/home/hero.png" alt=""
@@ -117,7 +138,7 @@ onUnmounted(() => {
             style="z-index: 15; background: radial-gradient(circle, rgba(255, 214, 140, 0.9) 0%, rgba(255, 214, 140, 0) 70%);"
         ></div>
 
-        <div class="hero__content relative z-20 flex flex-col items-center gap-6 px-6 text-center">
+        <div ref="heroContent" class="hero__content relative z-20 flex flex-col items-center gap-6 px-6 text-center">
             <h1 class="hero__title font-display text-4xl uppercase text-on-surface sm:text-5xl md:text-6xl">
                 <span class="sr-only">El último archivo de Clara</span>
                 <span ref="heroTitleTyped" aria-hidden="true"></span>
