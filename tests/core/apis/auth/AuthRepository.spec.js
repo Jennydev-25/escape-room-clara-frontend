@@ -1,5 +1,5 @@
 import AuthRepository from "@/core/apis/auth/AuthRepository";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 describe('Integration - Auth Repository', () => {
 
@@ -38,6 +38,19 @@ describe('Integration - Auth Repository', () => {
         const repository = new AuthRepository()
 
         await expect(repository.login('wrong@test.com', 'WrongPass1')).rejects.toThrow('¡Ups! Algo salió mal')
+    })
+
+    test('login should return the response data when the credentials are correct', async () => {
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+            ok: true,
+            json: () => Promise.resolve({ token: 'jwt-token', refreshToken: 'refresh-token' }),
+        }))
+        const repository = new AuthRepository()
+
+        const data = await repository.login('test@test.com', 'Test1234')
+
+        expect(data).toEqual({ token: 'jwt-token', refreshToken: 'refresh-token' })
+        vi.unstubAllGlobals()
     })
 
 })
