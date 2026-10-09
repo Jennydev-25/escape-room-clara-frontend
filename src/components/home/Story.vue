@@ -13,9 +13,6 @@ onMounted(() => {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (prefersReducedMotion) return
 
-    // El texto "va saliendo" línea a línea (heading + párrafos + pregunta),
-    // no todo de golpe: cada línea entra con un pequeño stagger, dando la
-    // sensación de ir apareciendo progresivamente sin ser un tecleo letra a letra.
     const textLines = storySection.value.querySelectorAll('.story__reveal')
 
     const timeline = gsap.timeline({
@@ -32,8 +29,6 @@ onMounted(() => {
             ease: 'power2.out',
             stagger: 0.4,
         })
-        // Las fotos "caen" desde arriba (y negativo -> 0) poco a poco, cada
-        // una se queda un momento visible antes de que empiece la siguiente.
         .from(storyPhoto1.value, { opacity: 0, y: -60, duration: 1.3, ease: 'power2.out' }, 0.9)
         .from(storyPhoto2.value, { opacity: 0, y: -60, duration: 1.3, ease: 'power2.out' }, 2.6)
         .from(storyPhoto3.value, { opacity: 0, y: -60, duration: 1.3, ease: 'power2.out' }, 4.3)
@@ -47,7 +42,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <section id="el-caso" ref="storySection" class="story relative overflow-hidden px-6 pt-16 sm:pt-24">
+    <section id="el-caso" ref="storySection" class="story relative overflow-hidden px-6 pt-16 pb-16 sm:pt-24 sm:pb-24">
         <div class="story__container mx-auto flex max-w-6xl flex-col gap-12 sm:flex-row sm:items-center sm:gap-16">
             <div class="story__content flex flex-1 flex-col gap-6 text-on-surface-variant">
                 <h2 class="story__reveal story__heading font-display text-2xl text-on-surface sm:text-3xl">

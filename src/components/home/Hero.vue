@@ -98,8 +98,6 @@ onMounted(() => {
         heroBg.value.addEventListener('load', playIntro, { once: true })
     }
 
-    // Parallax de verdad: la foto hace zoom y sube despacio, el contenido sube
-    // más rápido y se desvanece. Al ir a distinta velocidad se nota la profundidad.
     const parallaxTimeline = gsap.timeline({
         scrollTrigger: {
             trigger: heroSection.value,

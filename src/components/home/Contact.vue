@@ -1,6 +1,9 @@
 <script setup>
-import { onUnmounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref, useTemplateRef } from 'vue'
+import { gsap } from 'gsap'
 import ContactForm from '@/components/home/ContactForm.vue'
+
+const contactSection = useTemplateRef('contactSection')
 
 const showForm = ref(false)
 const sent = ref(false)
@@ -33,22 +36,43 @@ function handleSubmit() {
     }, 3000)
 }
 
+let contactScrollTrigger = null
+
+onMounted(() => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (prefersReducedMotion) return
+
+    const textLines = contactSection.value.querySelectorAll('.contact__reveal')
+
+    const timeline = gsap.timeline({
+        scrollTrigger: {
+            trigger: contactSection.value,
+            start: 'top 75%',
+            toggleActions: 'play none none none',
+        }
+    })
+        .from(textLines, { opacity: 0, y: 40, duration: 1, ease: 'power2.out', stagger: 0.25 })
+
+    contactScrollTrigger = timeline.scrollTrigger
+})
+
 onUnmounted(() => {
     clearTimeout(closeTimeout)
+    contactScrollTrigger?.kill()
 })
 </script>
 
 <template>
-    <section id="contacto"
-        class="contact relative flex min-h-136 flex-col justify-center overflow-hidden px-6 pt-16 sm:pt-24 pb-16 sm:pb-24 transition-[padding] duration-1000 ease-out motion-reduce:transition-none"
+    <section id="contacto" ref="contactSection"
+        class="contact relative flex min-h-96 flex-col justify-center overflow-hidden px-6 pt-8 sm:pt-12 pb-16 sm:pb-24 transition-[padding] duration-1000 ease-out motion-reduce:transition-none"
         :class="showForm ? 'lg:pr-120' : ''"
     >
         <div class="contact__container mx-auto flex max-w-2xl flex-col items-center gap-6 text-center">
-            <h2 class="contact__heading font-display text-2xl text-on-surface sm:text-3xl">
+            <h2 class="contact__reveal contact__heading font-display text-2xl text-on-surface sm:text-3xl">
                 Contacto
             </h2>
 
-            <p class="contact__text font-body text-base text-on-surface-variant sm:text-lg">
+            <p class="contact__reveal contact__text font-body text-base text-on-surface-variant sm:text-lg">
                 ¿Tienes alguna duda, te has encontrado un error en el juego, te has quedado atascada/o en
                 alguna prueba o no sabes cómo avanzar en algún punto? ¿O simplemente te apetece charlar
                 sobre el juego, proponerme una mejora o hablarme de una colaboración? No dudes en
@@ -57,7 +81,7 @@ onUnmounted(() => {
 
             <button
                 type="button"
-                class="contact__cta font-label mt-4 rounded-md border border-primary px-8 py-3 uppercase tracking-widest text-primary transition-colors hover:bg-primary hover:text-on-primary"
+                class="contact__reveal contact__cta font-label mt-4 rounded-md border border-primary px-8 py-3 uppercase tracking-widest text-primary transition-colors hover:bg-primary hover:text-on-primary"
                 :aria-expanded="showForm"
                 aria-controls="contact-form-card"
                 @click="toggleForm"

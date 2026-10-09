@@ -1,8 +1,37 @@
-<script setup></script>
+<script setup>
+import { onMounted, onUnmounted, useTemplateRef } from 'vue'
+import { gsap } from 'gsap'
+
+const footerEl = useTemplateRef('footerEl')
+const footerBar = useTemplateRef('footerBar')
+
+let footerScrollTrigger = null
+
+onMounted(() => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (prefersReducedMotion) return
+
+    const timeline = gsap.timeline({
+        scrollTrigger: {
+            trigger: footerEl.value,
+            start: 'top 90%',
+            toggleActions: 'play none none none',
+        }
+    })
+        .from(footerBar.value, { opacity: 0, y: 40, duration: 1, ease: 'power2.out' })
+
+    footerScrollTrigger = timeline.scrollTrigger
+})
+
+onUnmounted(() => {
+    footerScrollTrigger?.kill()
+})
+</script>
 
 <template>
-    <footer class="footer relative overflow-hidden px-6 py-8">
+    <footer ref="footerEl" class="footer relative overflow-hidden px-6 py-8">
         <div
+            ref="footerBar"
             class="footer__bar mx-auto flex max-w-5xl flex-col items-center gap-6 rounded-full border border-white/20 bg-gradient-to-r from-surface/25 via-surface/5 to-surface/25 px-6 py-6 text-center shadow-2xl backdrop-blur-2xl backdrop-saturate-150 sm:flex-row sm:items-center sm:justify-between sm:text-left"
         >
             <div class="footer__brand flex items-center gap-3">
