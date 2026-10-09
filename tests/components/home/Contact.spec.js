@@ -84,4 +84,18 @@ describe('Contact', () => {
         expect(() => wrapper.unmount()).not.toThrow()
     })
 
+    it('skips the scroll reveal animation when the user prefers reduced motion', () => {
+        const originalMatchMedia = window.matchMedia
+        window.matchMedia = vi.fn().mockImplementation((query) => ({
+            matches: true,
+            media: query,
+            addEventListener: vi.fn(),
+            removeEventListener: vi.fn(),
+        }))
+
+        expect(() => mount(Contact)).not.toThrow()
+
+        window.matchMedia = originalMatchMedia
+    })
+
 })
