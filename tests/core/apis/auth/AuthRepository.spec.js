@@ -34,4 +34,10 @@ describe('Integration - Auth Repository', () => {
         await expect(repository.login('test@test.com', 'Test1234')).rejects.toThrow('¡Ups! Algo salió mal')
     })
 
+    test('login should throw \'¡Ups! Algo salió mal\' when the credentials are wrong', async () => {
+        const repository = new AuthRepository()
+
+        await expect(repository.login('wrong@test.com', 'WrongPass1')).rejects.toThrow('¡Ups! Algo salió mal')
+    })
+
 })
