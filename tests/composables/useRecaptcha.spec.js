@@ -39,4 +39,25 @@ describe('useRecaptcha', () => {
         expect(renderSpy).toHaveBeenCalledWith(container, expect.objectContaining({ sitekey: expect.any(String) }))
         expect(widgetId).toBe(2)
     })
+
+    it('does not render a second widget until the pending script finishes loading', async () => {
+        delete window.grecaptcha
+
+        const { renderWidget } = useRecaptcha()
+        const container1 = document.createElement('div')
+        const container2 = document.createElement('div')
+        const renderSpy = vi.fn(() => 5)
+
+        const firstPromise = renderWidget(container1)
+        const secondPromise = renderWidget(container2)
+
+        expect(document.head.querySelectorAll(SCRIPT_SELECTOR)).toHaveLength(1)
+
+        window.grecaptcha = { render: renderSpy }
+        document.head.querySelector(SCRIPT_SELECTOR).dispatchEvent(new Event('load'))
+
+        await Promise.all([firstPromise, secondPromise])
+
+        expect(renderSpy).toHaveBeenCalledTimes(2)
+    })
 })
