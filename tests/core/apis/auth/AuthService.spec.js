@@ -45,4 +45,16 @@ describe('Unit - Auth Service', () => {
         expect(register.getMessage()).toBe('User stored successfully')
     })
 
+    test('login should map the backend response to a LoginModel on success', async () => {
+        const fakeRepository = {
+            login: () => Promise.resolve({ token: 'jwt-token', refreshToken: 'refresh-token' })
+        }
+        const service = new AuthService(fakeRepository)
+
+        const login = await service.login('test@test.com', 'Test1234')
+
+        expect(login.getToken()).toBe('jwt-token')
+        expect(login.getRefreshToken()).toBe('refresh-token')
+    })
+
 })
