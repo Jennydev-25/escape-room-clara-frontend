@@ -39,8 +39,9 @@ describe('useScrollSpy', () => {
     })
 
     it('starts with no active section', () => {
-        const { activeId } = useScrollSpy(['el-caso', 'sobre-el-juego', 'contacto'])
-        expect(activeId.value).toBe(null)
+        const wrapper = mountScrollSpy(['el-caso', 'sobre-el-juego', 'contacto'])
+
+        expect(wrapper.vm.activeId).toBe(null)
     })
 
     it('sets the active section id when it intersects the viewport band', async () => {
