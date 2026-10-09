@@ -3,7 +3,7 @@ import { describe, expect, test } from "vitest";
 
 describe('Integration - Auth Repository', () => {
 
-    test('register should throw \'¡Ups! Algo salió mal\' when the uri is invalid', async () => {
+    test('should throw \'¡Ups! Algo salió mal\' when the uri is invalid', async () => {
         const repository = new AuthRepository()
         repository.uri = ''
 
@@ -16,7 +16,7 @@ describe('Integration - Auth Repository', () => {
     })
 
 
-    test('register should throw \'¡Ups! Algo salió mal\' when the backend rejects an empty recaptcha token', async () => {
+    test('should throw \'¡Ups! Algo salió mal\' when the backend rejects an empty recaptcha token', async () => {
         const repository = new AuthRepository()
 
         await expect(repository.register({
