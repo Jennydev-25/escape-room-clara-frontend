@@ -8,4 +8,8 @@ export default class RegisterModel {
         return this.message
     }
 
+    static create(dto, mapper) {
+        return new RegisterModel(mapper.message(dto))
+    }
+
 }
