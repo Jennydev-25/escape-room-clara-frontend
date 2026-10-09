@@ -4,10 +4,12 @@ import { mount } from '@vue/test-utils'
 import { useScrollSpy } from '@/composables/useScrollSpy'
 
 let observerCallback = null
+let observerOptions = null
 
 class IntersectionObserverMock {
-    constructor(callback) {
+    constructor(callback, options) {
         observerCallback = callback
+        observerOptions = options
     }
     observe() {}
     disconnect() {}
@@ -26,6 +28,7 @@ function mountScrollSpy(sectionIds) {
 describe('useScrollSpy', () => {
     beforeEach(() => {
         observerCallback = null
+        observerOptions = null
         window.IntersectionObserver = IntersectionObserverMock
         document.body.innerHTML = `
             <section id="el-caso"></section>
@@ -52,5 +55,11 @@ describe('useScrollSpy', () => {
         await nextTick()
 
         expect(wrapper.vm.activeId).toBe('contacto')
+    })
+
+    it('observes the sections using a rootMargin centered on the viewport', () => {
+        mountScrollSpy(['el-caso', 'sobre-el-juego', 'contacto'])
+
+        expect(observerOptions).toEqual({ rootMargin: '-40% 0px -40% 0px' })
     })
 })
