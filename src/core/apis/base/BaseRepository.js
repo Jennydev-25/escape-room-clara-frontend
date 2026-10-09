@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export default class Repository {
+export default class BaseRepository {
 
     constructor(uri) {
         this.uri = uri

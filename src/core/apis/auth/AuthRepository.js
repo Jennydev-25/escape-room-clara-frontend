@@ -1,6 +1,6 @@
-import Repository from "@/core/models/Repository";
+import BaseRepository from "@/core/apis/base/BaseRepository";
 
-export default class AuthRepository extends Repository {
+export default class AuthRepository extends BaseRepository {
 
     constructor() {
         super(import.meta.env.VITE_API_URL)
