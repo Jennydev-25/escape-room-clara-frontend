@@ -13,7 +13,7 @@ function revealConfirmPassword() {
     confirmPasswordVisible.value = true
 }
 
-const { renderWidget } = useRecaptcha()
+const { renderWidget, getToken } = useRecaptcha()
 const recaptchaContainer = useTemplateRef('recaptchaContainer')
 let recaptchaWidgetId = null
 
@@ -21,11 +21,15 @@ onMounted(async () => {
     recaptchaWidgetId = await renderWidget(recaptchaContainer.value)
 })
 
-defineEmits(['submit'])
+const emit = defineEmits(['submit'])
+
+function handleSubmit() {
+    emit('submit', { recaptchaToken: getToken(recaptchaWidgetId) })
+}
 </script>
 
 <template>
-    <form class="register-form flex flex-col gap-4" @submit.prevent="$emit('submit')">
+    <form class="register-form flex flex-col gap-4" @submit.prevent="handleSubmit">
         <div class="register-form__field flex flex-col gap-1">
             <label for="register-email">Email</label>
             <input
