@@ -23,8 +23,13 @@ export function useRecaptcha() {
 
     async function renderWidget(containerEl) {
         await ensureScriptLoaded()
-        return window.grecaptcha.render(containerEl, {
-            sitekey: import.meta.env.VITE_RECAPTCHA_SITE_KEY,
+        return new Promise((resolve) => {
+            window.grecaptcha.ready(() => {
+                const widgetId = window.grecaptcha.render(containerEl, {
+                    sitekey: import.meta.env.VITE_RECAPTCHA_SITE_KEY,
+                })
+                resolve(widgetId)
+            })
         })
     }
 
