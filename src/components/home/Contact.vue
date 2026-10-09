@@ -68,8 +68,8 @@ onUnmounted(() => {
 
         <Transition
             enter-active-class="transition duration-1000 ease-out motion-reduce:transition-none"
-            enter-from-class="opacity-0 scale-95 translate-x-8"
-            enter-to-class="opacity-100 scale-100 translate-x-0"
+            enter-from-class="opacity-0 scale-95 translate-y-8 lg:translate-y-0 lg:translate-x-8"
+            enter-to-class="opacity-100 scale-100 translate-y-0 translate-x-0"
             leave-active-class="transition duration-200 ease-out motion-reduce:transition-none"
             leave-from-class="opacity-100 scale-100"
             leave-to-class="opacity-0 scale-95"
@@ -77,7 +77,7 @@ onUnmounted(() => {
             <div
                 v-if="showForm"
                 id="contact-form-card"
-                class="contact__card absolute right-4 top-[60%] z-30 w-[90%] max-w-md -translate-y-1/2 rounded-2xl border border-white/20 bg-surface/15 p-6 text-left shadow-2xl backdrop-blur-2xl backdrop-saturate-150 sm:right-8 lg:right-16"
+                class="contact__card relative z-30 mx-auto mt-8 w-[90%] max-w-md rounded-2xl border border-white/20 bg-surface/15 p-6 text-left shadow-2xl backdrop-blur-2xl backdrop-saturate-150 lg:absolute lg:right-16 lg:top-[60%] lg:mt-0 lg:-translate-y-1/2"
                 role="region"
                 aria-label="Formulario de contacto"
             >
