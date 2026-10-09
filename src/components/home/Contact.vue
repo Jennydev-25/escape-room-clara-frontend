@@ -2,6 +2,8 @@
 import { onMounted, onUnmounted, ref, useTemplateRef } from 'vue'
 import { gsap } from 'gsap'
 import ContactForm from '@/components/home/ContactForm.vue'
+import ContactRepository from '@/core/apis/contact/ContactRepository'
+import ContactService from '@/core/apis/contact/ContactService'
 
 const contactSection = useTemplateRef('contactSection')
 
@@ -12,6 +14,9 @@ const name = ref('')
 const email = ref('')
 const type = ref('')
 const message = ref('')
+
+const contactService = new ContactService(new ContactRepository())
+const contactStatus = ref(null)
 
 let closeTimeout = null
 
@@ -26,14 +31,28 @@ function toggleForm() {
     showForm.value = !showForm.value
 }
 
-function handleSubmit() {
-    sent.value = true
+async function handleSubmit({ recaptchaToken }) {
+    try {
+        const contact = await contactService.send({
+            name: name.value,
+            email: email.value,
+            type: type.value,
+            message: message.value,
+            recaptchaToken,
+        })
 
-    closeTimeout = setTimeout(() => {
-        showForm.value = false
-        sent.value = false
-        resetFields()
-    }, 3000)
+        sent.value = true
+        contactStatus.value = { type: 'success', message: contact.getMessage() }
+
+        closeTimeout = setTimeout(() => {
+            showForm.value = false
+            sent.value = false
+            contactStatus.value = null
+            resetFields()
+        }, 3000)
+    } catch (error) {
+        contactStatus.value = { type: 'error', message: error.message }
+    }
 }
 
 let contactScrollTrigger = null
@@ -111,16 +130,25 @@ onUnmounted(() => {
                     role="status"
                     aria-live="polite"
                 >
-                    Mensaje enviado correctamente
+                    {{ contactStatus?.message }}
                 </p>
-                <ContactForm
-                    v-else
-                    v-model:name="name"
-                    v-model:email="email"
-                    v-model:type="type"
-                    v-model:message="message"
-                    @submit="handleSubmit"
-                />
+                <template v-else>
+                    <p
+                        v-if="contactStatus"
+                        class="contact__feedback font-body mb-2 text-center text-error"
+                        role="status"
+                        aria-live="polite"
+                    >
+                        {{ contactStatus.message }}
+                    </p>
+                    <ContactForm
+                        v-model:name="name"
+                        v-model:email="email"
+                        v-model:type="type"
+                        v-model:message="message"
+                        @submit="handleSubmit"
+                    />
+                </template>
             </div>
         </Transition>
     </section>
