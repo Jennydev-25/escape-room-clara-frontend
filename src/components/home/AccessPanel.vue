@@ -18,7 +18,7 @@ const registerConfirmPassword = ref('')
 
 const authService = new AuthService(new AuthRepository())
 const authStore = useAuthStore()
-const registerStatus = ref(null)
+const status = ref(null)
 
 async function handleRegisterSubmit({ recaptchaToken }) {
     try {
@@ -28,16 +28,20 @@ async function handleRegisterSubmit({ recaptchaToken }) {
             confirmPassword: registerConfirmPassword.value,
             recaptchaToken,
         })
-        registerStatus.value = { type: 'success', message: register.getMessage() }
+        status.value = { type: 'success', message: register.getMessage() }
     } catch (error) {
-        registerStatus.value = { type: 'error', message: error.message }
+        status.value = { type: 'error', message: error.message }
     }
 }
 
 async function handleLoginSubmit() {
-    const login = await authService.login(loginEmail.value, loginPassword.value)
-    authStore.setSession(login.getToken(), login.getRefreshToken())
-    close()
+    try {
+        const login = await authService.login(loginEmail.value, loginPassword.value)
+        authStore.setSession(login.getToken(), login.getRefreshToken())
+        close()
+    } catch (error) {
+        status.value = { type: 'error', message: error.message }
+    }
 }
 
 function close() {
@@ -98,13 +102,13 @@ function close() {
       </div>
 
       <p
-        v-if="registerStatus"
+        v-if="status"
         class="access-panel__feedback mt-4"
-        :class="registerStatus.type === 'success' ? 'text-primary' : 'text-error'"
+        :class="status.type === 'success' ? 'text-primary' : 'text-error'"
         role="status"
         aria-live="polite"
       >
-        {{ registerStatus.message }}
+        {{ status.message }}
       </p>
 
       <div class="access-panel__content mt-6">
