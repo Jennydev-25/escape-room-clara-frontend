@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { mount, flushPromises } from '@vue/test-utils'
 import ContactForm from '@/components/home/ContactForm.vue'
 
 const renderWidget = vi.fn().mockResolvedValue(1)
@@ -18,5 +18,15 @@ describe('ContactForm', () => {
         const wrapper = mount(ContactForm)
 
         expect(renderWidget).toHaveBeenCalledWith(wrapper.find('#contact-recaptcha').element)
+    })
+
+    it('emits the recaptcha token on submit', async () => {
+        getToken.mockReturnValue('mocked-token')
+        const wrapper = mount(ContactForm)
+        await flushPromises()
+
+        await wrapper.find('form').trigger('submit.prevent')
+
+        expect(wrapper.emitted('submit')[0]).toEqual([{ recaptchaToken: 'mocked-token' }])
     })
 })
