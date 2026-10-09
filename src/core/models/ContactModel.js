@@ -8,4 +8,8 @@ export default class ContactModel {
         return this.message
     }
 
+    static create(dto, mapper) {
+        return new ContactModel(mapper.message(dto))
+    }
+
 }
