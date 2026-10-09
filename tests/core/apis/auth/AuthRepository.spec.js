@@ -27,4 +27,11 @@ describe('Integration - Auth Repository', () => {
         })).rejects.toThrow('¡Ups! Algo salió mal')
     })
 
+    test('login should throw \'¡Ups! Algo salió mal\' when the uri is invalid', async () => {
+        const repository = new AuthRepository()
+        repository.uri = ''
+
+        await expect(repository.login('test@test.com', 'Test1234')).rejects.toThrow('¡Ups! Algo salió mal')
+    })
+
 })
