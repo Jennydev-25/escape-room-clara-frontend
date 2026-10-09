@@ -1,5 +1,5 @@
 import './assets/styles/style.css'
-import { createApp } from 'vue'
+import { createApp, nextTick } from 'vue'
 import { createPinia } from 'pinia'
 import Lenis from 'lenis'
 import { gsap } from 'gsap'
@@ -24,3 +24,19 @@ app.use(createPinia())
 app.use(router)
 
 app.mount('#app')
+
+// "Home" se carga de forma lazy (ruta con import() dinámico), así que
+// app.mount() vuelve antes de que Hero/Story existan todavía. Esperamos a
+// que el router termine de resolver la navegación inicial y a que Vue
+// pinte esa vista (nextTick) para que los ScrollTrigger ya existan; y si
+// además hay imágenes (fotos de Story, fondos...) que aún no cargaron,
+// esperamos también al evento "load" antes de recalcular sus posiciones.
+router.isReady().then(() => {
+    nextTick(() => {
+        if (document.readyState === 'complete') {
+            ScrollTrigger.refresh()
+        } else {
+            window.addEventListener('load', () => ScrollTrigger.refresh(), { once: true })
+        }
+    })
+})
