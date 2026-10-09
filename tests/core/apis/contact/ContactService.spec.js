@@ -19,3 +19,24 @@ describe('Integration - Contact Service', () => {
     })
 
 })
+
+describe('Unit - Contact Service', () => {
+
+    test('send should map the backend response to a ContactModel on success', async () => {
+        const fakeRepository = {
+            send: () => Promise.resolve({ message: 'Mensaje enviado correctamente' })
+        }
+        const service = new ContactService(fakeRepository)
+
+        const contact = await service.send({
+            name: 'Test',
+            email: 'test@test.com',
+            type: 'QUESTION',
+            message: 'Mensaje de prueba',
+            recaptchaToken: 'token'
+        })
+
+        expect(contact.getMessage()).toBe('Mensaje enviado correctamente')
+    })
+
+})
