@@ -28,4 +28,13 @@ describe('ResumenView', () => {
         const activeLink = wrapper.find('[aria-current="page"]')
         expect(activeLink.text()).toBe('Resumen')
     })
+
+    it('renders the case summary card heading', () => {
+        const wrapper = mount(ResumenView, {
+            global: { plugins: [router] },
+        })
+
+        expect(wrapper.text()).toContain('Sumario de la investigación')
+        expect(wrapper.text()).toContain('Comenzar investigación')
+    })
 })
