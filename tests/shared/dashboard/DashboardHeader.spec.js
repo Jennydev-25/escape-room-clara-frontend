@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import router from '@/router'
-import DashboardHeader from '@/shared/DashboardHeader.vue'
+import DashboardHeader from '@/shared/dashboard/DashboardHeader.vue'
 
 describe('DashboardHeader', () => {
     it('renders the player alias', () => {

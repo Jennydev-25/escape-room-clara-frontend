@@ -1,6 +1,6 @@
 <script setup>
-import DashboardHeader from '@/shared/DashboardHeader.vue'
-import DashboardFooter from '@/shared/DashboardFooter.vue'
+import DashboardHeader from '@/shared/dashboard/DashboardHeader.vue'
+import DashboardFooter from '@/shared/dashboard/DashboardFooter.vue'
 
 const props = defineProps({
     activeSection: {

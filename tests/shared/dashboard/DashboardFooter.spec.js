@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import DashboardFooter from '@/shared/DashboardFooter.vue'
+import DashboardFooter from '@/shared/dashboard/DashboardFooter.vue'
 
 describe('DashboardFooter', () => {
     it('renders the site name and copyright', () => {

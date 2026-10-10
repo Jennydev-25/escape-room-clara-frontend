@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import router from '@/router'
-import DashboardLayout from '@/shared/DashboardLayout.vue'
+import DashboardLayout from '@/shared/dashboard/DashboardLayout.vue'
 
 describe('DashboardLayout', () => {
     it.each([
