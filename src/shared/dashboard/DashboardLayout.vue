@@ -24,7 +24,7 @@ defineProps({
                 <span class="h-2 w-2 -translate-y-px animate-pulse rounded-full bg-success" />
                 TERMINAL ACTIVA
             </span>
-            <span>SESIÓN ABIERTA</span>
+            <span>Sesión abierta // Estado: <span class="uppercase">clasificada</span></span>
         </div>
 
         <div class="dashboard-layout__workspace flex min-h-0 flex-1">
