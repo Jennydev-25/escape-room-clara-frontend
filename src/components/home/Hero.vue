@@ -2,6 +2,7 @@
 import { onMounted, onUnmounted, useTemplateRef } from 'vue'
 import { gsap } from 'gsap'
 import AccessPanel from '@/components/home/AccessPanel.vue'
+import BaseButton from '@/shared/BaseButton.vue'
 import { useAccessPanel } from '@/composables/useAccessPanel'
 
 const { open: accessPanelOpen, tab: accessPanelTab, openPanel } = useAccessPanel()
@@ -88,7 +89,7 @@ onMounted(() => {
         gsap.timeline({ delay: 0.4 })
             .to(heroTitleTyped.value, { duration: 3.2, text: HERO_TITLE, ease: 'none' })
             .from(heroTagline.value, { opacity: 0, y: 24, duration: 1.4, ease: 'power2.out' }, '-=0.2')
-            .from(heroCta.value, { opacity: 0, y: 24, duration: 1.4, ease: 'power2.out' }, '-=0.3')
+            .from(heroCta.value.$el, { opacity: 0, y: 24, duration: 1.4, ease: 'power2.out' }, '-=0.3')
         playFlickerSequence()
     }
 
@@ -148,10 +149,9 @@ onUnmounted(() => {
                 Lo que ella no llegó a contar, alguien tiene que terminarlo...
             </p>
 
-            <button ref="heroCta" type="button" @click="openPanel('register')"
-                class="hero__cta font-label mt-4 rounded-md border border-primary px-8 py-3 uppercase tracking-widest text-primary transition-colors hover:bg-primary hover:text-on-primary">
+            <BaseButton ref="heroCta" type="button" size="lg" class="hero__cta" @click="openPanel('register')">
                 Investigar
-            </button>
+            </BaseButton>
         </div>
 
         <AccessPanel v-model:open="accessPanelOpen" v-model:tab="accessPanelTab" />
