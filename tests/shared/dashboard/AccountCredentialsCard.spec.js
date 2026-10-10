@@ -25,4 +25,12 @@ describe('AccountCredentialsCard', () => {
         expect(wrapper.find('#credentials-full-name').exists()).toBe(false)
         expect(wrapper.get('button').text()).toContain('Editar mis datos')
     })
+
+    it('shows a close button once editing is active', async () => {
+        const wrapper = mount(AccountCredentialsCard)
+
+        await wrapper.get('button').trigger('click')
+
+        expect(wrapper.get('[aria-label="Cerrar"]').exists()).toBe(true)
+    })
 })
