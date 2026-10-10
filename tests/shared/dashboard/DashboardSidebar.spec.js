@@ -19,11 +19,26 @@ describe('DashboardSidebar', () => {
 
     it('renders a logout button', () => {
         const wrapper = mount(DashboardSidebar, {
-            props: { activeSection: 'inicio' },
+            global: { plugins: [router] },
         })
 
         const button = wrapper.find('button')
 
         expect(button.text()).toBe('Cerrar sesión')
+    })
+
+    it.each([
+        ['/resumen', 'Resumen'],
+        ['/perfil', 'Mi perfil'],
+    ])('marks the link to %s as the current page via aria-current', async (path, linkText) => {
+        await router.push(path)
+
+        const wrapper = mount(DashboardSidebar, {
+            global: { plugins: [router] },
+        })
+
+        const activeLink = wrapper.findAll('a').find((a) => a.text() === linkText)
+
+        expect(activeLink.attributes('aria-current')).toBe('page')
     })
 })
