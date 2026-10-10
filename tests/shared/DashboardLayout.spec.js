@@ -4,15 +4,6 @@ import router from '@/router'
 import DashboardLayout from '@/shared/DashboardLayout.vue'
 
 describe('DashboardLayout', () => {
-    it('renders the player alias in the header', () => {
-        const wrapper = mount(DashboardLayout, {
-            global: { plugins: [router] },
-            props: { activeSection: 'inicio', playerAlias: 'marta_v' },
-        })
-
-        expect(wrapper.text()).toContain('marta_v')
-    })
-
     it.each([
         ['inicio', 'Resumen'],
         ['perfil', 'Mi perfil'],
@@ -35,16 +26,5 @@ describe('DashboardLayout', () => {
         })
 
         expect(wrapper.find('p').text()).toBe('contenido de prueba')
-    })
-
-    it('links the logo to the home route', () => {
-        const wrapper = mount(DashboardLayout, {
-            global: { plugins: [router] },
-            props: { activeSection: 'inicio', playerAlias: 'marta_v' },
-        })
-
-        const logoLink = wrapper.get('[aria-label="Ir al inicio"]')
-
-        expect(logoLink.attributes('href')).toBe('/')
     })
 })

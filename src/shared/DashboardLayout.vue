@@ -1,5 +1,5 @@
 <script setup>
-import { UserRound } from '@lucide/vue'
+import DashboardHeader from '@/shared/DashboardHeader.vue'
 
 const props = defineProps({
     activeSection: {
@@ -17,28 +17,7 @@ const currentPageOrUndefined = (section) => (props.activeSection === section ? '
 
 <template>
     <div class="dashboard-layout flex h-screen min-h-0 flex-col overflow-hidden bg-surface font-body text-on-surface">
-        <header class="dashboard-layout__header flex items-center justify-between border-b border-outline/30 px-6 py-4">
-            <div class="flex items-center gap-3">
-                <RouterLink to="/" aria-label="Ir al inicio" class="shrink-0">
-                    <img
-                        src="@/assets/images/home/logo.png"
-                        alt="El último archivo de Clara"
-                        class="h-10 w-10 -translate-y-1 object-contain"
-                    >
-                </RouterLink>
-                <div class="flex items-baseline gap-3 whitespace-nowrap">
-                    <span class="font-display text-lg uppercase tracking-wide text-primary">El último archivo de Clara</span>
-                    <span class="font-display text-lg text-on-surface-variant">·</span>
-                    <span class="font-display text-lg uppercase tracking-wide text-on-surface-variant">Terminal de investigación</span>
-                </div>
-            </div>
-            <div class="flex items-center gap-3">
-                <span class="dashboard-layout__alias font-label text-sm uppercase tracking-wide text-on-surface">{{ playerAlias }}</span>
-                <span class="flex h-9 w-9 items-center justify-center rounded-full bg-surface-container-high text-on-surface-variant">
-                    <component :is="UserRound" :size="18" />
-                </span>
-            </div>
-        </header>
+        <DashboardHeader :player-alias="playerAlias" />
 
         <div class="dashboard-layout__status flex min-h-0 items-center justify-between border-b border-outline/30 bg-surface-container px-6 py-2 font-mono text-xs text-on-surface-variant">
             <span class="flex items-center gap-2">
@@ -48,7 +27,7 @@ const currentPageOrUndefined = (section) => (props.activeSection === section ? '
             <span>SESIÓN ABIERTA</span>
         </div>
 
-        <div class="dashboard-layout__body flex min-h-0 flex-1">
+        <div class="dashboard-layout__workspace flex min-h-0 flex-1">
             <nav class="dashboard-layout__nav flex min-h-0 w-56 flex-col gap-2 border-r border-outline/30 bg-surface-container p-4">
                 <a
                     href="#"
