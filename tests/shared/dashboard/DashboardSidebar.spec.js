@@ -62,4 +62,27 @@ describe('DashboardSidebar', () => {
 
         expect(activeLink.attributes('aria-current')).toBe('page')
     })
+
+    it('closes the mobile menu when a mobile nav link is clicked', async () => {
+        const wrapper = mount(DashboardSidebar, {
+            global: { plugins: [router] },
+        })
+
+        await wrapper.find('[aria-label="Abrir menú"]').trigger('click')
+        await wrapper.find('#dashboard-sidebar-menu a').trigger('click')
+
+        expect(wrapper.find('[aria-label="Abrir menú"]').exists()).toBe(true)
+    })
+
+    it('emits logout and closes the mobile menu when the mobile logout button is clicked', async () => {
+        const wrapper = mount(DashboardSidebar, {
+            global: { plugins: [router] },
+        })
+
+        await wrapper.find('[aria-label="Abrir menú"]').trigger('click')
+        await wrapper.find('#dashboard-sidebar-menu button').trigger('click')
+
+        expect(wrapper.emitted('logout')).toBeTruthy()
+        expect(wrapper.find('[aria-label="Abrir menú"]').exists()).toBe(true)
+    })
 })
