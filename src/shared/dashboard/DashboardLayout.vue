@@ -21,7 +21,7 @@ defineProps({
 
         <div class="dashboard-layout__status flex min-h-0 items-center justify-between border-b border-outline/30 bg-surface-container px-6 py-2 font-mono text-xs text-on-surface-variant">
             <span class="flex items-center gap-2">
-                <span class="h-2 w-2 -translate-y-px animate-pulse rounded-full bg-primary" />
+                <span class="h-2 w-2 -translate-y-px animate-pulse rounded-full bg-success" />
                 TERMINAL ACTIVA
             </span>
             <span>SESIÓN ABIERTA</span>

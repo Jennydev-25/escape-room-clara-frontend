@@ -44,33 +44,32 @@ const credentialNumber = String(Math.floor(Math.random() * 1000000)).padStart(6,
 
 <template>
     <section class="investigator-credential-card relative flex h-full min-h-0 flex-col rounded-2xl border border-outline/30 bg-surface-container p-8">
-        <div class="absolute right-6 top-6 flex items-center gap-1.5">
-            <span class="font-label text-[10px] uppercase tracking-widest text-success">Autorizado</span>
-            <span class="h-1.5 w-1.5 rounded-full bg-success" />
-        </div>
-
         <p class="font-label text-center text-xs uppercase tracking-widest text-primary">Credencial de investigador</p>
 
-        <div class="investigator-credential-card__avatar relative mx-auto mt-6 flex h-32 w-32 items-center justify-center rounded-full bg-surface-container-high text-on-surface-variant">
-            <img
-                v-if="avatarSrc"
-                :src="avatarSrc"
-                :alt="`Avatar ${avatarId}`"
-                class="investigator-credential-card__avatar-image h-24 w-24 object-contain"
-            >
-            <component v-else :is="UserRound" :size="56" />
-            <button
-                v-if="showAvatarPicker"
-                type="button"
-                class="investigator-credential-card__avatar-edit absolute bottom-0 right-0 flex h-9 w-9 items-center justify-center rounded-full bg-surface text-on-surface-variant transition-colors hover:text-primary"
-                aria-label="Cambiar avatar"
-            >
-                <component :is="Camera" :size="16" />
-            </button>
-        </div>
+        <div class="investigator-credential-card__identity mt-6 flex items-center justify-center gap-4">
+            <div class="investigator-credential-card__avatar relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-surface-container-high text-on-surface-variant">
+                <img
+                    v-if="avatarSrc"
+                    :src="avatarSrc"
+                    :alt="`Avatar ${avatarId}`"
+                    class="investigator-credential-card__avatar-image h-full w-full rounded-full object-cover"
+                >
+                <component v-else :is="UserRound" :size="40" />
+                <button
+                    v-if="showAvatarPicker"
+                    type="button"
+                    class="investigator-credential-card__avatar-edit absolute bottom-0 right-0 flex h-7 w-7 items-center justify-center rounded-full bg-surface text-on-surface-variant transition-colors hover:text-primary"
+                    aria-label="Cambiar avatar"
+                >
+                    <component :is="Camera" :size="14" />
+                </button>
+            </div>
 
-        <p class="font-display mt-4 text-center text-2xl text-on-surface">{{ alias }}</p>
-        <p class="font-body text-center text-sm text-on-surface-variant">Alias: {{ alias }}</p>
+            <div class="flex min-w-0 flex-col items-center text-center">
+                <p class="font-display truncate text-2xl text-on-surface">{{ alias }}</p>
+                <p class="font-body truncate text-sm text-on-surface-variant">Alias: {{ alias }}</p>
+            </div>
+        </div>
 
         <dl class="investigator-credential-card__details mt-6 flex flex-col gap-2 border-t border-outline/30 pt-6 font-body text-sm">
             <div class="flex items-center justify-between gap-4">
@@ -83,10 +82,16 @@ const credentialNumber = String(Math.floor(Math.random() * 1000000)).padStart(6,
             </div>
         </dl>
 
-        <div class="investigator-credential-card__id mt-auto flex flex-col items-center gap-2 pt-6">
-            <div class="h-px w-16 bg-outline/30" />
-            <component :is="Barcode" class="h-16 w-56 text-on-surface-variant" />
-            <p class="font-mono text-xs text-on-surface">ID Nº {{ credentialNumber }}/{{ issueDate }}</p>
+        <div class="investigator-credential-card__id mt-6 flex items-center justify-between gap-4 border-t border-outline/30 pt-6">
+            <div class="flex items-center gap-2">
+                <component :is="Barcode" class="h-6 w-14 text-on-surface-variant" />
+                <p class="font-mono text-xs text-on-surface">ID Nº {{ credentialNumber }}/{{ issueDate }}</p>
+            </div>
+
+            <span class="flex items-center gap-1.5">
+                <span class="font-label text-[10px] uppercase tracking-widest text-success">Autorizado</span>
+                <span class="h-1.5 w-1.5 rounded-full bg-success" />
+            </span>
         </div>
     </section>
 </template>
