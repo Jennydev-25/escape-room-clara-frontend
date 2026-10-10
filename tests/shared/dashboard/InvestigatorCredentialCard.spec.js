@@ -55,4 +55,15 @@ describe('InvestigatorCredentialCard', () => {
 
         expect(wrapper.findAll('[aria-label^="Avatar "]')).toHaveLength(9)
     })
+
+    it('closes the avatar picker when the close button is clicked', async () => {
+        const wrapper = mount(InvestigatorCredentialCard, {
+            props: { alias: 'marta_v' },
+        })
+
+        await wrapper.find('[aria-label="Cambiar avatar"]').trigger('click')
+        await wrapper.find('[aria-label="Cerrar selector de avatar"]').trigger('click')
+
+        expect(wrapper.find('[aria-label="Cerrar selector de avatar"]').exists()).toBe(false)
+    })
 })
