@@ -99,4 +99,16 @@ describe('InvestigatorCredentialCard', () => {
         expect(wrapper.find('[aria-label="Avatar 2"]').attributes('aria-pressed')).toBe('true')
         expect(wrapper.find('[aria-label="Avatar 1"]').attributes('aria-pressed')).toBe('false')
     })
+
+    it('emits the chosen avatar id when the save button is clicked', async () => {
+        const wrapper = mount(InvestigatorCredentialCard, {
+            props: { alias: 'marta_v' },
+        })
+
+        await wrapper.find('[aria-label="Cambiar avatar"]').trigger('click')
+        await wrapper.find('[aria-label="Avatar 3"]').trigger('click')
+        await wrapper.findAll('button').find((b) => b.text().includes('Guardar cambios')).trigger('click')
+
+        expect(wrapper.emitted('update:avatar-id')).toEqual([[3]])
+    })
 })
