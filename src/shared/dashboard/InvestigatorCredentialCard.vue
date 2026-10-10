@@ -1,5 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue'
+import BaseButton from '@/shared/BaseButton.vue'
 import { Barcode, Camera, UserRound } from '@lucide/vue'
 import avatar1 from '@/assets/images/avatars/avatar-1.png'
 import avatar2 from '@/assets/images/avatars/avatar-2.png'
@@ -98,7 +99,7 @@ const closeAvatarPicker = () => {
                 &times;
             </button>
 
-            <div class="mt-4 grid grid-cols-3 content-start justify-items-center gap-3">
+            <div class="mt-2 grid grid-cols-3 content-start justify-items-center gap-2">
                 <button
                     v-for="(image, index) in avatarImages"
                     :key="index"
@@ -109,6 +110,8 @@ const closeAvatarPicker = () => {
                     <img :src="image" :alt="`Avatar ${index + 1}`" class="h-full w-full object-cover">
                 </button>
             </div>
+
+            <BaseButton type="button" class="investigator-credential-card__avatar-save self-center !mt-2 !px-4 !py-1.5 !text-[10px]" @click="closeAvatarPicker">Guardar cambios</BaseButton>
         </div>
 
         <dl class="investigator-credential-card__details mt-6 flex flex-col gap-2 border-t border-outline/30 pt-6 font-body text-sm">
