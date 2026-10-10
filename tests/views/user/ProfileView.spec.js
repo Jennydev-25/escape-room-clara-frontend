@@ -20,4 +20,12 @@ describe('ProfileView', () => {
         const activeLink = wrapper.find('[aria-current="page"]')
         expect(activeLink.text()).toBe('Mi perfil')
     })
+
+    it('renders the profile subtitle', () => {
+        const wrapper = mount(ProfileView, {
+            global: { plugins: [router] },
+        })
+
+        expect(wrapper.text()).toContain('Registro oficial de tu credencial de investigador y los datos de tu cuenta.')
+    })
 })
