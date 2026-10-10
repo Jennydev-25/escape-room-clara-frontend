@@ -14,6 +14,10 @@ defineProps({
         type: String,
         default: '',
     },
+    showAvatarPicker: {
+        type: Boolean,
+        default: true,
+    },
 })
 </script>
 
@@ -24,6 +28,7 @@ defineProps({
         <div class="investigator-credential-card__avatar relative mx-auto mt-6 flex h-32 w-32 items-center justify-center rounded-full bg-surface-container-high text-on-surface-variant">
             <component :is="UserRound" :size="56" />
             <button
+                v-if="showAvatarPicker"
                 type="button"
                 class="investigator-credential-card__avatar-edit absolute bottom-0 right-0 flex h-9 w-9 items-center justify-center rounded-full bg-surface text-on-surface-variant transition-colors hover:text-primary"
                 aria-label="Cambiar avatar"
