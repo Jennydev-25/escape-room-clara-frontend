@@ -4,20 +4,6 @@ import router from '@/router'
 import DashboardLayout from '@/shared/dashboard/DashboardLayout.vue'
 
 describe('DashboardLayout', () => {
-    it.each([
-        ['inicio', 'Resumen'],
-        ['perfil', 'Mi perfil'],
-    ])('marks the "%s" section link as the current page via aria-current', (activeSection, linkText) => {
-        const wrapper = mount(DashboardLayout, {
-            global: { plugins: [router] },
-            props: { activeSection, playerAlias: 'marta_v' },
-        })
-
-        const activeLink = wrapper.findAll('a').find((link) => link.text() === linkText)
-
-        expect(activeLink.attributes('aria-current')).toBe('page')
-    })
-
     it('renders the default slot content', () => {
         const wrapper = mount(DashboardLayout, {
             global: { plugins: [router] },

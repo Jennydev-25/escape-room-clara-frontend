@@ -1,8 +1,9 @@
 <script setup>
 import DashboardHeader from '@/shared/dashboard/DashboardHeader.vue'
+import DashboardSidebar from '@/shared/dashboard/DashboardSidebar.vue'
 import DashboardFooter from '@/shared/dashboard/DashboardFooter.vue'
 
-const props = defineProps({
+defineProps({
     activeSection: {
         type: String,
         required: true,
@@ -12,8 +13,6 @@ const props = defineProps({
         required: true,
     },
 })
-
-const currentPageOrUndefined = (section) => (props.activeSection === section ? 'page' : undefined)
 </script>
 
 <template>
@@ -29,19 +28,7 @@ const currentPageOrUndefined = (section) => (props.activeSection === section ? '
         </div>
 
         <div class="dashboard-layout__workspace flex min-h-0 flex-1">
-            <nav class="dashboard-layout__nav flex min-h-0 w-56 flex-col gap-2 border-r border-outline/30 bg-surface-container p-4">
-                <a
-                    href="#"
-                    :aria-current="currentPageOrUndefined('inicio')"
-                    class="rounded-xl px-4 py-2 font-label text-sm uppercase tracking-wide text-on-surface transition-colors aria-[current=page]:bg-primary aria-[current=page]:text-on-primary"
-                >Resumen</a>
-                <a
-                    href="#"
-                    :aria-current="currentPageOrUndefined('perfil')"
-                    class="rounded-xl px-4 py-2 font-label text-sm uppercase tracking-wide text-on-surface transition-colors aria-[current=page]:bg-primary aria-[current=page]:text-on-primary"
-                >Mi perfil</a>
-                <div class="mt-auto font-mono text-xs text-primary">● Estado: clasificado</div>
-            </nav>
+            <DashboardSidebar :active-section="activeSection" />
 
             <main class="dashboard-layout__content min-h-0 flex-1 overflow-hidden p-6">
                 <slot />
