@@ -5,7 +5,7 @@ import AccountCredentialsCard from '@/shared/dashboard/AccountCredentialsCard.vu
 </script>
 
 <template>
-    <DashboardLayout active-section="perfil" player-alias="jugador_01">
+    <DashboardLayout player-alias="jugador_01">
         <div class="profile-view flex h-full min-h-0 flex-col">
             <h1 class="profile-view__title font-display text-4xl text-on-surface">Mi perfil</h1>
             <p class="profile-view__subtitle font-body text-base text-on-surface-variant">Registro oficial de tu credencial de investigador y los datos de tu cuenta.</p>

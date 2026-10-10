@@ -7,7 +7,7 @@ describe('DashboardLayout', () => {
     it('renders the default slot content', () => {
         const wrapper = mount(DashboardLayout, {
             global: { plugins: [router] },
-            props: { activeSection: 'inicio', playerAlias: 'marta_v' },
+            props: { playerAlias: 'marta_v' },
             slots: { default: '<p>contenido de prueba</p>' },
         })
 
@@ -17,7 +17,7 @@ describe('DashboardLayout', () => {
     it('renders the classified status next to the open session label', () => {
         const wrapper = mount(DashboardLayout, {
             global: { plugins: [router] },
-            props: { activeSection: 'inicio', playerAlias: 'marta_v' },
+            props: { playerAlias: 'marta_v' },
         })
 
         const statusBar = wrapper.find('.dashboard-layout__status')

@@ -4,10 +4,6 @@ import DashboardSidebar from '@/shared/dashboard/DashboardSidebar.vue'
 import DashboardFooter from '@/shared/dashboard/DashboardFooter.vue'
 
 defineProps({
-    activeSection: {
-        type: String,
-        required: true,
-    },
     playerAlias: {
         type: String,
         required: true,
@@ -28,7 +24,7 @@ defineProps({
         </div>
 
         <div class="dashboard-layout__workspace flex min-h-0 flex-1">
-            <DashboardSidebar :active-section="activeSection" />
+            <DashboardSidebar />
 
             <main class="dashboard-layout__content min-h-0 flex-1 overflow-hidden p-6">
                 <slot />
