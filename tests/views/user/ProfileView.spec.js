@@ -49,4 +49,14 @@ describe('ProfileView', () => {
 
         expect(wrapper.findComponent(AccountCredentialsCard).props('alias')).toBe('jugador_01')
     })
+
+    it('updates the credential card avatar id when the picker emits a new one', async () => {
+        const wrapper = mount(ProfileView, {
+            global: { plugins: [router, createPinia()] },
+        })
+
+        await wrapper.findComponent(InvestigatorCredentialCard).vm.$emit('update:avatar-id', 5)
+
+        expect(wrapper.findComponent(InvestigatorCredentialCard).props('avatarId')).toBe(5)
+    })
 })
