@@ -70,7 +70,7 @@ const saveAvatar = () => {
 </script>
 
 <template>
-    <section class="investigator-credential-card relative flex h-full min-h-0 flex-col rounded-2xl border border-outline/30 bg-surface-container p-8">
+    <section class="investigator-credential-card relative flex min-h-0 flex-col rounded-2xl border border-outline/30 bg-surface-container p-8 lg:h-full">
         <p class="font-label text-center text-xs uppercase tracking-widest text-primary">Credencial de investigador</p>
 
         <div class="investigator-credential-card__identity mt-6 flex items-center justify-center gap-4">

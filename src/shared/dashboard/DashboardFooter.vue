@@ -2,13 +2,13 @@
 </script>
 
 <template>
-    <footer class="dashboard-footer border-t border-outline/30 bg-surface px-6 py-3">
-        <div class="dashboard-footer__bar flex w-full items-center justify-between gap-8">
-            <div class="dashboard-footer__brand flex items-center gap-2 whitespace-nowrap">
+    <footer class="dashboard-footer border-t border-outline/30 bg-surface px-4 py-3 lg:px-6">
+        <div class="dashboard-footer__bar flex w-full flex-col items-center gap-3 text-center lg:flex-row lg:justify-between lg:gap-8 lg:text-left">
+            <div class="dashboard-footer__brand flex items-center gap-2">
                 <span class="font-body text-xs text-on-surface-variant">© 2026 Todos los derechos reservados</span>
             </div>
 
-            <nav class="dashboard-footer__legal flex flex-wrap items-center justify-center gap-3" aria-label="Legal">
+            <nav class="dashboard-footer__legal flex flex-wrap items-center justify-center gap-x-3 gap-y-1" aria-label="Legal">
                 <a href="#" class="font-label text-xs uppercase tracking-widest text-on-surface-variant transition-colors hover:text-primary">
                     Aviso legal
                 </a>
@@ -24,7 +24,7 @@
                 href="https://github.com/Jennydev-25"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="flex items-center gap-1.5 whitespace-nowrap font-label text-xs uppercase tracking-wide text-primary transition-colors hover:text-primary-hover"
+                class="flex items-center gap-1.5 font-label text-xs uppercase tracking-wide text-primary transition-colors hover:text-primary-hover"
             >
                 <span class="font-body text-xs normal-case tracking-normal text-on-surface-variant">Desarrollado por:</span>
                 <svg viewBox="0 0 24 24" class="h-3.5 w-3.5 fill-current" aria-hidden="true">

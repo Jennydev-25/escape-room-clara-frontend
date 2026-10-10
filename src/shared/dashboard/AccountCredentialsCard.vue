@@ -22,7 +22,7 @@ defineProps({
 </script>
 
 <template>
-    <section class="account-credentials-card relative h-full min-h-0 overflow-hidden rounded-2xl border border-outline/30 bg-surface-container p-8">
+    <section class="account-credentials-card relative min-h-0 overflow-hidden rounded-2xl border border-outline/30 bg-surface-container p-8 lg:h-full">
         <div v-if="!isEditing" class="flex h-full flex-col items-center justify-center gap-4 text-center">
             <p class="account-credentials-card__edit-hint font-body text-sm text-on-surface-variant">¿Algo que corregir en tus credenciales o tus datos de acceso? Actualízalo aquí.</p>
             <BaseButton type="button" class="account-credentials-card__edit-toggle" @click="isEditing = true">Editar mis datos</BaseButton>

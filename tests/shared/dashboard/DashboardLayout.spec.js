@@ -42,7 +42,10 @@ describe('DashboardLayout', () => {
             props: { playerAlias: 'marta_v' },
         })
 
-        await wrapper.find('.dashboard-sidebar button').trigger('click')
+        await wrapper
+            .findAll('button')
+            .find((button) => button.text().includes('Cerrar sesión'))
+            .trigger('click')
 
         expect(authStore.token).toBeNull()
         expect(pushSpy).toHaveBeenCalledWith('/')

@@ -22,7 +22,7 @@ const handleLogout = () => {
 </script>
 
 <template>
-    <div class="dashboard-layout flex h-screen min-h-0 flex-col overflow-hidden bg-surface font-body text-on-surface">
+    <div class="dashboard-layout flex min-h-screen flex-col bg-surface font-body text-on-surface lg:h-screen lg:min-h-0 lg:overflow-hidden">
         <DashboardHeader :player-alias="playerAlias" />
 
         <div class="dashboard-layout__status flex min-h-0 items-center justify-between border-b border-outline/30 bg-surface-container px-6 py-2 font-mono text-xs text-on-surface-variant">
@@ -33,10 +33,10 @@ const handleLogout = () => {
             <span>Sesión abierta // Estado: <span class="uppercase">clasificada</span></span>
         </div>
 
-        <div class="dashboard-layout__workspace flex min-h-0 flex-1">
+        <div class="dashboard-layout__workspace flex flex-col lg:min-h-0 lg:flex-1 lg:flex-row">
             <DashboardSidebar @logout="handleLogout" />
 
-            <main class="dashboard-layout__content min-h-0 flex-1 overflow-hidden p-6">
+            <main class="dashboard-layout__content p-4 lg:min-h-0 lg:flex-1 lg:overflow-hidden lg:p-6">
                 <slot />
             </main>
         </div>

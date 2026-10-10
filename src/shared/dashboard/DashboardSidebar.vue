@@ -12,12 +12,12 @@ function closeMobile() {
 </script>
 
 <template>
-    <nav class="dashboard-sidebar relative flex min-h-0 w-full items-center justify-between border-b border-outline/30 bg-surface-container p-4 sm:w-56 sm:flex-col sm:items-stretch sm:justify-start sm:gap-2 sm:border-b-0 sm:border-r">
-        <span class="font-label text-xs uppercase tracking-widest text-on-surface-variant sm:hidden">Menú</span>
+    <nav class="dashboard-sidebar relative flex min-h-0 w-full items-center justify-between border-b border-outline/30 bg-surface-container p-4 lg:w-56 lg:flex-col lg:items-stretch lg:justify-start lg:gap-2 lg:border-b-0 lg:border-r">
+        <span class="font-label text-xs uppercase tracking-widest text-on-surface-variant lg:hidden">Menú</span>
 
         <button
             type="button"
-            class="dashboard-sidebar__toggle flex h-9 w-9 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:text-primary sm:hidden"
+            class="dashboard-sidebar__toggle flex h-9 w-9 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:text-primary lg:hidden"
             :aria-expanded="mobileOpen"
             aria-controls="dashboard-sidebar-menu"
             :aria-label="mobileOpen ? 'Cerrar menú' : 'Abrir menú'"
@@ -26,7 +26,7 @@ function closeMobile() {
             <component :is="mobileOpen ? X : Menu" :size="20" aria-hidden="true" />
         </button>
 
-        <div class="hidden sm:flex sm:w-full sm:flex-col sm:gap-2">
+        <div class="hidden lg:flex lg:w-full lg:flex-col lg:gap-2">
             <RouterLink
                 to="/resumen"
                 class="rounded-xl px-4 py-2 font-label text-sm uppercase tracking-wide text-on-surface transition-colors aria-[current=page]:bg-primary aria-[current=page]:text-on-primary"
@@ -49,7 +49,7 @@ function closeMobile() {
         <div
             v-if="mobileOpen"
             id="dashboard-sidebar-menu"
-            class="dashboard-sidebar__mobile-menu absolute left-0 right-0 top-full z-20 flex flex-col gap-1 border-b border-outline/30 bg-surface-container p-4 sm:hidden"
+            class="dashboard-sidebar__mobile-menu absolute left-0 right-0 top-full z-20 flex flex-col gap-1 border-b border-outline/30 bg-surface-container p-4 lg:hidden"
         >
             <RouterLink
                 to="/resumen"

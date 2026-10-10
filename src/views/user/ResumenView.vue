@@ -10,7 +10,7 @@ import BaseButton from '@/shared/BaseButton.vue'
         <p class="resumen-view__subtitle font-body text-base text-on-surface-variant">Aquí tienes un resumen de tu progreso en el caso. El portátil de Clara guardará todo lo que vayas reconstruyendo.</p>
 
         <section class="resumen-view__case-card relative mt-6 rounded-2xl border border-outline/30 bg-surface-container p-8">
-            <span class="resumen-view__case-badge absolute right-6 top-6 flex items-center gap-1.5 rounded-full border border-outline/30 px-3 py-1 font-label text-[10px] uppercase tracking-widest text-on-surface-variant">
+            <span class="resumen-view__case-badge mb-4 inline-flex items-center gap-1.5 rounded-full border border-outline/30 px-3 py-1 font-label text-[10px] uppercase tracking-widest text-on-surface-variant lg:absolute lg:right-6 lg:top-6 lg:mb-0">
                 <span class="h-1.5 w-1.5 rounded-full bg-on-surface-variant" />
                 Pendiente de inicio
             </span>
@@ -18,7 +18,7 @@ import BaseButton from '@/shared/BaseButton.vue'
             <p class="font-label text-xs uppercase tracking-widest text-primary">Sumario de la investigación</p>
             <h2 class="font-display mt-2 text-3xl text-on-surface">Comenzar investigación</h2>
 
-            <div class="resumen-view__chapter mt-6 flex items-center justify-between font-label text-base uppercase tracking-wide text-on-surface-variant">
+            <div class="resumen-view__chapter mt-6 flex flex-col gap-1 font-label text-base uppercase tracking-wide text-on-surface-variant lg:flex-row lg:items-center lg:justify-between">
                 <span class="flex items-center gap-2">
                     <component :is="BookOpen" :size="16" />
                     Capítulo 1 de 17
