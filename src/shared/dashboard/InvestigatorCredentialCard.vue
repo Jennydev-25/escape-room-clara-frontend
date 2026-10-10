@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { Barcode, Camera, UserRound } from '@lucide/vue'
 import avatar1 from '@/assets/images/avatars/avatar-1.png'
 import avatar2 from '@/assets/images/avatars/avatar-2.png'
@@ -40,6 +40,13 @@ const avatarSrc = computed(() => (props.avatarId ? avatarImages[props.avatarId -
 
 const issueDate = '10/2026'
 const credentialNumber = String(Math.floor(Math.random() * 1000000)).padStart(6, '0')
+
+const isAvatarPickerOpen = ref(false)
+
+const openAvatarPicker = () => {
+    isAvatarPickerOpen.value = true
+}
+
 </script>
 
 <template>
@@ -60,6 +67,7 @@ const credentialNumber = String(Math.floor(Math.random() * 1000000)).padStart(6,
                     type="button"
                     class="investigator-credential-card__avatar-edit absolute bottom-0 right-0 flex h-7 w-7 items-center justify-center rounded-full bg-surface text-on-surface-variant transition-colors hover:text-primary"
                     aria-label="Cambiar avatar"
+                    @click="openAvatarPicker"
                 >
                     <component :is="Camera" :size="14" />
                 </button>
@@ -68,6 +76,25 @@ const credentialNumber = String(Math.floor(Math.random() * 1000000)).padStart(6,
             <div class="flex min-w-0 flex-col items-center text-center">
                 <p class="font-display truncate text-2xl text-on-surface">{{ alias }}</p>
                 <p class="font-body truncate text-sm text-on-surface-variant">Alias: {{ alias }}</p>
+            </div>
+        </div>
+
+        <div
+            v-if="isAvatarPickerOpen"
+            class="investigator-credential-card__avatar-picker absolute inset-0 z-10 flex flex-col rounded-2xl bg-surface-container p-6"
+        >
+            <p class="font-label text-xs uppercase tracking-widest text-primary">Elige tu avatar</p>
+
+            <div class="mt-4 grid grid-cols-3 content-start justify-items-center gap-3">
+                <button
+                    v-for="(image, index) in avatarImages"
+                    :key="index"
+                    type="button"
+                    :aria-label="`Avatar ${index + 1}`"
+                    class="aspect-square w-full max-w-20 overflow-hidden rounded-full border-2 border-transparent transition-colors hover:border-primary"
+                >
+                    <img :src="image" :alt="`Avatar ${index + 1}`" class="h-full w-full object-cover">
+                </button>
             </div>
         </div>
 
