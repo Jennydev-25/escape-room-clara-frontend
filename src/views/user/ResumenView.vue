@@ -1,5 +1,5 @@
 <script setup>
-import { BookOpen } from '@lucide/vue'
+import { BookOpen, Clock, Folder } from '@lucide/vue'
 import DashboardLayout from '@/shared/dashboard/DashboardLayout.vue'
 </script>
 
@@ -27,6 +27,24 @@ import DashboardLayout from '@/shared/dashboard/DashboardLayout.vue'
 
             <div class="resumen-view__progress-bar mt-2 h-1.5 w-full overflow-hidden rounded-full bg-surface">
                 <div class="h-full rounded-full bg-primary" style="width: 0%" />
+            </div>
+
+            <div class="resumen-view__info-tiles mt-6 grid grid-cols-2 gap-4">
+                <div class="flex items-center gap-3 rounded-xl border border-outline/30 bg-surface p-4">
+                    <component :is="Clock" :size="18" class="text-on-surface-variant" />
+                    <div>
+                        <p class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant">Tiempo en el caso</p>
+                        <p class="font-body text-sm text-on-surface">0h 00m</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 rounded-xl border border-outline/30 bg-surface p-4">
+                    <component :is="Folder" :size="18" class="text-on-surface-variant" />
+                    <div>
+                        <p class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant">Carpeta activa</p>
+                        <p class="font-body text-sm text-on-surface">Ninguna</p>
+                    </div>
+                </div>
             </div>
         </section>
     </DashboardLayout>
