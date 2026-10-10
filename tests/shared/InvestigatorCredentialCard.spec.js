@@ -9,4 +9,16 @@ describe('InvestigatorCredentialCard', () => {
         })
         expect(wrapper.text()).toContain('marta_v')
     })
+
+    it('renders the assigned case and investigation status', () => {
+        const wrapper = mount(InvestigatorCredentialCard, {
+            props: {
+                alias: 'marta_v',
+                caseName: 'El último archivo de Clara',
+                status: 'Investigación en curso',
+            },
+        })
+        expect(wrapper.text()).toContain('El último archivo de Clara')
+        expect(wrapper.text()).toContain('Investigación en curso')
+    })
 })
