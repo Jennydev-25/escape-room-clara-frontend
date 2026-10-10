@@ -1,7 +1,10 @@
 <script setup>
+import { ref } from 'vue'
 import DashboardLayout from '@/shared/dashboard/DashboardLayout.vue'
 import InvestigatorCredentialCard from '@/shared/dashboard/InvestigatorCredentialCard.vue'
 import AccountCredentialsCard from '@/shared/dashboard/AccountCredentialsCard.vue'
+
+const avatarId = ref(null)
 </script>
 
 <template>
@@ -16,6 +19,8 @@ import AccountCredentialsCard from '@/shared/dashboard/AccountCredentialsCard.vu
                     alias="jugador_01"
                     case-name="El último archivo de Clara"
                     status="Investigación en curso"
+                    :avatar-id="avatarId"
+                    @update:avatar-id="avatarId = $event"
                 />
 
                 <AccountCredentialsCard class="flex-1" alias="jugador_01" />
