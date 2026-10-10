@@ -1,10 +1,14 @@
 <script setup>
+import { DoorOpen } from '@lucide/vue'
+
 const props = defineProps({
     activeSection: {
         type: String,
         required: true,
     },
 })
+
+defineEmits(['logout'])
 
 const currentPageOrUndefined = (section) => (props.activeSection === section ? 'page' : undefined)
 </script>
@@ -21,5 +25,14 @@ const currentPageOrUndefined = (section) => (props.activeSection === section ? '
             :aria-current="currentPageOrUndefined('perfil')"
             class="rounded-xl px-4 py-2 font-label text-sm uppercase tracking-wide text-on-surface transition-colors aria-[current=page]:bg-primary aria-[current=page]:text-on-primary"
         >Mi perfil</a>
+
+        <button
+            type="button"
+            class="mt-auto flex items-center gap-2 rounded-xl px-4 py-2 font-label text-sm uppercase tracking-wide text-error transition-colors hover:bg-error/10"
+            @click="$emit('logout')"
+        >
+            <component :is="DoorOpen" :size="16" />
+            Cerrar sesión
+        </button>
     </nav>
 </template>
