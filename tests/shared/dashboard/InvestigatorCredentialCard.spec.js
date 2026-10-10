@@ -38,4 +38,11 @@ describe('InvestigatorCredentialCard', () => {
         })
         expect(wrapper.find('img[alt="Avatar 3"]').exists()).toBe(true)
     })
+
+    it('renders a credential id with a 6-digit random number and the issue date', () => {
+        const wrapper = mount(InvestigatorCredentialCard, {
+            props: { alias: 'marta_v' },
+        })
+        expect(wrapper.text()).toMatch(/ID N[ºo] \d{6}\/10\/2026/)
+    })
 })
