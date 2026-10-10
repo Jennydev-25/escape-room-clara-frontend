@@ -16,4 +16,11 @@ describe('AccountCredentialsCard', () => {
         expect(wrapper.get('#credentials-alias').element.value).toBe('marta_v')
         expect(wrapper.get('#credentials-email').element.value).toBe('marta@example.com')
     })
+
+    it('hides the credential fields until "Editar mis datos" is clicked', () => {
+        const wrapper = mount(AccountCredentialsCard)
+
+        expect(wrapper.find('#credentials-full-name').exists()).toBe(false)
+        expect(wrapper.get('button').text()).toContain('Editar mis datos')
+    })
 })
