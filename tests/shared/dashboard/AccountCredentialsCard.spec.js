@@ -3,7 +3,7 @@ import { mount } from '@vue/test-utils'
 import AccountCredentialsCard from '@/shared/dashboard/AccountCredentialsCard.vue'
 
 describe('AccountCredentialsCard', () => {
-    it('renders the current account values in the fields', () => {
+    it('renders the current account values in the fields', async () => {
         const wrapper = mount(AccountCredentialsCard, {
             props: {
                 fullName: 'Marta Vega',
@@ -11,6 +11,8 @@ describe('AccountCredentialsCard', () => {
                 email: 'marta@example.com',
             },
         })
+
+        await wrapper.get('button').trigger('click')
 
         expect(wrapper.get('#credentials-full-name').element.value).toBe('Marta Vega')
         expect(wrapper.get('#credentials-alias').element.value).toBe('marta_v')
