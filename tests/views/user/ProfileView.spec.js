@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import router from '@/router'
 import ProfileView from '@/views/user/ProfileView.vue'
+import InvestigatorCredentialCard from '@/shared/dashboard/InvestigatorCredentialCard.vue'
 
 describe('ProfileView', () => {
     it('renders the profile page title', () => {
@@ -27,5 +28,13 @@ describe('ProfileView', () => {
         })
 
         expect(wrapper.text()).toContain('Registro oficial de tu credencial de investigador y los datos de tu cuenta.')
+    })
+
+    it('renders the investigator credential card with the player alias', () => {
+        const wrapper = mount(ProfileView, {
+            global: { plugins: [router] },
+        })
+
+        expect(wrapper.findComponent(InvestigatorCredentialCard).props('alias')).toBe('jugador_01')
     })
 })
