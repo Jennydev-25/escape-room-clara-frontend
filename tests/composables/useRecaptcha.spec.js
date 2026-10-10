@@ -6,7 +6,7 @@ const SCRIPT_SELECTOR = 'script[src^="https://www.google.com/recaptcha/api.js"]'
 describe('useRecaptcha', () => {
     beforeEach(() => {
         document.head.querySelectorAll(SCRIPT_SELECTOR).forEach((el) => el.remove())
-        window.grecaptcha = { render: () => 1 }
+        window.grecaptcha = { ready: (cb) => cb(), render: () => 1 }
     })
 
     it('loads the Google reCAPTCHA script into the document head only once', () => {
@@ -31,7 +31,7 @@ describe('useRecaptcha', () => {
 
         expect(renderSpy).not.toHaveBeenCalled()
 
-        window.grecaptcha = { render: renderSpy }
+        window.grecaptcha = { ready: (cb) => cb(), render: renderSpy }
         document.head.querySelector(SCRIPT_SELECTOR).dispatchEvent(new Event('load'))
 
         const widgetId = await widgetIdPromise
@@ -53,11 +53,36 @@ describe('useRecaptcha', () => {
 
         expect(document.head.querySelectorAll(SCRIPT_SELECTOR)).toHaveLength(1)
 
-        window.grecaptcha = { render: renderSpy }
+        window.grecaptcha = { ready: (cb) => cb(), render: renderSpy }
         document.head.querySelector(SCRIPT_SELECTOR).dispatchEvent(new Event('load'))
 
         await Promise.all([firstPromise, secondPromise])
 
         expect(renderSpy).toHaveBeenCalledTimes(2)
+    })
+
+    it('waits for grecaptcha.ready before calling render, even if grecaptcha already exists', async () => {
+        const renderSpy = vi.fn(() => 3)
+        const readyCallbacks = []
+        window.grecaptcha = {
+            ready: (cb) => readyCallbacks.push(cb),
+            render: renderSpy,
+        }
+
+        const { renderWidget } = useRecaptcha()
+        const container = document.createElement('div')
+
+        const widgetIdPromise = renderWidget(container)
+        document.head.querySelector(SCRIPT_SELECTOR).dispatchEvent(new Event('load'))
+        await Promise.resolve()
+
+        expect(renderSpy).not.toHaveBeenCalled()
+
+        readyCallbacks[0]()
+
+        const widgetId = await widgetIdPromise
+
+        expect(renderSpy).toHaveBeenCalledWith(container, expect.objectContaining({ sitekey: expect.any(String) }))
+        expect(widgetId).toBe(3)
     })
 })

@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { Menu, X } from '@lucide/vue'
+import { useScrollSpy } from '@/composables/useScrollSpy'
 
 const links = [
     { href: '#', label: 'Inicio' },
@@ -8,6 +9,12 @@ const links = [
     { href: '#sobre-el-juego', label: 'Sobre el juego' },
     { href: '#contacto', label: 'Contacto' },
 ]
+
+const { activeId } = useScrollSpy(['el-caso', 'sobre-el-juego', 'contacto'])
+
+function isActive(href) {
+    return href === '#' ? activeId.value === null : href === `#${activeId.value}`
+}
 
 const mobileOpen = ref(false)
 
@@ -25,7 +32,8 @@ function closeMobile() {
                 v-for="link in links"
                 :key="link.href"
                 :href="link.href"
-                class="navbar__link font-label text-xs uppercase tracking-widest text-on-surface-variant transition-colors hover:text-primary"
+                class="navbar__link font-label text-xs uppercase tracking-widest transition-colors"
+                :class="isActive(link.href) ? 'text-primary' : 'text-on-surface-variant hover:text-primary'"
             >
                 {{ link.label }}
             </a>
@@ -59,7 +67,8 @@ function closeMobile() {
                     v-for="link in links"
                     :key="link.href"
                     :href="link.href"
-                    class="navbar__mobile-link font-label rounded-lg px-3 py-2 text-xs uppercase tracking-widest text-on-surface-variant transition-colors hover:bg-white/10 hover:text-primary"
+                    class="navbar__mobile-link font-label rounded-lg px-3 py-2 text-xs uppercase tracking-widest transition-colors"
+                    :class="isActive(link.href) ? 'bg-white/10 text-primary' : 'text-on-surface-variant hover:bg-white/10 hover:text-primary'"
                     @click="closeMobile"
                 >
                     {{ link.label }}

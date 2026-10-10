@@ -4,6 +4,7 @@ import { gsap } from 'gsap'
 import ContactForm from '@/components/home/ContactForm.vue'
 import ContactRepository from '@/core/apis/contact/ContactRepository'
 import ContactService from '@/core/apis/contact/ContactService'
+import BaseButton from '@/shared/BaseButton.vue'
 
 const contactSection = useTemplateRef('contactSection')
 
@@ -83,8 +84,8 @@ onUnmounted(() => {
 
 <template>
     <section id="contacto" ref="contactSection"
-        class="contact relative flex min-h-96 flex-col justify-center overflow-hidden px-6 pt-8 sm:pt-12 pb-16 sm:pb-24 transition-[padding] duration-1000 ease-out motion-reduce:transition-none"
-        :class="showForm ? 'lg:pr-120' : ''"
+        class="contact relative flex min-h-96 flex-col justify-center px-6 pt-8 sm:pt-12 pb-16 sm:pb-24 transition-[padding,min-height] duration-1000 ease-out motion-reduce:transition-none"
+        :class="showForm ? 'lg:min-h-[42rem] lg:pr-120' : ''"
     >
         <div class="contact__container mx-auto flex max-w-2xl flex-col items-center gap-6 text-center">
             <h2 class="contact__reveal contact__heading font-display text-2xl text-on-surface sm:text-3xl">
@@ -98,15 +99,16 @@ onUnmounted(() => {
                 preguntar, estaré encantada de responderte.
             </p>
 
-            <button
+            <BaseButton
                 type="button"
-                class="contact__reveal contact__cta font-label mt-4 rounded-md border border-primary px-8 py-3 uppercase tracking-widest text-primary transition-colors hover:bg-primary hover:text-on-primary"
+                size="lg"
+                class="contact__reveal contact__cta"
                 :aria-expanded="showForm"
                 aria-controls="contact-form-card"
                 @click="toggleForm"
             >
                 {{ showForm ? 'Cerrar' : 'Escribir' }}
-            </button>
+            </BaseButton>
         </div>
 
         <Transition
@@ -120,7 +122,7 @@ onUnmounted(() => {
             <div
                 v-if="showForm"
                 id="contact-form-card"
-                class="contact__card relative z-30 mx-auto mt-8 w-[90%] max-w-md rounded-2xl border border-white/20 bg-surface/15 p-6 text-left shadow-2xl backdrop-blur-2xl backdrop-saturate-150 lg:absolute lg:right-16 lg:top-[60%] lg:mt-0 lg:-translate-y-1/2"
+                class="contact__card relative z-30 mx-auto mt-8 w-[90%] max-w-md rounded-2xl border border-white/20 bg-surface/15 p-6 text-left shadow-2xl backdrop-blur-2xl backdrop-saturate-150 lg:absolute lg:right-16 lg:top-20 lg:mt-0"
                 role="region"
                 aria-label="Formulario de contacto"
             >
