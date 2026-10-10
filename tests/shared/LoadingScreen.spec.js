@@ -14,4 +14,10 @@ describe('LoadingScreen', () => {
 
         expect(wrapper.text()).toContain('Cargando investigación...')
     })
+
+    it('renders the progress bar with the given width', () => {
+        const wrapper = mount(LoadingScreen, { props: { title: 'Bienvenid@', progress: 45 } })
+
+        expect(wrapper.get('.loading-screen__bar').attributes('style')).toContain('width: 45%')
+    })
 })
