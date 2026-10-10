@@ -31,4 +31,11 @@ describe('InvestigatorCredentialCard', () => {
         })
         expect(wrapper.find('[aria-label="Cambiar avatar"]').exists()).toBe(shouldShow)
     })
+
+    it('renders the selected avatar image when avatarId is set', () => {
+        const wrapper = mount(InvestigatorCredentialCard, {
+            props: { alias: 'marta_v', avatarId: 3 },
+        })
+        expect(wrapper.find('img[alt="Avatar 3"]').exists()).toBe(true)
+    })
 })
