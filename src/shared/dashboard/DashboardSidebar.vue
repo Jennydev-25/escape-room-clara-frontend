@@ -15,16 +15,16 @@ const currentPageOrUndefined = (section) => (props.activeSection === section ? '
 
 <template>
     <nav class="dashboard-sidebar flex min-h-0 w-56 flex-col gap-2 border-r border-outline/30 bg-surface-container p-4">
-        <a
-            href="#"
+        <RouterLink
+            to="/resumen"
             :aria-current="currentPageOrUndefined('inicio')"
             class="rounded-xl px-4 py-2 font-label text-sm uppercase tracking-wide text-on-surface transition-colors aria-[current=page]:bg-primary aria-[current=page]:text-on-primary"
-        >Resumen</a>
-        <a
-            href="#"
+        >Resumen</RouterLink>
+        <RouterLink
+            to="/perfil"
             :aria-current="currentPageOrUndefined('perfil')"
             class="rounded-xl px-4 py-2 font-label text-sm uppercase tracking-wide text-on-surface transition-colors aria-[current=page]:bg-primary aria-[current=page]:text-on-primary"
-        >Mi perfil</a>
+        >Mi perfil</RouterLink>
 
         <button
             type="button"
