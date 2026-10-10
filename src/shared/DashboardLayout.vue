@@ -19,11 +19,13 @@ const currentPageOrUndefined = (section) => (props.activeSection === section ? '
     <div class="dashboard-layout flex h-screen min-h-0 flex-col overflow-hidden bg-surface font-body text-on-surface">
         <header class="dashboard-layout__header flex items-center justify-between border-b border-outline/30 px-6 py-4">
             <div class="flex items-center gap-3">
-                <img
-                    src="@/assets/images/home/logo.png"
-                    alt="El último archivo de Clara"
-                    class="h-10 w-10 shrink-0 -translate-y-1 object-contain"
-                >
+                <RouterLink to="/" aria-label="Ir al inicio" class="shrink-0">
+                    <img
+                        src="@/assets/images/home/logo.png"
+                        alt="El último archivo de Clara"
+                        class="h-10 w-10 -translate-y-1 object-contain"
+                    >
+                </RouterLink>
                 <div class="flex items-baseline gap-3 whitespace-nowrap">
                     <span class="font-display text-lg uppercase tracking-wide text-primary">El último archivo de Clara</span>
                     <span class="font-display text-lg text-on-surface-variant">·</span>
