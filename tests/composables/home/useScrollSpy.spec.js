@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import { defineComponent, nextTick } from 'vue'
 import { mount } from '@vue/test-utils'
-import { useScrollSpy } from '@/composables/useScrollSpy'
+import { useScrollSpy } from '@/composables/home/useScrollSpy'
 
 let observerCallback = null
 let observerOptions = null

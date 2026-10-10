@@ -3,7 +3,7 @@ import { onMounted, onUnmounted, useTemplateRef } from 'vue'
 import { gsap } from 'gsap'
 import AccessPanel from '@/components/home/AccessPanel.vue'
 import BaseButton from '@/shared/BaseButton.vue'
-import { useAccessPanel } from '@/composables/useAccessPanel'
+import { useAccessPanel } from '@/composables/home/useAccessPanel'
 
 const { open: accessPanelOpen, tab: accessPanelTab, openPanel } = useAccessPanel()
 
