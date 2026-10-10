@@ -1,7 +1,19 @@
 <script setup>
+import { computed } from 'vue'
 import { Camera, UserRound } from '@lucide/vue'
+import avatar1 from '@/assets/images/avatars/avatar-1.png'
+import avatar2 from '@/assets/images/avatars/avatar-2.png'
+import avatar3 from '@/assets/images/avatars/avatar-3.png'
+import avatar4 from '@/assets/images/avatars/avatar-4.png'
+import avatar5 from '@/assets/images/avatars/avatar-5.png'
+import avatar6 from '@/assets/images/avatars/avatar-6.png'
+import avatar7 from '@/assets/images/avatars/avatar-7.png'
+import avatar8 from '@/assets/images/avatars/avatar-8.png'
+import avatar9 from '@/assets/images/avatars/avatar-9.png'
 
-defineProps({
+const avatarImages = [avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7, avatar8, avatar9]
+
+const props = defineProps({
     alias: {
         type: String,
         required: true,
@@ -18,7 +30,13 @@ defineProps({
         type: Boolean,
         default: true,
     },
+    avatarId: {
+        type: Number,
+        default: null,
+    },
 })
+
+const avatarSrc = computed(() => (props.avatarId ? avatarImages[props.avatarId - 1] : null))
 </script>
 
 <template>
@@ -26,7 +44,13 @@ defineProps({
         <p class="font-label text-center text-xs uppercase tracking-widest text-primary">Credencial de investigador</p>
 
         <div class="investigator-credential-card__avatar relative mx-auto mt-6 flex h-32 w-32 items-center justify-center rounded-full bg-surface-container-high text-on-surface-variant">
-            <component :is="UserRound" :size="56" />
+            <img
+                v-if="avatarSrc"
+                :src="avatarSrc"
+                :alt="`Avatar ${avatarId}`"
+                class="investigator-credential-card__avatar-image h-24 w-24 object-contain"
+            >
+            <component v-else :is="UserRound" :size="56" />
             <button
                 v-if="showAvatarPicker"
                 type="button"
