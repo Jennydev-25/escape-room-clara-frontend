@@ -4,6 +4,7 @@ import { gsap } from 'gsap'
 import ContactForm from '@/components/home/ContactForm.vue'
 import ContactRepository from '@/core/apis/contact/ContactRepository'
 import ContactService from '@/core/apis/contact/ContactService'
+import BaseButton from '@/shared/BaseButton.vue'
 
 const contactSection = useTemplateRef('contactSection')
 
@@ -98,15 +99,16 @@ onUnmounted(() => {
                 preguntar, estaré encantada de responderte.
             </p>
 
-            <button
+            <BaseButton
                 type="button"
-                class="contact__reveal contact__cta font-label mt-4 rounded-md border border-primary px-8 py-3 uppercase tracking-widest text-primary transition-colors hover:bg-primary hover:text-on-primary"
+                size="lg"
+                class="contact__reveal contact__cta"
                 :aria-expanded="showForm"
                 aria-controls="contact-form-card"
                 @click="toggleForm"
             >
                 {{ showForm ? 'Cerrar' : 'Escribir' }}
-            </button>
+            </BaseButton>
         </div>
 
         <Transition
