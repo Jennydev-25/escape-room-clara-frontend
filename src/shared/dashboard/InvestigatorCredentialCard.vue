@@ -52,6 +52,12 @@ const closeAvatarPicker = () => {
     isAvatarPickerOpen.value = false
 }
 
+const selectedAvatarIndex = ref(null)
+
+const selectAvatar = (index) => {
+    selectedAvatarIndex.value = index
+}
+
 </script>
 
 <template>
@@ -105,7 +111,10 @@ const closeAvatarPicker = () => {
                     :key="index"
                     type="button"
                     :aria-label="`Avatar ${index + 1}`"
-                    class="aspect-square w-full max-w-20 overflow-hidden rounded-full border-2 border-transparent transition-colors hover:border-primary"
+                    :aria-pressed="selectedAvatarIndex === index"
+                    class="aspect-square w-full max-w-20 overflow-hidden rounded-full border-2 transition-colors hover:border-primary"
+                    :class="selectedAvatarIndex === index ? 'border-primary' : 'border-transparent'"
+                    @click="selectAvatar(index)"
                 >
                     <img :src="image" :alt="`Avatar ${index + 1}`" class="h-full w-full object-cover">
                 </button>
