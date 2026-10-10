@@ -33,6 +33,7 @@ defineProps({
             type="button"
             class="account-credentials-card__close absolute right-6 top-6 flex h-8 w-8 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-surface hover:text-on-surface"
             aria-label="Cerrar"
+            @click="isEditing = false"
         >
             &times;
         </button>
