@@ -21,4 +21,14 @@ describe('InvestigatorCredentialCard', () => {
         expect(wrapper.text()).toContain('El último archivo de Clara')
         expect(wrapper.text()).toContain('Investigación en curso')
     })
+
+    it.each([
+        [true, true],
+        [false, false],
+    ])('shows the avatar picker button only when showAvatarPicker is %s', (showAvatarPicker, shouldShow) => {
+        const wrapper = mount(InvestigatorCredentialCard, {
+            props: { alias: 'marta_v', showAvatarPicker },
+        })
+        expect(wrapper.find('[aria-label="Cambiar avatar"]').exists()).toBe(shouldShow)
+    })
 })
