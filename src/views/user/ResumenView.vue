@@ -1,5 +1,5 @@
 <script setup>
-import { BookOpen, Clock, Folder } from '@lucide/vue'
+import { BookOpen, Clock, FolderOpen } from '@lucide/vue'
 import DashboardLayout from '@/shared/dashboard/DashboardLayout.vue'
 </script>
 
@@ -17,7 +17,7 @@ import DashboardLayout from '@/shared/dashboard/DashboardLayout.vue'
             <p class="font-label text-xs uppercase tracking-widest text-primary">Sumario de la investigación</p>
             <h2 class="font-display mt-2 text-3xl text-on-surface">Comenzar investigación</h2>
 
-            <div class="resumen-view__chapter mt-6 flex items-center justify-between font-label text-xs uppercase tracking-wide text-on-surface-variant">
+            <div class="resumen-view__chapter mt-6 flex items-center justify-between font-label text-base uppercase tracking-wide text-on-surface-variant">
                 <span class="flex items-center gap-2">
                     <component :is="BookOpen" :size="16" />
                     Capítulo 1 de 17
@@ -31,18 +31,18 @@ import DashboardLayout from '@/shared/dashboard/DashboardLayout.vue'
 
             <div class="resumen-view__info-tiles mt-6 grid grid-cols-2 gap-4">
                 <div class="flex items-center gap-3 rounded-xl border border-outline/30 bg-surface p-4">
-                    <component :is="Clock" :size="18" class="text-on-surface-variant" />
+                    <component :is="Clock" :size="28" class="text-primary" />
                     <div>
                         <p class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant">Tiempo en el caso</p>
-                        <p class="font-body text-sm text-on-surface">0h 00m</p>
+                        <p class="font-mono text-xl text-on-surface">00:00:00</p>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-3 rounded-xl border border-outline/30 bg-surface p-4">
-                    <component :is="Folder" :size="18" class="text-on-surface-variant" />
+                    <component :is="FolderOpen" :size="28" class="text-primary" />
                     <div>
                         <p class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant">Carpeta activa</p>
-                        <p class="font-body text-sm text-on-surface">Ninguna</p>
+                        <p class="font-mono text-xl uppercase text-on-surface">Ninguna</p>
                     </div>
                 </div>
             </div>

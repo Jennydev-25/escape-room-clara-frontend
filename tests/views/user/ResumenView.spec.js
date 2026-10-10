@@ -54,7 +54,7 @@ describe('ResumenView', () => {
         })
 
         expect(wrapper.text()).toContain('Tiempo en el caso')
-        expect(wrapper.text()).toContain('0h 00m')
+        expect(wrapper.text()).toContain('00:00:00')
         expect(wrapper.text()).toContain('Carpeta activa')
         expect(wrapper.text()).toContain('Ninguna')
     })
