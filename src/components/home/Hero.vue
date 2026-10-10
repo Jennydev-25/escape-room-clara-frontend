@@ -124,17 +124,19 @@ onUnmounted(() => {
 <template>  
     <section
         ref="heroSection"
-        class="hero relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden transition-[padding] duration-1000 ease-out before:absolute before:inset-0 before:z-10 before:bg-linear-to-r before:from-surface/85 before:via-surface/60 before:to-surface/15 before:content-[''] motion-reduce:transition-none"
+        class="hero relative flex min-h-screen w-full flex-col items-center justify-center transition-[padding] duration-1000 ease-out before:absolute before:inset-0 before:z-10 before:bg-linear-to-r before:from-surface/85 before:via-surface/60 before:to-surface/15 before:content-[''] motion-reduce:transition-none"
     :class="accessPanelOpen ? 'lg:pr-120' : ''">
-        <img ref="heroBg" src="@/assets/images/home/hero.png" alt=""
-            class="hero__bg absolute inset-0 z-0 h-full w-full object-cover" />
+        <div class="hero__visuals absolute inset-0 overflow-hidden">
+            <img ref="heroBg" src="@/assets/images/home/hero.png" alt=""
+                class="hero__bg absolute inset-0 z-0 h-full w-full object-cover" />
 
-        <div
-            ref="lampGlow"
-            aria-hidden="true"
-            class="hero__lamp-glow pointer-events-none absolute h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full blur-xl"
-            style="z-index: 15; background: radial-gradient(circle, rgba(255, 214, 140, 0.9) 0%, rgba(255, 214, 140, 0) 70%);"
-        ></div>
+            <div
+                ref="lampGlow"
+                aria-hidden="true"
+                class="hero__lamp-glow pointer-events-none absolute h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full blur-xl"
+                style="z-index: 15; background: radial-gradient(circle, rgba(255, 214, 140, 0.9) 0%, rgba(255, 214, 140, 0) 70%);"
+            ></div>
+        </div>
 
         <div ref="heroContent" class="hero__content relative z-20 flex flex-col items-center gap-6 px-6 text-center">
             <h1 class="hero__title font-display text-4xl uppercase text-on-surface sm:text-5xl md:text-6xl">
