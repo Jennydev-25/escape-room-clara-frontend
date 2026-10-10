@@ -8,4 +8,10 @@ describe('LoadingScreen', () => {
 
         expect(wrapper.text()).toContain('Bienvenid@')
     })
+
+    it('renders the message when provided', () => {
+        const wrapper = mount(LoadingScreen, { props: { title: 'Bienvenid@', message: 'Cargando investigación...' } })
+
+        expect(wrapper.text()).toContain('Cargando investigación...')
+    })
 })
