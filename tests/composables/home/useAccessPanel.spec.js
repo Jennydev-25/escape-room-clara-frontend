@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { useAccessPanel } from '@/composables/useAccessPanel'
+import { useAccessPanel } from '@/composables/home/useAccessPanel'
 
 describe('useAccessPanel', () => {
     it('starts closed, on the login tab', () => {

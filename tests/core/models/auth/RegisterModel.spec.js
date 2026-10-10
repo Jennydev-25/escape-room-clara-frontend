@@ -1,5 +1,5 @@
-import { registerMapper } from "@/core/mappers/register-mapper";
-import RegisterModel from "@/core/models/RegisterModel";
+import { registerMapper } from "@/core/mappers/auth/register-mapper";
+import RegisterModel from "@/core/models/auth/RegisterModel";
 import { describe, expect, test } from "vitest";
 
 describe('RegisterModel', () => {

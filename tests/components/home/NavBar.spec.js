@@ -5,7 +5,7 @@ import NavBar from '@/components/home/NavBar.vue'
 
 const activeId = ref(null)
 
-vi.mock('@/composables/useScrollSpy', () => ({
+vi.mock('@/composables/home/useScrollSpy', () => ({
     useScrollSpy: () => ({ activeId }),
 }))
 

@@ -21,7 +21,7 @@ function toggleVisible() {
             :type="type"
             v-model="model"
             v-bind="$attrs"
-            class="w-full rounded-md border border-outline bg-surface-container px-3 py-2 pr-10 text-on-surface focus:border-primary focus:outline-none"
+            class="w-full rounded-md border border-outline bg-surface px-3 py-2 pr-10 text-on-surface focus:border-primary focus:outline-none"
         >
         <button
             type="button"

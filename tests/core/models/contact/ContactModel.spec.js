@@ -1,5 +1,5 @@
-import { contactMapper } from "@/core/mappers/contact-mapper";
-import ContactModel from "@/core/models/ContactModel";
+import { contactMapper } from "@/core/mappers/contact/contact-mapper";
+import ContactModel from "@/core/models/contact/ContactModel";
 import { describe, expect, test } from "vitest";
 
 describe('ContactModel', () => {

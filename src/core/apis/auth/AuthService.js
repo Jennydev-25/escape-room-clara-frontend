@@ -1,7 +1,7 @@
-import { loginMapper } from "@/core/mappers/login-mapper";
-import { registerMapper } from "@/core/mappers/register-mapper";
-import LoginModel from "@/core/models/LoginModel";
-import RegisterModel from "@/core/models/RegisterModel";
+import { loginMapper } from "@/core/mappers/auth/login-mapper";
+import { registerMapper } from "@/core/mappers/auth/register-mapper";
+import LoginModel from "@/core/models/auth/LoginModel";
+import RegisterModel from "@/core/models/auth/RegisterModel";
 
 export default class AuthService {
 

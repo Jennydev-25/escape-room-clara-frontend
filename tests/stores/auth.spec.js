@@ -18,4 +18,16 @@ describe('useAuthStore', () => {
         expect(store.refreshToken).toBe('refresh-token')
     })
 
+    test('logout should clear the token and the refreshToken', () => {
+        const store = useAuthStore()
+        store.setSession('jwt-token', 'refresh-token')
+
+        store.logout()
+
+        expect(store.token).toBeNull()
+        expect(store.refreshToken).toBeNull()
+        expect(localStorage.getItem('token')).toBeNull()
+        expect(localStorage.getItem('refreshToken')).toBeNull()
+    })
+
 })

@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { Menu, X } from '@lucide/vue'
-import { useScrollSpy } from '@/composables/useScrollSpy'
+import { useScrollSpy } from '@/composables/home/useScrollSpy'
 
 const links = [
     { href: '#', label: 'Inicio' },
