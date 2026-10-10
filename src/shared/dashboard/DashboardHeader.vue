@@ -14,7 +14,7 @@ defineProps({
 </script>
 
 <template>
-    <header class="dashboard-header flex items-center justify-between border-b border-outline/30 px-6 py-4">
+    <header class="dashboard-header flex items-center justify-between border-b border-outline/30 px-6 py-2.5">
         <div class="flex items-center gap-3">
             <RouterLink to="/" aria-label="Ir al inicio" class="shrink-0">
                 <img
