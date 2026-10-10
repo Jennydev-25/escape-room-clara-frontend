@@ -1,5 +1,6 @@
 <script setup>
 import { nextTick, ref, useTemplateRef } from 'vue'
+import BaseButton from '@/shared/BaseButton.vue'
 import { useRecaptcha } from '@/composables/useRecaptcha'
 
 const name = defineModel('name', { type: String, default: '' })
@@ -80,8 +81,8 @@ async function handleSubmit() {
 
         <div v-if="recaptchaVisible" id="contact-recaptcha" ref="recaptchaContainer" class="contact-form__recaptcha"></div>
 
-        <button type="submit" class="contact-form__submit mt-2 rounded-md border border-primary px-6 py-2 uppercase tracking-widest text-primary transition-colors hover:bg-primary hover:text-on-primary">
+        <BaseButton type="submit" class="contact-form__submit">
             Enviar mensaje
-        </button>
+        </BaseButton>
     </form>
 </template>
