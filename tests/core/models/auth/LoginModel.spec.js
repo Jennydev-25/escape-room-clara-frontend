@@ -1,5 +1,5 @@
-import { loginMapper } from "@/core/mappers/login-mapper";
-import LoginModel from "@/core/models/LoginModel";
+import { loginMapper } from "@/core/mappers/auth/login-mapper";
+import LoginModel from "@/core/models/auth/LoginModel";
 import { describe, expect, test } from "vitest";
 
 describe('LoginModel', () => {
