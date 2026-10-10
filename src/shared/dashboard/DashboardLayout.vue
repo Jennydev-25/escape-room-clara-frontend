@@ -1,4 +1,6 @@
 <script setup>
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 import DashboardHeader from '@/shared/dashboard/DashboardHeader.vue'
 import DashboardSidebar from '@/shared/dashboard/DashboardSidebar.vue'
 import DashboardFooter from '@/shared/dashboard/DashboardFooter.vue'
@@ -9,6 +11,14 @@ defineProps({
         required: true,
     },
 })
+
+const router = useRouter()
+const authStore = useAuthStore()
+
+const handleLogout = () => {
+    authStore.logout()
+    router.push('/')
+}
 </script>
 
 <template>
@@ -24,7 +34,7 @@ defineProps({
         </div>
 
         <div class="dashboard-layout__workspace flex min-h-0 flex-1">
-            <DashboardSidebar />
+            <DashboardSidebar @logout="handleLogout" />
 
             <main class="dashboard-layout__content min-h-0 flex-1 overflow-hidden p-6">
                 <slot />
