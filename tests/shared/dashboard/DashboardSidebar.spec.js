@@ -22,9 +22,30 @@ describe('DashboardSidebar', () => {
             global: { plugins: [router] },
         })
 
-        const button = wrapper.find('button')
+        const button = wrapper.findAll('button').find((b) => b.text().includes('Cerrar sesión'))
 
         expect(button.text()).toBe('Cerrar sesión')
+    })
+
+    it('renders a mobile menu toggle, closed by default', () => {
+        const wrapper = mount(DashboardSidebar, {
+            global: { plugins: [router] },
+        })
+
+        const toggle = wrapper.find('[aria-label="Abrir menú"]')
+
+        expect(toggle.exists()).toBe(true)
+        expect(toggle.attributes('aria-expanded')).toBe('false')
+    })
+
+    it('opens the mobile menu when the toggle is clicked', async () => {
+        const wrapper = mount(DashboardSidebar, {
+            global: { plugins: [router] },
+        })
+
+        await wrapper.find('[aria-label="Abrir menú"]').trigger('click')
+
+        expect(wrapper.find('[aria-label="Cerrar menú"]').attributes('aria-expanded')).toBe('true')
     })
 
     it.each([
