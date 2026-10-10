@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { mount, flushPromises } from '@vue/test-utils'
 import { createPinia } from 'pinia'
 import App from '@/App.vue'
 import router from '@/router'
@@ -31,7 +31,7 @@ describe('App', () => {
     })
 
     vi.advanceTimersByTime(1200)
-    await wrapper.vm.$nextTick()
+    await flushPromises()
 
     expect(wrapper.text()).toContain('El último archivo de Clara')
     vi.useRealTimers()
@@ -51,12 +51,12 @@ describe('App', () => {
     })
 
     vi.advanceTimersByTime(5000)
-    await wrapper.vm.$nextTick()
+    await flushPromises()
 
     expect(wrapper.text()).toContain('Bienvenid@')
 
     window.dispatchEvent(new Event('load'))
-    await wrapper.vm.$nextTick()
+    await flushPromises()
 
     expect(wrapper.text()).toContain('El último archivo de Clara')
 

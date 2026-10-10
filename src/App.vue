@@ -4,10 +4,18 @@ import LoadingScreen from '@/shared/LoadingScreen.vue'
 
 const isLoading = ref(true)
 
-onMounted(() => {
-    setTimeout(() => {
-        isLoading.value = false
-    }, 1200)
+function waitForWindowLoad() {
+    if (document.readyState === 'complete') return Promise.resolve()
+    return new Promise((resolve) => window.addEventListener('load', resolve, { once: true }))
+}
+
+function waitMinimumDuration() {
+    return new Promise((resolve) => setTimeout(resolve, 1200))
+}
+
+onMounted(async () => {
+    await Promise.all([waitForWindowLoad(), waitMinimumDuration()])
+    isLoading.value = false
 })
 </script>
 
