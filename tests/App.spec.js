@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createPinia } from 'pinia'
 import App from '@/App.vue'
@@ -20,6 +20,7 @@ describe('App', () => {
   })
 
   it('renders the current route inside RouterView', async () => {
+    vi.useFakeTimers()
     router.push('/')
     await router.isReady()
 
@@ -29,6 +30,10 @@ describe('App', () => {
       },
     })
 
+    vi.advanceTimersByTime(1200)
+    await wrapper.vm.$nextTick()
+
     expect(wrapper.text()).toContain('El último archivo de Clara')
+    vi.useRealTimers()
   })
 })
