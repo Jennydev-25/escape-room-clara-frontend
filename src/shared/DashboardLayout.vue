@@ -1,5 +1,6 @@
 <script setup>
 import DashboardHeader from '@/shared/DashboardHeader.vue'
+import DashboardFooter from '@/shared/DashboardFooter.vue'
 
 const props = defineProps({
     activeSection: {
@@ -46,5 +47,7 @@ const currentPageOrUndefined = (section) => (props.activeSection === section ? '
                 <slot />
             </main>
         </div>
+
+        <DashboardFooter />
     </div>
 </template>
