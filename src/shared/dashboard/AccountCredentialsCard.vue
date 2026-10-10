@@ -28,6 +28,15 @@ defineProps({
             <BaseButton type="button" class="account-credentials-card__edit-toggle" @click="isEditing = true">Editar mis datos</BaseButton>
         </div>
 
+        <button
+            v-if="isEditing"
+            type="button"
+            class="account-credentials-card__close absolute right-6 top-6 flex h-8 w-8 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-surface hover:text-on-surface"
+            aria-label="Cerrar"
+        >
+            &times;
+        </button>
+
         <div v-if="isEditing" class="account-credentials-card__columns grid grid-cols-2 gap-0">
             <div class="account-credentials-card__access flex flex-col gap-4 pr-6">
                 <h2 class="font-display text-xl text-on-surface">Datos de acceso y credenciales</h2>
