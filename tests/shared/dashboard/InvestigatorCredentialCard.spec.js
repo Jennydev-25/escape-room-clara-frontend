@@ -45,4 +45,14 @@ describe('InvestigatorCredentialCard', () => {
         })
         expect(wrapper.text()).toMatch(/ID N[ºo] \d{6}\/10\/2026/)
     })
+
+    it('shows the 9 avatar options when the camera button is clicked', async () => {
+        const wrapper = mount(InvestigatorCredentialCard, {
+            props: { alias: 'marta_v' },
+        })
+
+        await wrapper.find('[aria-label="Cambiar avatar"]').trigger('click')
+
+        expect(wrapper.findAll('[aria-label^="Avatar "]')).toHaveLength(9)
+    })
 })
