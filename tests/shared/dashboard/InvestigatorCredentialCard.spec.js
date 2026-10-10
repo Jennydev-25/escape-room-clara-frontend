@@ -66,4 +66,37 @@ describe('InvestigatorCredentialCard', () => {
 
         expect(wrapper.find('[aria-label="Cerrar selector de avatar"]').exists()).toBe(false)
     })
+
+    it('shows a save button when the avatar picker is open', async () => {
+        const wrapper = mount(InvestigatorCredentialCard, {
+            props: { alias: 'marta_v' },
+        })
+
+        await wrapper.find('[aria-label="Cambiar avatar"]').trigger('click')
+
+        expect(wrapper.findAll('button').find((b) => b.text().includes('Guardar cambios'))).toBeTruthy()
+    })
+
+    it('closes the avatar picker when the save button is clicked', async () => {
+        const wrapper = mount(InvestigatorCredentialCard, {
+            props: { alias: 'marta_v' },
+        })
+
+        await wrapper.find('[aria-label="Cambiar avatar"]').trigger('click')
+        await wrapper.findAll('button').find((b) => b.text().includes('Guardar cambios')).trigger('click')
+
+        expect(wrapper.findAll('button').find((b) => b.text().includes('Guardar cambios'))).toBeFalsy()
+    })
+
+    it('marks the clicked avatar as selected', async () => {
+        const wrapper = mount(InvestigatorCredentialCard, {
+            props: { alias: 'marta_v' },
+        })
+
+        await wrapper.find('[aria-label="Cambiar avatar"]').trigger('click')
+        await wrapper.find('[aria-label="Avatar 2"]').trigger('click')
+
+        expect(wrapper.find('[aria-label="Avatar 2"]').attributes('aria-pressed')).toBe('true')
+        expect(wrapper.find('[aria-label="Avatar 1"]').attributes('aria-pressed')).toBe('false')
+    })
 })
