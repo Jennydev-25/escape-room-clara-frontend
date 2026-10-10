@@ -1,5 +1,6 @@
 <script setup>
 import PasswordField from '@/shared/PasswordField.vue'
+import BaseButton from '@/shared/BaseButton.vue'
 
 const email = defineModel('email', { type: String, default: '' })
 const password = defineModel('password', { type: String, default: '' })
@@ -25,8 +26,8 @@ defineEmits(['submit'])
             <PasswordField id="login-password" required v-model="password" />
         </div>
 
-        <button type="submit" class="login-form__submit mt-2 rounded-md border border-primary px-6 py-2 uppercase tracking-widest text-primary transition-colors hover:bg-primary hover:text-on-primary">
+        <BaseButton type="submit" class="login-form__submit">
             Iniciar sesión
-        </button>
+        </BaseButton>
     </form>
 </template>
