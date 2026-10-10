@@ -1,19 +1,20 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
+import router from '@/router'
 import DashboardSidebar from '@/shared/dashboard/DashboardSidebar.vue'
 
 describe('DashboardSidebar', () => {
     it.each([
-        ['inicio', 'Resumen'],
-        ['perfil', 'Mi perfil'],
-    ])('marks the "%s" section link as the current page via aria-current', (activeSection, linkText) => {
+        ['Resumen', '/resumen'],
+        ['Mi perfil', '/perfil'],
+    ])('links "%s" to the real route', async (linkText, path) => {
         const wrapper = mount(DashboardSidebar, {
-            props: { activeSection },
+            global: { plugins: [router] },
         })
 
-        const activeLink = wrapper.findAll('a').find((link) => link.text() === linkText)
+        const link = wrapper.findAll('a').find((a) => a.text() === linkText)
 
-        expect(activeLink.attributes('aria-current')).toBe('page')
+        expect(link.attributes('href')).toBe(path)
     })
 
     it('renders a logout button', () => {
