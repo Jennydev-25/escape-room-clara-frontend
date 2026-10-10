@@ -1,6 +1,7 @@
 <script setup>
 import { nextTick, ref, useTemplateRef } from 'vue'
 import PasswordField from '@/shared/PasswordField.vue'
+import BaseButton from '@/shared/BaseButton.vue'
 import { useRecaptcha } from '@/composables/useRecaptcha'
 
 const email = defineModel('email', { type: String, default: '' })
@@ -60,8 +61,8 @@ function handleSubmit() {
 
         <div v-if="confirmPasswordVisible" id="register-recaptcha" ref="recaptchaContainer" class="register-form__recaptcha"></div>
 
-        <button type="submit" class="register-form__submit mt-2 rounded-md border border-primary px-6 py-2 uppercase tracking-widest text-primary transition-colors hover:bg-primary hover:text-on-primary">
+        <BaseButton type="submit" class="register-form__submit">
             Crear cuenta
-        </button>
+        </BaseButton>
     </form>
 </template>
