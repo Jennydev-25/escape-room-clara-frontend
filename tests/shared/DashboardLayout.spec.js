@@ -6,6 +6,7 @@ import DashboardLayout from '@/shared/DashboardLayout.vue'
 describe('DashboardLayout', () => {
     it('renders the player alias in the header', () => {
         const wrapper = mount(DashboardLayout, {
+            global: { plugins: [router] },
             props: { activeSection: 'inicio', playerAlias: 'marta_v' },
         })
 
@@ -17,6 +18,7 @@ describe('DashboardLayout', () => {
         ['perfil', 'Mi perfil'],
     ])('marks the "%s" section link as the current page via aria-current', (activeSection, linkText) => {
         const wrapper = mount(DashboardLayout, {
+            global: { plugins: [router] },
             props: { activeSection, playerAlias: 'marta_v' },
         })
 
@@ -27,6 +29,7 @@ describe('DashboardLayout', () => {
 
     it('renders the default slot content', () => {
         const wrapper = mount(DashboardLayout, {
+            global: { plugins: [router] },
             props: { activeSection: 'inicio', playerAlias: 'marta_v' },
             slots: { default: '<p>contenido de prueba</p>' },
         })
