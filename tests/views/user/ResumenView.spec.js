@@ -36,5 +36,6 @@ describe('ResumenView', () => {
 
         expect(wrapper.text()).toContain('Sumario de la investigación')
         expect(wrapper.text()).toContain('Comenzar investigación')
+        expect(wrapper.text()).toContain('Pendiente de inicio')
     })
 })
