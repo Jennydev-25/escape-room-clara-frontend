@@ -1,6 +1,7 @@
 <script setup>
-import { BookOpen, Clock, FolderOpen } from '@lucide/vue'
+import { BookOpen, Clock, FolderOpen, Search } from '@lucide/vue'
 import DashboardLayout from '@/shared/dashboard/DashboardLayout.vue'
+import BaseButton from '@/shared/BaseButton.vue'
 </script>
 
 <template>
@@ -45,6 +46,15 @@ import DashboardLayout from '@/shared/dashboard/DashboardLayout.vue'
                         <p class="font-mono text-xl uppercase text-on-surface">Ninguna</p>
                     </div>
                 </div>
+            </div>
+
+            <div class="resumen-view__cta mt-6 flex justify-center">
+                <BaseButton type="button">
+                    <span class="flex items-center gap-2">
+                        Comenzar
+                        <component :is="Search" :size="16" />
+                    </span>
+                </BaseButton>
             </div>
         </section>
     </DashboardLayout>
