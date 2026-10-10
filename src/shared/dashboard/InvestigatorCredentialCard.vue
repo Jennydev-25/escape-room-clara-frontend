@@ -47,6 +47,10 @@ const openAvatarPicker = () => {
     isAvatarPickerOpen.value = true
 }
 
+const closeAvatarPicker = () => {
+    isAvatarPickerOpen.value = false
+}
+
 </script>
 
 <template>
@@ -84,6 +88,15 @@ const openAvatarPicker = () => {
             class="investigator-credential-card__avatar-picker absolute inset-0 z-10 flex flex-col rounded-2xl bg-surface-container p-6"
         >
             <p class="font-label text-xs uppercase tracking-widest text-primary">Elige tu avatar</p>
+
+            <button
+                type="button"
+                class="investigator-credential-card__avatar-picker-close absolute right-6 top-6 flex h-8 w-8 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-surface hover:text-on-surface"
+                aria-label="Cerrar selector de avatar"
+                @click="closeAvatarPicker"
+            >
+                &times;
+            </button>
 
             <div class="mt-4 grid grid-cols-3 content-start justify-items-center gap-3">
                 <button
