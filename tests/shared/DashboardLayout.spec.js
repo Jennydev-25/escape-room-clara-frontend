@@ -23,4 +23,13 @@ describe('DashboardLayout', () => {
 
         expect(activeLink.attributes('aria-current')).toBe('page')
     })
+
+    it('renders the default slot content', () => {
+        const wrapper = mount(DashboardLayout, {
+            props: { activeSection: 'inicio', playerAlias: 'marta_v' },
+            slots: { default: '<p>contenido de prueba</p>' },
+        })
+
+        expect(wrapper.find('p').text()).toBe('contenido de prueba')
+    })
 })
