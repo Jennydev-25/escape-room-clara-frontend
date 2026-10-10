@@ -37,6 +37,8 @@ const props = defineProps({
     },
 })
 
+const emit = defineEmits(['update:avatar-id'])
+
 const avatarSrc = computed(() => (props.avatarId ? avatarImages[props.avatarId - 1] : null))
 
 const issueDate = '10/2026'
@@ -56,6 +58,13 @@ const selectedAvatarIndex = ref(null)
 
 const selectAvatar = (index) => {
     selectedAvatarIndex.value = index
+}
+
+const saveAvatar = () => {
+    if (selectedAvatarIndex.value !== null) {
+        emit('update:avatar-id', selectedAvatarIndex.value + 1)
+    }
+    closeAvatarPicker()
 }
 
 </script>
@@ -120,7 +129,7 @@ const selectAvatar = (index) => {
                 </button>
             </div>
 
-            <BaseButton type="button" class="investigator-credential-card__avatar-save self-center !mt-2 !px-4 !py-1.5 !text-[10px]" @click="closeAvatarPicker">Guardar cambios</BaseButton>
+            <BaseButton type="button" class="investigator-credential-card__avatar-save self-center !mt-2 !px-4 !py-1.5 !text-[10px]" @click="saveAvatar">Guardar cambios</BaseButton>
         </div>
 
         <dl class="investigator-credential-card__details mt-6 flex flex-col gap-2 border-t border-outline/30 pt-6 font-body text-sm">
