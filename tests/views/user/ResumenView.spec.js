@@ -38,4 +38,13 @@ describe('ResumenView', () => {
         expect(wrapper.text()).toContain('Comenzar investigación')
         expect(wrapper.text()).toContain('Pendiente de inicio')
     })
+
+    it('renders the chapter progress row', () => {
+        const wrapper = mount(ResumenView, {
+            global: { plugins: [router] },
+        })
+
+        expect(wrapper.text()).toContain('Capítulo 1 de 17')
+        expect(wrapper.text()).toContain('0% completado')
+    })
 })

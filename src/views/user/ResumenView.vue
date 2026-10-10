@@ -1,4 +1,5 @@
 <script setup>
+import { BookOpen } from '@lucide/vue'
 import DashboardLayout from '@/shared/dashboard/DashboardLayout.vue'
 </script>
 
@@ -9,12 +10,24 @@ import DashboardLayout from '@/shared/dashboard/DashboardLayout.vue'
 
         <section class="resumen-view__case-card relative mt-6 rounded-2xl border border-outline/30 bg-surface-container p-8">
             <span class="resumen-view__case-badge absolute right-6 top-6 flex items-center gap-1.5 rounded-full border border-outline/30 px-3 py-1 font-label text-[10px] uppercase tracking-widest text-on-surface-variant">
-                <span class="h-1.5 w-1.5 rounded-full bg-success" />
+                <span class="h-1.5 w-1.5 rounded-full bg-on-surface-variant" />
                 Pendiente de inicio
             </span>
 
             <p class="font-label text-xs uppercase tracking-widest text-primary">Sumario de la investigación</p>
             <h2 class="font-display mt-2 text-3xl text-on-surface">Comenzar investigación</h2>
+
+            <div class="resumen-view__chapter mt-6 flex items-center justify-between font-label text-xs uppercase tracking-wide text-on-surface-variant">
+                <span class="flex items-center gap-2">
+                    <component :is="BookOpen" :size="16" />
+                    Capítulo 1 de 17
+                </span>
+                <span>0% completado</span>
+            </div>
+
+            <div class="resumen-view__progress-bar mt-2 h-1.5 w-full overflow-hidden rounded-full bg-surface">
+                <div class="h-full rounded-full bg-primary" style="width: 0%" />
+            </div>
         </section>
     </DashboardLayout>
 </template>
