@@ -58,4 +58,13 @@ describe('ResumenView', () => {
         expect(wrapper.text()).toContain('Carpeta activa')
         expect(wrapper.text()).toContain('Ninguna')
     })
+
+    it('renders the start investigation button', () => {
+        const wrapper = mount(ResumenView, {
+            global: { plugins: [router] },
+        })
+
+        const button = wrapper.find('button')
+        expect(button.text()).toContain('Comenzar')
+    })
 })
