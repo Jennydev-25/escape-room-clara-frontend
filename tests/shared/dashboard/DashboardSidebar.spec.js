@@ -15,4 +15,14 @@ describe('DashboardSidebar', () => {
 
         expect(activeLink.attributes('aria-current')).toBe('page')
     })
+
+    it('renders a logout button', () => {
+        const wrapper = mount(DashboardSidebar, {
+            props: { activeSection: 'inicio' },
+        })
+
+        const button = wrapper.find('button')
+
+        expect(button.text()).toBe('Cerrar sesión')
+    })
 })
