@@ -1,12 +1,13 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
+import { createPinia } from 'pinia'
 import router from '@/router'
 import ResumenView from '@/views/user/ResumenView.vue'
 
 describe('ResumenView', () => {
     it('greets the player by their alias', () => {
         const wrapper = mount(ResumenView, {
-            global: { plugins: [router] },
+            global: { plugins: [router, createPinia()] },
         })
 
         expect(wrapper.text()).toContain('Hola de nuevo, jugador_01')
@@ -14,7 +15,7 @@ describe('ResumenView', () => {
 
     it('renders the resumen subtitle', () => {
         const wrapper = mount(ResumenView, {
-            global: { plugins: [router] },
+            global: { plugins: [router, createPinia()] },
         })
 
         expect(wrapper.text()).toContain('Aquí tienes un resumen de tu progreso en el caso. El portátil de Clara guardará todo lo que vayas reconstruyendo.')
@@ -24,7 +25,7 @@ describe('ResumenView', () => {
         await router.push('/resumen')
 
         const wrapper = mount(ResumenView, {
-            global: { plugins: [router] },
+            global: { plugins: [router, createPinia()] },
         })
 
         const activeLink = wrapper.find('[aria-current="page"]')
@@ -33,7 +34,7 @@ describe('ResumenView', () => {
 
     it('renders the case summary card heading', () => {
         const wrapper = mount(ResumenView, {
-            global: { plugins: [router] },
+            global: { plugins: [router, createPinia()] },
         })
 
         expect(wrapper.text()).toContain('Sumario de la investigación')
@@ -43,7 +44,7 @@ describe('ResumenView', () => {
 
     it('renders the chapter progress row', () => {
         const wrapper = mount(ResumenView, {
-            global: { plugins: [router] },
+            global: { plugins: [router, createPinia()] },
         })
 
         expect(wrapper.text()).toContain('Capítulo 1 de 17')
@@ -52,7 +53,7 @@ describe('ResumenView', () => {
 
     it('renders the case info tiles', () => {
         const wrapper = mount(ResumenView, {
-            global: { plugins: [router] },
+            global: { plugins: [router, createPinia()] },
         })
 
         expect(wrapper.text()).toContain('Tiempo en el caso')
@@ -63,7 +64,7 @@ describe('ResumenView', () => {
 
     it('renders the start investigation button', () => {
         const wrapper = mount(ResumenView, {
-            global: { plugins: [router] },
+            global: { plugins: [router, createPinia()] },
         })
 
         const button = wrapper.findAll('button').find((b) => b.text().includes('Comenzar'))
