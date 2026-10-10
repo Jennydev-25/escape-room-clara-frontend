@@ -1,6 +1,7 @@
 <script setup>
 import DashboardLayout from '@/shared/dashboard/DashboardLayout.vue'
 import InvestigatorCredentialCard from '@/shared/dashboard/InvestigatorCredentialCard.vue'
+import AccountCredentialsCard from '@/shared/dashboard/AccountCredentialsCard.vue'
 </script>
 
 <template>
@@ -13,5 +14,7 @@ import InvestigatorCredentialCard from '@/shared/dashboard/InvestigatorCredentia
             case-name="El último archivo de Clara"
             status="Investigación en curso"
         />
+
+        <AccountCredentialsCard alias="jugador_01" />
     </DashboardLayout>
 </template>
