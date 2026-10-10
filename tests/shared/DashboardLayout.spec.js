@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
+import router from '@/router'
 import DashboardLayout from '@/shared/DashboardLayout.vue'
 
 describe('DashboardLayout', () => {
@@ -31,5 +32,16 @@ describe('DashboardLayout', () => {
         })
 
         expect(wrapper.find('p').text()).toBe('contenido de prueba')
+    })
+
+    it('links the logo to the home route', () => {
+        const wrapper = mount(DashboardLayout, {
+            global: { plugins: [router] },
+            props: { activeSection: 'inicio', playerAlias: 'marta_v' },
+        })
+
+        const logoLink = wrapper.get('[aria-label="Ir al inicio"]')
+
+        expect(logoLink.attributes('href')).toBe('/')
     })
 })
