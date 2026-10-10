@@ -79,7 +79,7 @@ async function handleSubmit() {
             ></textarea>
         </div>
 
-        <div v-if="recaptchaVisible" id="contact-recaptcha" ref="recaptchaContainer" class="contact-form__recaptcha"></div>
+        <div v-if="recaptchaVisible" id="contact-recaptcha" ref="recaptchaContainer" class="contact-form__recaptcha flex justify-center"></div>
 
         <BaseButton type="submit" class="contact-form__submit">
             Enviar mensaje

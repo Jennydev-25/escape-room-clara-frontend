@@ -59,7 +59,7 @@ function handleSubmit() {
             <PasswordField id="register-confirm-password" required minlength="8" v-model="confirmPassword" />
         </div>
 
-        <div v-if="confirmPasswordVisible" id="register-recaptcha" ref="recaptchaContainer" class="register-form__recaptcha"></div>
+        <div v-if="confirmPasswordVisible" id="register-recaptcha" ref="recaptchaContainer" class="register-form__recaptcha flex justify-center"></div>
 
         <BaseButton type="submit" class="register-form__submit">
             Crear cuenta
