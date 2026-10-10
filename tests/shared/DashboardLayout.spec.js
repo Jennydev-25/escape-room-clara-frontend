@@ -10,4 +10,17 @@ describe('DashboardLayout', () => {
 
         expect(wrapper.text()).toContain('marta_v')
     })
+
+    it.each([
+        ['inicio', 'Resumen'],
+        ['perfil', 'Mi perfil'],
+    ])('marks the "%s" section link as the current page via aria-current', (activeSection, linkText) => {
+        const wrapper = mount(DashboardLayout, {
+            props: { activeSection, playerAlias: 'marta_v' },
+        })
+
+        const activeLink = wrapper.findAll('a').find((link) => link.text() === linkText)
+
+        expect(activeLink.attributes('aria-current')).toBe('page')
+    })
 })
