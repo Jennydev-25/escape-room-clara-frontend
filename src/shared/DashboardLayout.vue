@@ -22,5 +22,8 @@ const currentPageOrUndefined = (section) => (props.activeSection === section ? '
             <a href="#" :aria-current="currentPageOrUndefined('inicio')">Resumen</a>
             <a href="#" :aria-current="currentPageOrUndefined('perfil')">Mi perfil</a>
         </nav>
+        <main class="dashboard-layout__content">
+            <slot />
+        </main>
     </div>
 </template>
