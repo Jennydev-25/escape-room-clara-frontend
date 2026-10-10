@@ -8,4 +8,11 @@ describe('router', () => {
 
         expect(router.currentRoute.value.name).toBe('profile')
     })
+
+    it('resolves the /resumen route to the ResumenView component', async () => {
+        await router.push('/resumen')
+        await router.isReady()
+
+        expect(router.currentRoute.value.name).toBe('summary')
+    })
 })
