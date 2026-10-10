@@ -13,4 +13,16 @@ describe('DashboardLayout', () => {
 
         expect(wrapper.find('p').text()).toBe('contenido de prueba')
     })
+
+    it('renders the classified status next to the open session label', () => {
+        const wrapper = mount(DashboardLayout, {
+            global: { plugins: [router] },
+            props: { activeSection: 'inicio', playerAlias: 'marta_v' },
+        })
+
+        const statusBar = wrapper.find('.dashboard-layout__status')
+
+        expect(statusBar.text()).toContain('Sesión abierta')
+        expect(statusBar.text()).toContain('Estado: clasificada')
+    })
 })
