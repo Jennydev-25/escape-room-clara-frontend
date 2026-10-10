@@ -1,8 +1,9 @@
 <script setup>
+import DashboardLayout from '@/shared/dashboard/DashboardLayout.vue'
 </script>
 
 <template>
-    <main class="profile-view mx-auto flex max-w-3xl flex-col gap-10 px-6 py-16">
+    <DashboardLayout active-section="perfil" player-alias="jugador_01">
         <h1 class="profile-view__title font-display text-3xl text-on-surface">Mi perfil</h1>
-    </main>
+    </DashboardLayout>
 </template>
