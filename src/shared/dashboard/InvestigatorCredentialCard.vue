@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue'
-import { Camera, UserRound } from '@lucide/vue'
+import { Barcode, Camera, UserRound } from '@lucide/vue'
 import avatar1 from '@/assets/images/avatars/avatar-1.png'
 import avatar2 from '@/assets/images/avatars/avatar-2.png'
 import avatar3 from '@/assets/images/avatars/avatar-3.png'
@@ -37,10 +37,18 @@ const props = defineProps({
 })
 
 const avatarSrc = computed(() => (props.avatarId ? avatarImages[props.avatarId - 1] : null))
+
+const issueDate = '10/2026'
+const credentialNumber = String(Math.floor(Math.random() * 1000000)).padStart(6, '0')
 </script>
 
 <template>
-    <section class="investigator-credential-card flex h-full min-h-0 flex-col rounded-2xl border border-outline/30 bg-surface-container p-8">
+    <section class="investigator-credential-card relative flex h-full min-h-0 flex-col rounded-2xl border border-outline/30 bg-surface-container p-8">
+        <div class="absolute right-6 top-6 flex items-center gap-1.5">
+            <span class="font-label text-[10px] uppercase tracking-widest text-success">Autorizado</span>
+            <span class="h-1.5 w-1.5 rounded-full bg-success" />
+        </div>
+
         <p class="font-label text-center text-xs uppercase tracking-widest text-primary">Credencial de investigador</p>
 
         <div class="investigator-credential-card__avatar relative mx-auto mt-6 flex h-32 w-32 items-center justify-center rounded-full bg-surface-container-high text-on-surface-variant">
@@ -74,5 +82,11 @@ const avatarSrc = computed(() => (props.avatarId ? avatarImages[props.avatarId -
                 <dd class="text-primary">{{ status }}</dd>
             </div>
         </dl>
+
+        <div class="investigator-credential-card__id mt-auto flex flex-col items-center gap-2 pt-6">
+            <div class="h-px w-16 bg-outline/30" />
+            <component :is="Barcode" class="h-16 w-56 text-on-surface-variant" />
+            <p class="font-mono text-xs text-on-surface">ID Nº {{ credentialNumber }}/{{ issueDate }}</p>
+        </div>
     </section>
 </template>
