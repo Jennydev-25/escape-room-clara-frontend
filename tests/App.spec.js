@@ -36,4 +36,31 @@ describe('App', () => {
     expect(wrapper.text()).toContain('El último archivo de Clara')
     vi.useRealTimers()
   })
+
+  it('keeps the loading screen until the window finishes loading, even past the minimum duration', async () => {
+    vi.useFakeTimers()
+    const readyStateSpy = vi.spyOn(document, 'readyState', 'get').mockReturnValue('loading')
+
+    router.push('/')
+    await router.isReady()
+
+    const wrapper = mount(App, {
+      global: {
+        plugins: [router, createPinia()],
+      },
+    })
+
+    vi.advanceTimersByTime(5000)
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.text()).toContain('Bienvenid@')
+
+    window.dispatchEvent(new Event('load'))
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.text()).toContain('El último archivo de Clara')
+
+    readyStateSpy.mockRestore()
+    vi.useRealTimers()
+  })
 })
