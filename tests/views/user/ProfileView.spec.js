@@ -14,7 +14,9 @@ describe('ProfileView', () => {
         expect(wrapper.text()).toContain('Mi perfil')
     })
 
-    it('marks "Mi perfil" as the active section in the sidebar', () => {
+    it('marks "Mi perfil" as the active section in the sidebar', async () => {
+        await router.push('/perfil')
+
         const wrapper = mount(ProfileView, {
             global: { plugins: [router] },
         })

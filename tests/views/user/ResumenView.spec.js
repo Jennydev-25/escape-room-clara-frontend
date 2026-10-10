@@ -20,7 +20,9 @@ describe('ResumenView', () => {
         expect(wrapper.text()).toContain('Aquí tienes un resumen de tu progreso en el caso. El portátil de Clara guardará todo lo que vayas reconstruyendo.')
     })
 
-    it('marks "Resumen" as the active section in the sidebar', () => {
+    it('marks "Resumen" as the active section in the sidebar', async () => {
+        await router.push('/resumen')
+
         const wrapper = mount(ResumenView, {
             global: { plugins: [router] },
         })
@@ -64,7 +66,7 @@ describe('ResumenView', () => {
             global: { plugins: [router] },
         })
 
-        const button = wrapper.find('button')
-        expect(button.text()).toContain('Comenzar')
+        const button = wrapper.findAll('button').find((b) => b.text().includes('Comenzar'))
+        expect(button.exists()).toBe(true)
     })
 })
