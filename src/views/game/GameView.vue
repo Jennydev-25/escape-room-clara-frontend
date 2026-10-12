@@ -1,5 +1,5 @@
 <script setup>
-import { Maximize, Minimize } from '@lucide/vue'
+import { Maximize, Minimize, Trash2 } from '@lucide/vue'
 import { onMounted, onUnmounted, ref } from 'vue'
 import FolderList from '@/components/game/FolderList.vue'
 import wallpaper from '@/assets/images/game/desktop/wallpaper.webp'
@@ -36,7 +36,17 @@ function toggleFullscreen() {
 
         <FolderList class="relative" />
 
-        <footer class="relative mt-auto flex items-center gap-3 border-t border-outline bg-surface-container/90 px-4 py-3 backdrop-blur-sm sm:px-6 md:py-2">
+        <div class="relative mt-auto flex justify-end p-4 sm:p-6">
+            <button
+                type="button"
+                class="flex w-16 flex-col items-center gap-1 rounded-2xl p-2 text-center text-xs font-medium tracking-wide text-on-surface uppercase transition-colors hover:bg-surface-container/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-20"
+            >
+                <Trash2 class="size-9 fill-on-surface-variant/20 text-on-surface-variant sm:size-10" aria-hidden="true" />
+                <span>Papelera</span>
+            </button>
+        </div>
+
+        <footer class="relative flex items-center gap-3 border-t border-outline bg-surface-container/90 px-4 py-3 backdrop-blur-sm sm:px-6 md:py-2">
             <span class="size-2 shrink-0 animate-pulse rounded-full bg-primary motion-reduce:animate-none" aria-hidden="true"></span>
             <p class="min-w-0 truncate text-xs text-on-surface sm:text-sm"><span class="text-primary">ClaraOS</span> · Bienvenida de nuevo, Clara</p>
             <button
