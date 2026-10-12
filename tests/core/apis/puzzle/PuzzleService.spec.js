@@ -21,6 +21,14 @@ describe('Integration - Puzzle Service', () => {
         await expect(service.getPuzzle(2)).rejects.toThrow('¡Ups! Algo salió mal')
     })
 
+    test('getHint should throw \'¡Ups! Algo salió mal\' when the uri is invalid', async () => {
+        const repository = new PuzzleRepository()
+        repository.uri = ''
+        const service = new PuzzleService(repository)
+
+        await expect(service.getHint(2, 1)).rejects.toThrow('¡Ups! Algo salió mal')
+    })
+
 })
 
 describe('Unit - Puzzle Service', () => {
@@ -41,6 +49,23 @@ describe('Unit - Puzzle Service', () => {
         expect(puzzle.getType()).toBe('CIPHER')
         expect(puzzle.getFiles()).toEqual(['/tomas/libreta_tomas.png', '/tomas/indice_criptico.png'])
         expect(puzzle.getQuestion()).toBe('Descifra el mensaje y escribe lo que has obtenido.')
+    })
+
+    test('getHint should ask for the hint number and map the response to a PuzzleHintModel', async () => {
+        let receivedArgs
+        const fakeRepository = {
+            getHint: (id, number) => {
+                receivedArgs = [id, number]
+                return Promise.resolve({ number: 1, text: 'Fíjate en el orden de las letras del índice.' })
+            }
+        }
+        const service = new PuzzleService(fakeRepository)
+
+        const hint = await service.getHint(2, 1)
+
+        expect(receivedArgs).toEqual([2, 1])
+        expect(hint.getNumber()).toBe(1)
+        expect(hint.getText()).toBe('Fíjate en el orden de las letras del índice.')
     })
 
 })
