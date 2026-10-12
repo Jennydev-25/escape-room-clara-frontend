@@ -10,4 +10,11 @@ describe('Integration - Chat Repository', () => {
         await expect(repository.listContacts()).rejects.toThrow('¡Ups! Algo salió mal')
     })
 
+    test('getConversation should throw \'¡Ups! Algo salió mal\' when the uri is invalid', async () => {
+        const repository = new ChatRepository()
+        repository.uri = ''
+
+        await expect(repository.getConversation('Marina')).rejects.toThrow('¡Ups! Algo salió mal')
+    })
+
 })
