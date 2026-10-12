@@ -1,4 +1,5 @@
 import FolderList from '@/components/game/FolderList.vue'
+import FolderWindow from '@/components/game/FolderWindow.vue'
 import { flushPromises, mount } from '@vue/test-utils'
 import { createPinia } from 'pinia'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -8,7 +9,7 @@ const getFolder = vi.fn()
 const mountFolderList = () => mount(FolderList, { global: { plugins: [createPinia()], provide: { FolderService: { listFolders, getFolder } } } })
 
 const folder = (code, name) => ({ getCode: () => code, getName: () => name })
-const folderWithPuzzles = (...ids) => ({ getPuzzles: () => ids.map((id) => ({ getId: () => id })) })
+const folderWithPuzzles = (...ids) => ({ getName: () => 'Tomás', getPuzzles: () => ids.map((id) => ({ getId: () => id })) })
 
 describe('FolderList', () => {
 
@@ -96,6 +97,27 @@ describe('FolderList', () => {
 
         expect(wrapper.get('[role="alert"]').text()).toContain('¡Ups! Algo salió mal')
         expect(wrapper.findAll('button')).toHaveLength(0)
+    })
+
+    it('opens the window of a folder when it is clicked', async () => {
+        listFolders.mockResolvedValue([folder('tomas', 'Tomás')])
+        const wrapper = mountFolderList()
+        await flushPromises()
+
+        await wrapper.get('button').trigger('click')
+
+        expect(wrapper.findComponent(FolderWindow).props('code')).toBe('tomas')
+    })
+
+    it('closes the folder window when it asks to be closed', async () => {
+        listFolders.mockResolvedValue([folder('tomas', 'Tomás')])
+        const wrapper = mountFolderList()
+        await flushPromises()
+        await wrapper.get('button').trigger('click')
+
+        await wrapper.findComponent(FolderWindow).vm.$emit('close')
+
+        expect(wrapper.findComponent(FolderWindow).exists()).toBe(false)
     })
 
 })
