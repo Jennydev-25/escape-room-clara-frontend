@@ -23,4 +23,13 @@ export default class PuzzleSummaryModel {
         return this.displayOrder
     }
 
+    static create(dto, mapper) {
+        return new PuzzleSummaryModel(
+            mapper.id(dto),
+            mapper.title(dto),
+            mapper.type(dto),
+            mapper.displayOrder(dto)
+        )
+    }
+
 }
