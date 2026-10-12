@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useAuthStore } from "@/stores/auth";
 
 export default class BaseRepository {
@@ -28,15 +27,6 @@ export default class BaseRepository {
         }
     }
 
-    async getAxios() {
-        try {
-            const response = await axios.get(this.uri)
-            return response.data
-        } catch (error) {
-            throw new Error("¡Ups! Algo salió mal")
-        }
-    }
-
     async post(path, body) {
         try {
             const response = await fetch(`${this.uri}${path}`, {
@@ -58,13 +48,27 @@ export default class BaseRepository {
 
     async authGet(path) {
         try {
-            const response = await this.#authFetch(path)
+            const response = await this.#authFetch(`${this.uri}${path}`)
 
             if (!response.ok) {
                 throw new Error('Error en la respuesta');
             }
 
             return await response.json()
+        } catch (error) {
+            throw new Error("¡Ups! Algo salió mal")
+        }
+    }
+
+    async authGetBlob(url) {
+        try {
+            const response = await this.#authFetch(url)
+
+            if (!response.ok) {
+                throw new Error('Error en la respuesta');
+            }
+
+            return await response.blob()
         } catch (error) {
             throw new Error("¡Ups! Algo salió mal")
         }
@@ -84,7 +88,7 @@ export default class BaseRepository {
 
     async #authSend(method, path, body) {
         try {
-            const response = await this.#authFetch(path, {
+            const response = await this.#authFetch(`${this.uri}${path}`, {
                 method,
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body),
@@ -104,9 +108,9 @@ export default class BaseRepository {
         }
     }
 
-    async #authFetch(path, options = {}) {
+    async #authFetch(url, options = {}) {
         const authStore = useAuthStore()
-        const send = () => fetch(`${this.uri}${path}`, {
+        const send = () => fetch(url, {
             ...options,
             headers: { ...options.headers, Authorization: `Bearer ${authStore.token}` },
         })

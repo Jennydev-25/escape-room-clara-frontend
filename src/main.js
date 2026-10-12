@@ -21,6 +21,8 @@ import ProgressRepository from './core/apis/progress/ProgressRepository'
 import ProgressService from './core/apis/progress/ProgressService'
 import PuzzleRepository from './core/apis/puzzle/PuzzleRepository'
 import PuzzleService from './core/apis/puzzle/PuzzleService'
+import StaticFileRepository from './core/apis/static-file/StaticFileRepository'
+import StaticFileService from './core/apis/static-file/StaticFileService'
 import TrashRepository from './core/apis/trash/TrashRepository'
 import TrashService from './core/apis/trash/TrashService'
 import UserRepository from './core/apis/user/UserRepository'
@@ -45,6 +47,7 @@ app.provide('EmailService', new EmailService(new EmailRepository()))
 app.provide('FolderService', new FolderService(new FolderRepository()))
 app.provide('ProgressService', new ProgressService(new ProgressRepository()))
 app.provide('PuzzleService', new PuzzleService(new PuzzleRepository()))
+app.provide('StaticFileService', new StaticFileService(new StaticFileRepository()))
 app.provide('TrashService', new TrashService(new TrashRepository()))
 app.provide('UserService', new UserService(new UserRepository()))
 

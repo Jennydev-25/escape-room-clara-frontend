@@ -36,22 +36,6 @@ describe('BaseRepository', () => {
         expect(data).toEqual({ message: 'ok' })
     })
 
-    test('getAxios should throw \'¡Ups! Algo salió mal\' when the uri is invalid', async () => {
-        const repository = new BaseRepository('')
-
-        await expect(repository.getAxios()).rejects.toThrow('¡Ups! Algo salió mal')
-    })
-
-    test('getAxios should return the response data when the backend responds with success', async () => {
-        const axios = (await import('axios')).default
-        vi.spyOn(axios, 'get').mockResolvedValue({ data: { message: 'ok' } })
-        const repository = new BaseRepository('http://localhost:8080/api/v1')
-
-        const data = await repository.getAxios()
-
-        expect(data).toEqual({ message: 'ok' })
-    })
-
     test('getUri should return the uri passed to the constructor', () => {
         const repository = new BaseRepository('http://localhost:8080/api/v1')
 
@@ -283,6 +267,33 @@ describe('BaseRepository', () => {
         const refreshCalls = fetchMock.mock.calls.filter(([url]) => url.endsWith('/auth/refresh'))
         expect(refreshCalls).toHaveLength(1)
         expect(results).toEqual([{ message: 'ok' }, { message: 'ok' }])
+    })
+
+    test('authGetBlob should send the stored token as a Bearer header and return the blob', async () => {
+        setActivePinia(createPinia())
+        useAuthStore().setSession('jwt-token', 'refresh-token')
+        const blob = new Blob(['file content'])
+        const fetchMock = vi.fn().mockResolvedValue({
+            ok: true,
+            blob: () => Promise.resolve(blob),
+        })
+        vi.stubGlobal('fetch', fetchMock)
+        const repository = new BaseRepository('http://localhost:8080/api/v1')
+
+        const data = await repository.authGetBlob('http://localhost:8080/tomas/libreta_tomas.png')
+
+        expect(fetchMock).toHaveBeenCalledWith('http://localhost:8080/tomas/libreta_tomas.png', {
+            headers: { Authorization: 'Bearer jwt-token' },
+        })
+        expect(data).toBe(blob)
+    })
+
+    test('authGetBlob should throw \'¡Ups! Algo salió mal\' when the backend responds with an error status', async () => {
+        setActivePinia(createPinia())
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false }))
+        const repository = new BaseRepository('http://localhost:8080/api/v1')
+
+        await expect(repository.authGetBlob('http://localhost:8080/tomas/libreta_tomas.png')).rejects.toThrow('¡Ups! Algo salió mal')
     })
 
 })
