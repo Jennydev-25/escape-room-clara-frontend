@@ -10,4 +10,8 @@ export default class PuzzleRepository extends BaseRepository {
         return this.authGet(`/puzzles/${id}`)
     }
 
+    async getHint(id, number) {
+        return this.authGet(`/puzzles/${id}/hints/${number}`)
+    }
+
 }
