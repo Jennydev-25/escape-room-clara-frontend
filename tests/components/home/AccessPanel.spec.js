@@ -10,13 +10,7 @@ const login = vi.fn().mockResolvedValue({
     getRefreshToken: () => 'refresh-token',
 })
 const setSession = vi.fn()
-
-vi.mock('@/core/apis/auth/AuthService', () => ({
-    default: class {
-        register = register
-        login = login
-    },
-}))
+const withAuthService = { global: { provide: { AuthService: { register, login } } } }
 
 vi.mock('@/stores/auth', () => ({
     useAuthStore: () => ({ setSession }),
@@ -44,6 +38,7 @@ describe('AccessPanel', () => {
 
     it('registers the user with the form data and the recaptcha token on register submit', async () => {
         const wrapper = mount(AccessPanel, {
+            ...withAuthService,
             props: { open: true, tab: 'register' },
         })
 
@@ -65,6 +60,7 @@ describe('AccessPanel', () => {
     it('shows an error message when the register request fails', async () => {
         register.mockRejectedValueOnce(new Error('¡Ups! Algo salió mal'))
         const wrapper = mount(AccessPanel, {
+            ...withAuthService,
             props: { open: true, tab: 'register' },
         })
 
@@ -75,7 +71,7 @@ describe('AccessPanel', () => {
     })
 
     it('renders the login form by default and binds its fields', async () => {
-        const wrapper = mount(AccessPanel, { props: { open: true } })
+        const wrapper = mount(AccessPanel, { ...withAuthService, props: { open: true } })
 
         expect(wrapper.findComponent(LoginForm).exists()).toBe(true)
 
@@ -87,7 +83,7 @@ describe('AccessPanel', () => {
     })
 
     it('logs in with the form data and closes the panel on submit', async () => {
-        const wrapper = mount(AccessPanel, { props: { open: true } })
+        const wrapper = mount(AccessPanel, { ...withAuthService, props: { open: true } })
 
         await wrapper.find('#login-email').setValue('test@test.com')
         await wrapper.find('#login-password').setValue('Test1234')
@@ -102,7 +98,7 @@ describe('AccessPanel', () => {
 
     it('shows an error message when the login request fails', async () => {
         login.mockRejectedValueOnce(new Error('¡Ups! Algo salió mal'))
-        const wrapper = mount(AccessPanel, { props: { open: true } })
+        const wrapper = mount(AccessPanel, { ...withAuthService, props: { open: true } })
 
         await wrapper.findComponent(LoginForm).vm.$emit('submit')
         await Promise.resolve()
@@ -111,7 +107,7 @@ describe('AccessPanel', () => {
     })
 
     it('switches between the login and register tabs', async () => {
-        const wrapper = mount(AccessPanel, { props: { open: true } })
+        const wrapper = mount(AccessPanel, { ...withAuthService, props: { open: true } })
 
         await wrapper.findAll('.access-panel__tab')[1].trigger('click')
         expect(wrapper.findComponent(RegisterForm).exists()).toBe(true)
@@ -121,7 +117,7 @@ describe('AccessPanel', () => {
     })
 
     it('emits update:open with false when the close button is clicked', async () => {
-        const wrapper = mount(AccessPanel, { props: { open: true } })
+        const wrapper = mount(AccessPanel, { ...withAuthService, props: { open: true } })
 
         await wrapper.find('.access-panel__close').trigger('click')
 

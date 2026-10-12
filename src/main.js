@@ -7,6 +7,10 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { TextPlugin } from 'gsap/TextPlugin'
 
 import App from './App.vue'
+import AuthRepository from './core/apis/auth/AuthRepository'
+import AuthService from './core/apis/auth/AuthService'
+import ContactRepository from './core/apis/contact/ContactRepository'
+import ContactService from './core/apis/contact/ContactService'
 import router from './router'
 
 gsap.registerPlugin(ScrollTrigger, TextPlugin)
@@ -19,6 +23,9 @@ gsap.ticker.add((time) => {
 gsap.ticker.lagSmoothing(0)
 
 const app = createApp(App)
+
+app.provide('AuthService', new AuthService(new AuthRepository()))
+app.provide('ContactService', new ContactService(new ContactRepository()))
 
 app.use(createPinia())
 app.use(router)
