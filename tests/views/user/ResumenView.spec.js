@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createPinia } from 'pinia'
 import router from '@/router'
+import { useAuthStore } from '@/stores/auth'
 import ResumenView from '@/views/user/ResumenView.vue'
 
 describe('ResumenView', () => {
@@ -22,6 +23,7 @@ describe('ResumenView', () => {
     })
 
     it('marks "Resumen" as the active section in the sidebar', async () => {
+        useAuthStore().setSession('jwt-token', 'refresh-token')
         await router.push('/resumen')
 
         const wrapper = mount(ResumenView, {

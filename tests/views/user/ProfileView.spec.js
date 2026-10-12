@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createPinia } from 'pinia'
 import router from '@/router'
+import { useAuthStore } from '@/stores/auth'
 import ProfileView from '@/views/user/ProfileView.vue'
 import InvestigatorCredentialCard from '@/shared/dashboard/InvestigatorCredentialCard.vue'
 import AccountCredentialsCard from '@/shared/dashboard/AccountCredentialsCard.vue'
@@ -16,6 +17,7 @@ describe('ProfileView', () => {
     })
 
     it('marks "Mi perfil" as the active section in the sidebar', async () => {
+        useAuthStore().setSession('jwt-token', 'refresh-token')
         await router.push('/perfil')
 
         const wrapper = mount(ProfileView, {
