@@ -38,4 +38,31 @@ describe('Integration - Chat Service', () => {
         await expect(service.listContacts()).rejects.toThrow('¡Ups! Algo salió mal')
     })
 
+    test('getConversation should return the messages as ChatMessageModel from the backend response', async () => {
+        const fetchMock = vi.fn().mockResolvedValue({
+            ok: true,
+            json: () => Promise.resolve([
+                { id: 2, contact: 'Redacción · El Faro', character: 'Marina', content: 'eres mi héroe', sentAt: '2025-06-10T10:54:00', displayOrder: 4, read: true },
+                { id: 3, contact: 'Redacción · El Faro', character: 'Fermín', content: 'qué pesados', sentAt: '2025-06-10T11:01:00', displayOrder: 5, read: false }
+            ])
+        })
+        vi.stubGlobal('fetch', fetchMock)
+        const service = new ChatService(new ChatRepository())
+
+        const messages = await service.getConversation('Marina')
+
+        expect(fetchMock.mock.calls[0][0]).toContain('/chat/Marina')
+        expect(messages).toHaveLength(2)
+        expect(messages[0].getCharacter()).toBe('Marina')
+        expect(messages[0].isRead()).toBe(true)
+        expect(messages[1].getDisplayOrder()).toBe(5)
+    })
+
+    test('getConversation should throw \'¡Ups! Algo salió mal\' when the backend responds with an error status', async () => {
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false }))
+        const service = new ChatService(new ChatRepository())
+
+        await expect(service.getConversation('Marina')).rejects.toThrow('¡Ups! Algo salió mal')
+    })
+
 })
