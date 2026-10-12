@@ -14,4 +14,9 @@ export default class ProgressService {
         return ProgressModel.create(dto, progressMapper)
     }
 
+    async accumulateTime(timeData) {
+        const dto = await this.#repo.accumulateTime(timeData)
+        return ProgressModel.create(dto, progressMapper)
+    }
+
 }
