@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useAuthStore } from "@/stores/auth";
 
 export default class BaseRepository {
 
@@ -51,6 +52,16 @@ export default class BaseRepository {
         } catch (error) {
             throw new Error("¡Ups! Algo salió mal")
         }
+    }
+
+    async authGet(path) {
+        const authStore = useAuthStore()
+
+        const response = await fetch(`${this.uri}${path}`, {
+            headers: { Authorization: `Bearer ${authStore.token}` },
+        })
+
+        return await response.json()
     }
 
 }
