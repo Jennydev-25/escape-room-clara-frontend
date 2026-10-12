@@ -1,9 +1,21 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import LoadingScreen from '@/shared/LoadingScreen.vue'
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
+const route = useRoute()
+const router = useRouter()
 
 const isLoading = ref(true)
 const progress = ref(0)
+
+watch(() => authStore.isAuthenticated, (isAuthenticated) => {
+    if (!isAuthenticated && route.meta.requiresAuth) {
+        router.push({ name: 'home' })
+    }
+})
 
 function waitForWindowLoad() {
     if (document.readyState === 'complete') return Promise.resolve()
