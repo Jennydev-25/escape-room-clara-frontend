@@ -30,4 +30,8 @@ export default class AuthRepository extends BaseRepository {
         }
     }
 
+    async refresh(refreshData) {
+        return this.post('/auth/refresh', refreshData)
+    }
+
 }
