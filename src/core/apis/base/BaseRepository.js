@@ -98,6 +98,10 @@ export default class BaseRepository {
                 throw new Error('Error en la respuesta');
             }
 
+            if (response.status === 204) {
+                return null
+            }
+
             return await response.json()
         } catch (error) {
             throw new Error("¡Ups! Algo salió mal")
