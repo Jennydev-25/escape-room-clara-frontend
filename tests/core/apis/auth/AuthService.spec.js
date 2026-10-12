@@ -33,6 +33,14 @@ describe('Integration - Auth Service', () => {
         await expect(service.refresh({ refreshToken: 'refresh-token' })).rejects.toThrow('¡Ups! Algo salió mal')
     })
 
+    test('logout should throw \'¡Ups! Algo salió mal\' when the uri is invalid', async () => {
+        const repository = new AuthRepository()
+        repository.uri = ''
+        const service = new AuthService(repository)
+
+        await expect(service.logout({ refreshToken: 'refresh-token' })).rejects.toThrow('¡Ups! Algo salió mal')
+    })
+
 })
 
 describe('Unit - Auth Service', () => {
@@ -80,6 +88,22 @@ describe('Unit - Auth Service', () => {
         expect(received).toEqual({ refreshToken: 'refresh-token' })
         expect(login.getToken()).toBe('new-jwt-token')
         expect(login.getRefreshToken()).toBe('new-refresh-token')
+    })
+
+    test('logout should pass the refresh token to the repository and map the response to a LogoutModel', async () => {
+        let received
+        const fakeRepository = {
+            logout: (logoutData) => {
+                received = logoutData
+                return Promise.resolve({ message: 'Sesión cerrada correctamente' })
+            }
+        }
+        const service = new AuthService(fakeRepository)
+
+        const logout = await service.logout({ refreshToken: 'refresh-token' })
+
+        expect(received).toEqual({ refreshToken: 'refresh-token' })
+        expect(logout.getMessage()).toBe('Sesión cerrada correctamente')
     })
 
 })
