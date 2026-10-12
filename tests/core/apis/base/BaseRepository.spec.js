@@ -1,11 +1,14 @@
 import BaseRepository from "@/core/apis/base/BaseRepository";
 import { describe, expect, test, vi, afterEach } from "vitest";
+import { createPinia, setActivePinia } from "pinia";
+import { useAuthStore } from "@/stores/auth";
 
 describe('BaseRepository', () => {
 
     afterEach(() => {
         vi.unstubAllGlobals()
         vi.restoreAllMocks()
+        localStorage.clear()
     })
 
     test('get should throw \'¡Ups! Algo salió mal\' when the uri is invalid', async () => {
@@ -64,6 +67,24 @@ describe('BaseRepository', () => {
 
         const data = await repository.post('/test', {})
 
+        expect(data).toEqual({ message: 'ok' })
+    })
+
+    test('authGet should send the stored token as a Bearer header and return the response data', async () => {
+        setActivePinia(createPinia())
+        useAuthStore().setSession('jwt-token', 'refresh-token')
+        const fetchMock = vi.fn().mockResolvedValue({
+            ok: true,
+            json: () => Promise.resolve({ message: 'ok' }),
+        })
+        vi.stubGlobal('fetch', fetchMock)
+        const repository = new BaseRepository('http://localhost:8080/api/v1')
+
+        const data = await repository.authGet('/progress')
+
+        expect(fetchMock).toHaveBeenCalledWith('http://localhost:8080/api/v1/progress', {
+            headers: { Authorization: 'Bearer jwt-token' },
+        })
         expect(data).toEqual({ message: 'ok' })
     })
 
