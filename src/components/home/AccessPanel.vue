@@ -1,9 +1,7 @@
 <script setup>
-import { ref } from 'vue'
+import { inject, ref } from 'vue'
 import LoginForm from '@/components/auth/LoginForm.vue'
 import RegisterForm from '@/components/auth/RegisterForm.vue'
-import AuthRepository from '@/core/apis/auth/AuthRepository'
-import AuthService from '@/core/apis/auth/AuthService'
 import { useAuthStore } from '@/stores/auth'
 
 const open = defineModel('open', { type: Boolean, default: false })
@@ -16,7 +14,7 @@ const registerEmail = ref('')
 const registerPassword = ref('')
 const registerConfirmPassword = ref('')
 
-const authService = new AuthService(new AuthRepository())
+const authService = inject('AuthService')
 const authStore = useAuthStore()
 const status = ref(null)
 

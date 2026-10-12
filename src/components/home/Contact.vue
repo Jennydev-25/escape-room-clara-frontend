@@ -1,9 +1,7 @@
 <script setup>
-import { onMounted, onUnmounted, ref, useTemplateRef } from 'vue'
+import { inject, onMounted, onUnmounted, ref, useTemplateRef } from 'vue'
 import { gsap } from 'gsap'
 import ContactForm from '@/components/home/ContactForm.vue'
-import ContactRepository from '@/core/apis/contact/ContactRepository'
-import ContactService from '@/core/apis/contact/ContactService'
 import BaseButton from '@/shared/BaseButton.vue'
 
 const contactSection = useTemplateRef('contactSection')
@@ -16,7 +14,7 @@ const email = ref('')
 const type = ref('')
 const message = ref('')
 
-const contactService = new ContactService(new ContactRepository())
+const contactService = inject('ContactService')
 const contactStatus = ref(null)
 
 let closeTimeout = null

@@ -4,12 +4,7 @@ import Contact from '@/components/home/Contact.vue'
 import ContactForm from '@/components/home/ContactForm.vue'
 
 const send = vi.fn().mockResolvedValue({ getMessage: () => 'Mensaje enviado correctamente' })
-
-vi.mock('@/core/apis/contact/ContactService', () => ({
-    default: class {
-        send = send
-    },
-}))
+const withContactService = { global: { provide: { ContactService: { send } } } }
 
 vi.mock('@/composables/useRecaptcha', () => ({
     useRecaptcha: () => ({
@@ -31,7 +26,7 @@ describe('Contact', () => {
     })
 
     it('sends the contact form data with the recaptcha token on submit', async () => {
-        const wrapper = mount(Contact)
+        const wrapper = mount(Contact, withContactService)
 
         await wrapper.find('.contact__cta').trigger('click')
 
@@ -53,7 +48,7 @@ describe('Contact', () => {
 
     it('shows an error message when the send request fails', async () => {
         send.mockRejectedValueOnce(new Error('¡Ups! Algo salió mal'))
-        const wrapper = mount(Contact)
+        const wrapper = mount(Contact, withContactService)
         await wrapper.find('.contact__cta').trigger('click')
 
         await wrapper.findComponent(ContactForm).vm.$emit('submit', { recaptchaToken: 'mocked-token' })
@@ -64,7 +59,7 @@ describe('Contact', () => {
 
     it('resets and closes the form 3 seconds after a successful submit', async () => {
         vi.useFakeTimers({ shouldAdvanceTime: true })
-        const wrapper = mount(Contact)
+        const wrapper = mount(Contact, withContactService)
         await wrapper.find('.contact__cta').trigger('click')
 
         await wrapper.findComponent(ContactForm).vm.$emit('submit', { recaptchaToken: 'mocked-token' })
@@ -79,7 +74,7 @@ describe('Contact', () => {
     })
 
     it('clears the pending timers and the scroll trigger on unmount', () => {
-        const wrapper = mount(Contact)
+        const wrapper = mount(Contact, withContactService)
 
         expect(() => wrapper.unmount()).not.toThrow()
     })
@@ -93,7 +88,7 @@ describe('Contact', () => {
             removeEventListener: vi.fn(),
         }))
 
-        expect(() => mount(Contact)).not.toThrow()
+        expect(() => mount(Contact, withContactService)).not.toThrow()
 
         window.matchMedia = originalMatchMedia
     })
