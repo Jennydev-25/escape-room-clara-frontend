@@ -186,4 +186,33 @@ describe('BaseRepository', () => {
         expect(data).toBeNull()
     })
 
+    test('authGet should refresh the session and retry the request when the token has expired', async () => {
+        setActivePinia(createPinia())
+        useAuthStore().setSession('expired-token', 'refresh-token')
+        const fetchMock = vi.fn()
+            .mockResolvedValueOnce({ ok: false, status: 401 })
+            .mockResolvedValueOnce({
+                ok: true,
+                json: () => Promise.resolve({ token: 'new-token', refreshToken: 'new-refresh-token' }),
+            })
+            .mockResolvedValueOnce({
+                ok: true,
+                json: () => Promise.resolve({ message: 'ok' }),
+            })
+        vi.stubGlobal('fetch', fetchMock)
+        const repository = new BaseRepository('http://localhost:8080/api/v1')
+
+        const data = await repository.authGet('/progress')
+
+        expect(fetchMock).toHaveBeenNthCalledWith(2, 'http://localhost:8080/api/v1/auth/refresh', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refreshToken: 'refresh-token' }),
+        })
+        expect(fetchMock).toHaveBeenNthCalledWith(3, 'http://localhost:8080/api/v1/progress', {
+            headers: { Authorization: 'Bearer new-token' },
+        })
+        expect(data).toEqual({ message: 'ok' })
+    })
+
 })
