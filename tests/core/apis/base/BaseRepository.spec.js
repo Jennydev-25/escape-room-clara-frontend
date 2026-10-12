@@ -70,6 +70,13 @@ describe('BaseRepository', () => {
         expect(data).toEqual({ message: 'ok' })
     })
 
+    test('post should throw \'¡Ups! Algo salió mal\' when the backend responds with an error status', async () => {
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false }))
+        const repository = new BaseRepository('http://localhost:8080/api/v1')
+
+        await expect(repository.post('/test', {})).rejects.toThrow('¡Ups! Algo salió mal')
+    })
+
     test('authGet should send the stored token as a Bearer header and return the response data', async () => {
         setActivePinia(createPinia())
         useAuthStore().setSession('jwt-token', 'refresh-token')
