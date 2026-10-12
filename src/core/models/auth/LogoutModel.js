@@ -8,4 +8,10 @@ export default class LogoutModel {
         return this.message
     }
 
+    static create(dto, mapper) {
+        return new LogoutModel(
+            mapper.message(dto)
+        )
+    }
+
 }
