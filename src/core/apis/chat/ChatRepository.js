@@ -10,4 +10,8 @@ export default class ChatRepository extends BaseRepository {
         return this.authGet('/chat')
     }
 
+    async getConversation(contact) {
+        return this.authGet(`/chat/${contact}`)
+    }
+
 }
