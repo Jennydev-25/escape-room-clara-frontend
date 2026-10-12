@@ -1,6 +1,7 @@
+import FileViewer from '@/components/game/FileViewer.vue'
 import FolderWindow from '@/components/game/FolderWindow.vue'
 import { flushPromises, mount } from '@vue/test-utils'
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 const puzzle = (id) => ({ getId: () => id })
 const puzzleWithFiles = (...files) => ({ getFiles: () => files })
@@ -8,10 +9,19 @@ const getFolder = vi.fn()
 const getPuzzle = vi.fn()
 const mountFolderWindow = () => mount(FolderWindow, {
     props: { code: 'tomas' },
-    global: { provide: { FolderService: { getFolder }, PuzzleService: { getPuzzle } } },
+    global: { stubs: { FileViewer: true }, provide: { FolderService: { getFolder }, PuzzleService: { getPuzzle } } },
 })
 
+const withOneFile = () => {
+    getFolder.mockResolvedValue({ getName: () => 'Léeme', getPuzzles: () => [puzzle(1)] })
+    getPuzzle.mockResolvedValue(puzzleWithFiles('/leeme/leeme.txt'))
+}
+
 describe('FolderWindow', () => {
+
+    afterEach(() => {
+        delete window.matchMedia
+    })
 
     it('shows the folder name as the title and a button for each file with its original name', async () => {
         getFolder.mockResolvedValue({ getName: () => 'Tomás', getPuzzles: () => [puzzle(2), puzzle(3)] })
@@ -29,6 +39,58 @@ describe('FolderWindow', () => {
             'libreta_tomas.png',
             'conciliacion_proveedores_2002-2005.pdf',
         ])
+    })
+
+    it('opens the file viewer when a file is double clicked', async () => {
+        withOneFile()
+        const wrapper = mountFolderWindow()
+        await flushPromises()
+
+        await wrapper.get('li button').trigger('dblclick')
+
+        expect(wrapper.findComponent(FileViewer).props('path')).toBe('/leeme/leeme.txt')
+    })
+
+    it('does not open the file with a single mouse click', async () => {
+        withOneFile()
+        const wrapper = mountFolderWindow()
+        await flushPromises()
+
+        await wrapper.get('li button').trigger('click', { detail: 1 })
+
+        expect(wrapper.findComponent(FileViewer).exists()).toBe(false)
+    })
+
+    it('opens the file when it is activated with the keyboard', async () => {
+        withOneFile()
+        const wrapper = mountFolderWindow()
+        await flushPromises()
+
+        await wrapper.get('li button').trigger('click', { detail: 0 })
+
+        expect(wrapper.findComponent(FileViewer).props('path')).toBe('/leeme/leeme.txt')
+    })
+
+    it('opens the file with a single tap on touch screens', async () => {
+        window.matchMedia = vi.fn().mockReturnValue({ matches: true })
+        withOneFile()
+        const wrapper = mountFolderWindow()
+        await flushPromises()
+
+        await wrapper.get('li button').trigger('click', { detail: 1 })
+
+        expect(wrapper.findComponent(FileViewer).props('path')).toBe('/leeme/leeme.txt')
+    })
+
+    it('closes the file viewer when it asks to be closed', async () => {
+        withOneFile()
+        const wrapper = mountFolderWindow()
+        await flushPromises()
+        await wrapper.get('li button').trigger('dblclick')
+
+        await wrapper.findComponent(FileViewer).vm.$emit('close')
+
+        expect(wrapper.findComponent(FileViewer).exists()).toBe(false)
     })
 
 })
