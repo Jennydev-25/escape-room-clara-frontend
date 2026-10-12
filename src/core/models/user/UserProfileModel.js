@@ -23,4 +23,13 @@ export default class UserProfileModel {
         return this.fullName
     }
 
+    static create(dto, mapper) {
+        return new UserProfileModel(
+            mapper.alias(dto),
+            mapper.email(dto),
+            mapper.avatarId(dto),
+            mapper.fullName(dto)
+        )
+    }
+
 }
