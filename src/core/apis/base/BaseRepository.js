@@ -80,6 +80,10 @@ export default class BaseRepository {
         return this.#authSend('PUT', path, body)
     }
 
+    async authPatch(path, body) {
+        return this.#authSend('PATCH', path, body)
+    }
+
     async #authSend(method, path, body) {
         const authStore = useAuthStore()
 
