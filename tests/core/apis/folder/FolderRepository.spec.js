@@ -10,4 +10,11 @@ describe('Integration - Folder Repository', () => {
         await expect(repository.listFolders()).rejects.toThrow('¡Ups! Algo salió mal')
     })
 
+    test('getFolder should throw \'¡Ups! Algo salió mal\' when the uri is invalid', async () => {
+        const repository = new FolderRepository()
+        repository.uri = ''
+
+        await expect(repository.getFolder('tomas')).rejects.toThrow('¡Ups! Algo salió mal')
+    })
+
 })
