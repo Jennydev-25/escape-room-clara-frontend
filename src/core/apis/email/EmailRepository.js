@@ -10,4 +10,8 @@ export default class EmailRepository extends BaseRepository {
         return this.authGet('/emails')
     }
 
+    async getEmail(id) {
+        return this.authGet(`/emails/${id}`)
+    }
+
 }
