@@ -1,4 +1,6 @@
-import { vi } from "vitest";
+import { afterEach, beforeEach, vi } from "vitest";
+import { enableAutoUnmount } from "@vue/test-utils";
+import { createPinia, setActivePinia } from "pinia";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -18,3 +20,10 @@ Object.defineProperty(window, "matchMedia", {
 })
 
 gsap.registerPlugin(ScrollTrigger)
+
+beforeEach(() => {
+    localStorage.clear()
+    setActivePinia(createPinia())
+})
+
+enableAutoUnmount(afterEach)

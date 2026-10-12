@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import router from '@/router'
+import { useAuthStore } from '@/stores/auth'
 import DashboardSidebar from '@/shared/dashboard/DashboardSidebar.vue'
 
 describe('DashboardSidebar', () => {
@@ -52,6 +53,7 @@ describe('DashboardSidebar', () => {
         ['/resumen', 'Resumen'],
         ['/perfil', 'Mi perfil'],
     ])('marks the link to %s as the current page via aria-current', async (path, linkText) => {
+        useAuthStore().setSession('jwt-token', 'refresh-token')
         await router.push(path)
 
         const wrapper = mount(DashboardSidebar, {
