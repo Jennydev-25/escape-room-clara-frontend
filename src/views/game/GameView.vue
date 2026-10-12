@@ -1,9 +1,20 @@
 <script setup>
-import { Maximize } from '@lucide/vue'
+import { Maximize, Minimize } from '@lucide/vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import wallpaper from '@/assets/images/game/desktop/wallpaper.webp'
 
 // el navegador decide si deja pantalla completa (en iPhone no)
 const canFullscreen = document.fullscreenEnabled === true
+
+// se actualiza también al salir con Esc, no solo con el botón
+const isFullscreen = ref(Boolean(document.fullscreenElement))
+
+function syncFullscreen() {
+    isFullscreen.value = Boolean(document.fullscreenElement)
+}
+
+onMounted(() => document.addEventListener('fullscreenchange', syncFullscreen))
+onUnmounted(() => document.removeEventListener('fullscreenchange', syncFullscreen))
 
 // entra o sale de pantalla completa según el estado actual
 function toggleFullscreen() {
@@ -28,11 +39,12 @@ function toggleFullscreen() {
             <button
                 v-if="canFullscreen"
                 type="button"
-                aria-label="Pantalla completa"
+                :aria-label="isFullscreen ? 'Salir de pantalla completa' : 'Pantalla completa'"
                 @click="toggleFullscreen"
                 class="ml-auto hidden size-7 shrink-0 items-center justify-center rounded-lg text-primary transition-colors hover:bg-surface-container-high focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:flex"
             >
-                <Maximize class="size-4" aria-hidden="true" />
+                <Minimize v-if="isFullscreen" class="size-4" aria-hidden="true" />
+                <Maximize v-else class="size-4" aria-hidden="true" />
             </button>
         </footer>
     </main>
