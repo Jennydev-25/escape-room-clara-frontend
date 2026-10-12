@@ -14,4 +14,9 @@ export default class UserService {
         return UserProfileModel.create(dto, userProfileMapper)
     }
 
+    async completeProfile(profileData) {
+        const dto = await this.#repo.completeProfile(profileData)
+        return UserProfileModel.create(dto, userProfileMapper)
+    }
+
 }
