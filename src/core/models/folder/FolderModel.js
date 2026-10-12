@@ -1,3 +1,6 @@
+import { puzzleSummaryMapper } from "@/core/mappers/puzzle/puzzle-summary-mapper";
+import PuzzleSummaryModel from "@/core/models/puzzle/PuzzleSummaryModel";
+
 export default class FolderModel {
 
     constructor(code, name, puzzles) {
@@ -22,7 +25,7 @@ export default class FolderModel {
         return new FolderModel(
             mapper.code(dto),
             mapper.name(dto),
-            mapper.puzzles(dto)
+            mapper.puzzles(dto).map((puzzle) => PuzzleSummaryModel.create(puzzle, puzzleSummaryMapper))
         )
     }
 
