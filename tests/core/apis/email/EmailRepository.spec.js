@@ -10,4 +10,11 @@ describe('Integration - Email Repository', () => {
         await expect(repository.listInbox()).rejects.toThrow('¡Ups! Algo salió mal')
     })
 
+    test('getEmail should throw \'¡Ups! Algo salió mal\' when the uri is invalid', async () => {
+        const repository = new EmailRepository()
+        repository.uri = ''
+
+        await expect(repository.getEmail(1)).rejects.toThrow('¡Ups! Algo salió mal')
+    })
+
 })
