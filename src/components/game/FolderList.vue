@@ -6,14 +6,28 @@ import { useSeenStore } from '@/stores/seen'
 const folderService = inject('FolderService')
 const seenStore = useSeenStore()
 const folders = ref([])
+const puzzlesByFolder = ref({})
 
 onMounted(async () => {
     folders.value = await folderService.listFolders()
+    const details = await Promise.all(folders.value.map((folder) => folderService.getFolder(folder.getCode())))
+    folders.value.forEach((folder, index) => {
+        puzzlesByFolder.value[folder.getCode()] = details[index].getPuzzles()
+    })
 })
 
-// una carpeta es nueva hasta que se abre por primera vez
+const puzzlesOf = (folder) => puzzlesByFolder.value[folder.getCode()] ?? []
+
+// verde: carpeta que nunca se ha abierto
 const isNew = (folder) => !seenStore.isSeen(`folder:${folder.getCode()}`)
-const open = (folder) => seenStore.markSeen(`folder:${folder.getCode()}`)
+
+// amarillo: carpeta ya abierta a la que le han llegado archivos nuevos
+const hasNewFiles = (folder) => !isNew(folder) && puzzlesOf(folder).some((puzzle) => !seenStore.isSeen(`known:${puzzle.getId()}`))
+
+function open(folder) {
+    seenStore.markSeen(`folder:${folder.getCode()}`)
+    puzzlesOf(folder).forEach((puzzle) => seenStore.markSeen(`known:${puzzle.getId()}`))
+}
 </script>
 
 <template>
@@ -26,13 +40,14 @@ const open = (folder) => seenStore.markSeen(`folder:${folder.getCode()}`)
             >
                 <span class="relative">
                     <Folder class="size-12 fill-os-folder/25 text-os-folder sm:size-14" aria-hidden="true" />
-                    <span v-if="isNew(folder)" class="absolute top-4 right-2 flex size-3" aria-hidden="true">
-                        <span class="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-75 motion-reduce:animate-none"></span>
-                        <span class="relative inline-flex size-3 rounded-full bg-primary"></span>
+                    <span v-if="isNew(folder) || hasNewFiles(folder)" class="absolute top-4 right-2 flex size-3" aria-hidden="true">
+                        <span class="absolute inline-flex size-full animate-ping rounded-full opacity-75 motion-reduce:animate-none" :class="isNew(folder) ? 'bg-primary' : 'bg-os-clue'"></span>
+                        <span class="relative inline-flex size-3 rounded-full" :class="isNew(folder) ? 'bg-primary' : 'bg-os-clue'"></span>
                     </span>
                 </span>
                 <span class="wrap-anywhere">{{ folder.getName() }}</span>
                 <span v-if="isNew(folder)" class="sr-only">, con contenido nuevo</span>
+                <span v-else-if="hasNewFiles(folder)" class="sr-only">, con archivos nuevos</span>
             </button>
         </li>
     </ul>
