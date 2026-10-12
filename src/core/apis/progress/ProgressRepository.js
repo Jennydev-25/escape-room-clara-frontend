@@ -10,4 +10,8 @@ export default class ProgressRepository extends BaseRepository {
         return this.authGet('/progress')
     }
 
+    async accumulateTime(timeData) {
+        return this.authPatch('/progress/time', timeData)
+    }
+
 }
