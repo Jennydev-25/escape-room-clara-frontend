@@ -12,6 +12,14 @@ describe('Integration - Email Service', () => {
         await expect(service.listInbox()).rejects.toThrow('¡Ups! Algo salió mal')
     })
 
+    test('getEmail should throw \'¡Ups! Algo salió mal\' when the uri is invalid', async () => {
+        const repository = new EmailRepository()
+        repository.uri = ''
+        const service = new EmailService(repository)
+
+        await expect(service.getEmail(1)).rejects.toThrow('¡Ups! Algo salió mal')
+    })
+
 })
 
 describe('Unit - Email Service', () => {
@@ -31,6 +39,30 @@ describe('Unit - Email Service', () => {
         expect(emails[0].getSender()).toBe('Marina Ortiz')
         expect(emails[0].isRead()).toBe(false)
         expect(emails[1].isRead()).toBe(true)
+    })
+
+    test('getEmail should ask for the email id and map the response to an EmailDetailModel', async () => {
+        let receivedId
+        const fakeRepository = {
+            getEmail: (id) => {
+                receivedId = id
+                return Promise.resolve({
+                    id: 1,
+                    sender: 'Marina Ortiz',
+                    recipient: 'Clara Vega',
+                    subject: 'Lo de esta noche',
+                    sentDate: '2025-06-03',
+                    body: 'Clara, ¿vienes luego a la despedida de Fermín?'
+                })
+            }
+        }
+        const service = new EmailService(fakeRepository)
+
+        const email = await service.getEmail(1)
+
+        expect(receivedId).toBe(1)
+        expect(email.getRecipient()).toBe('Clara Vega')
+        expect(email.getBody()).toBe('Clara, ¿vienes luego a la despedida de Fermín?')
     })
 
 })
