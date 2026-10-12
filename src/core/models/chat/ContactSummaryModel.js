@@ -18,4 +18,12 @@ export default class ContactSummaryModel {
         return this.unread
     }
 
+    static create(dto, mapper) {
+        return new ContactSummaryModel(
+            mapper.contact(dto),
+            mapper.lastMessage(dto),
+            mapper.unread(dto)
+        )
+    }
+
 }
