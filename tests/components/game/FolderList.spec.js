@@ -2,7 +2,7 @@ import FolderList from '@/components/game/FolderList.vue'
 import FolderWindow from '@/components/game/FolderWindow.vue'
 import { flushPromises, mount } from '@vue/test-utils'
 import { createPinia } from 'pinia'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 const listFolders = vi.fn()
 const getFolder = vi.fn()
@@ -18,6 +18,10 @@ describe('FolderList', () => {
         getFolder.mockReset()
         getFolder.mockResolvedValue(folderWithPuzzles())
         localStorage.clear()
+    })
+
+    afterEach(() => {
+        delete window.matchMedia
     })
 
     it('shows a button for each folder returned by the service', async () => {
@@ -118,6 +122,38 @@ describe('FolderList', () => {
         await wrapper.findComponent(FolderWindow).vm.$emit('close')
 
         expect(wrapper.findComponent(FolderWindow).exists()).toBe(false)
+    })
+
+    it('does not open a folder with a single mouse click', async () => {
+        listFolders.mockResolvedValue([folder('tomas', 'Tomás')])
+        const wrapper = mountFolderList()
+        await flushPromises()
+
+        await wrapper.get('button').trigger('click', { detail: 1 })
+
+        expect(wrapper.findComponent(FolderWindow).exists()).toBe(false)
+        expect(localStorage.getItem('seen')).toBeNull()
+    })
+
+    it('opens a folder with a double click', async () => {
+        listFolders.mockResolvedValue([folder('tomas', 'Tomás')])
+        const wrapper = mountFolderList()
+        await flushPromises()
+
+        await wrapper.get('button').trigger('dblclick')
+
+        expect(wrapper.findComponent(FolderWindow).props('code')).toBe('tomas')
+    })
+
+    it('opens a folder with a single tap on touch screens', async () => {
+        window.matchMedia = vi.fn().mockReturnValue({ matches: true })
+        listFolders.mockResolvedValue([folder('tomas', 'Tomás')])
+        const wrapper = mountFolderList()
+        await flushPromises()
+
+        await wrapper.get('button').trigger('click', { detail: 1 })
+
+        expect(wrapper.findComponent(FolderWindow).props('code')).toBe('tomas')
     })
 
 })
