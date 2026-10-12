@@ -38,4 +38,16 @@ export default class ChatMessageModel {
         return this.read
     }
 
+    static create(dto, mapper) {
+        return new ChatMessageModel(
+            mapper.id(dto),
+            mapper.contact(dto),
+            mapper.character(dto),
+            mapper.content(dto),
+            mapper.sentAt(dto),
+            mapper.displayOrder(dto),
+            mapper.read(dto)
+        )
+    }
+
 }
