@@ -117,21 +117,34 @@ export default class BaseRepository {
             return response
         }
 
-        await this.#refreshSession()
+        if (!await this.#refreshSession()) {
+            return response
+        }
+
         return send()
     }
 
     async #refreshSession() {
         const authStore = useAuthStore()
 
-        const response = await fetch(`${this.uri}/auth/refresh`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ refreshToken: authStore.refreshToken }),
-        })
-        const data = await response.json()
+        try {
+            const response = await fetch(`${this.uri}/auth/refresh`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ refreshToken: authStore.refreshToken }),
+            })
 
-        authStore.setSession(data.token, data.refreshToken)
+            if (!response.ok) {
+                throw new Error('Error en la respuesta');
+            }
+
+            const data = await response.json()
+            authStore.setSession(data.token, data.refreshToken)
+            return true
+        } catch (error) {
+            authStore.logout()
+            return false
+        }
     }
 
 }
