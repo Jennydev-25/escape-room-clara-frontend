@@ -30,4 +30,12 @@ export default class AuthRepository extends BaseRepository {
         }
     }
 
+    async refresh(refreshData) {
+        return this.post('/auth/refresh', refreshData)
+    }
+
+    async logout(logoutData) {
+        return this.authPost('/auth/logout', logoutData)
+    }
+
 }
