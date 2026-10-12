@@ -55,12 +55,8 @@ export default class BaseRepository {
     }
 
     async authGet(path) {
-        const authStore = useAuthStore()
-
         try {
-            const response = await fetch(`${this.uri}${path}`, {
-                headers: { Authorization: `Bearer ${authStore.token}` },
-            })
+            const response = await this.#authFetch(path)
 
             if (!response.ok) {
                 throw new Error('Error en la respuesta');
@@ -106,6 +102,36 @@ export default class BaseRepository {
         } catch (error) {
             throw new Error("¡Ups! Algo salió mal")
         }
+    }
+
+    async #authFetch(path, options = {}) {
+        const authStore = useAuthStore()
+        const send = () => fetch(`${this.uri}${path}`, {
+            ...options,
+            headers: { ...options.headers, Authorization: `Bearer ${authStore.token}` },
+        })
+
+        const response = await send()
+
+        if (response.status !== 401) {
+            return response
+        }
+
+        await this.#refreshSession()
+        return send()
+    }
+
+    async #refreshSession() {
+        const authStore = useAuthStore()
+
+        const response = await fetch(`${this.uri}/auth/refresh`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refreshToken: authStore.refreshToken }),
+        })
+        const data = await response.json()
+
+        authStore.setSession(data.token, data.refreshToken)
     }
 
 }
