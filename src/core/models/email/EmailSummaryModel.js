@@ -28,4 +28,14 @@ export default class EmailSummaryModel {
         return this.read
     }
 
+    static create(dto, mapper) {
+        return new EmailSummaryModel(
+            mapper.id(dto),
+            mapper.sender(dto),
+            mapper.subject(dto),
+            mapper.sentDate(dto),
+            mapper.read(dto)
+        )
+    }
+
 }
