@@ -32,6 +32,12 @@ const isNew = (folder) => !seenStore.isSeen(`folder:${folder.getCode()}`)
 // amarillo: carpeta ya abierta a la que le han llegado archivos nuevos
 const hasNewFiles = (folder) => !isNew(folder) && puzzlesOf(folder).some((puzzle) => !seenStore.isSeen(`known:${puzzle.getId()}`))
 
+// teclado (detail 0) o pantalla táctil abren con un solo gesto; el ratón, con doble clic
+const isTouch = () => window.matchMedia?.('(pointer: coarse)').matches
+function onClick(event, folder) {
+    if (event.detail === 0 || isTouch()) open(folder)
+}
+
 function open(folder) {
     openCode.value = folder.getCode()
     seenStore.markSeen(`folder:${folder.getCode()}`)
@@ -49,7 +55,8 @@ function open(folder) {
                 <button
                     type="button"
                     class="flex w-16 flex-col items-center gap-1 rounded-2xl p-2 text-center text-xs font-medium tracking-wide text-on-surface uppercase transition-colors hover:bg-surface-container/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-20"
-                    @click="open(folder)"
+                    @click="onClick($event, folder)"
+                    @dblclick="open(folder)"
                 >
                     <span class="relative">
                         <Folder class="size-9 fill-os-folder/25 text-os-folder sm:size-10" aria-hidden="true" />
