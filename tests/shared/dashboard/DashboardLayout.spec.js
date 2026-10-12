@@ -75,4 +75,30 @@ describe('DashboardLayout', () => {
         expect(authStore.token).toBeNull()
     })
 
+    it('still logs out and redirects to home when the backend cannot revoke the token', async () => {
+        const pinia = createPinia()
+        setActivePinia(pinia)
+        const authStore = useAuthStore()
+        authStore.setSession('jwt-token', 'refresh-token')
+        const authService = { logout: vi.fn().mockRejectedValue(new Error('¡Ups! Algo salió mal')) }
+        await router.push('/perfil')
+        const pushSpy = vi.spyOn(router, 'push')
+
+        const wrapper = mount(DashboardLayout, {
+            global: { plugins: [router, pinia], provide: { AuthService: authService } },
+            props: { playerAlias: 'marta_v' },
+        })
+
+        await wrapper
+            .findAll('button')
+            .find((button) => button.text().includes('Cerrar sesión'))
+            .trigger('click')
+        await flushPromises()
+
+        expect(authStore.token).toBeNull()
+        expect(pushSpy).toHaveBeenCalledWith('/')
+
+        pushSpy.mockRestore()
+    })
+
 })
