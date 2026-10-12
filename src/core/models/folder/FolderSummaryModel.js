@@ -13,4 +13,11 @@ export default class FolderSummaryModel {
         return this.name
     }
 
+    static create(dto, mapper) {
+        return new FolderSummaryModel(
+            mapper.code(dto),
+            mapper.name(dto)
+        )
+    }
+
 }
