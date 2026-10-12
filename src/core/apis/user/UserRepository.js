@@ -10,4 +10,8 @@ export default class UserRepository extends BaseRepository {
         return this.authGet('/users/me')
     }
 
+    async completeProfile(profileData) {
+        return this.authPut('/users/me/complete-profile', profileData)
+    }
+
 }
