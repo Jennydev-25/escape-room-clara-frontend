@@ -30,6 +30,14 @@ describe('Integration - Progress Service', () => {
         await expect(service.accumulateTime({ secondsToAdd: 30 })).rejects.toThrow('¡Ups! Algo salió mal')
     })
 
+    test('updateNote should throw \'¡Ups! Algo salió mal\' when the uri is invalid', async () => {
+        const repository = new ProgressRepository()
+        repository.uri = ''
+        const service = new ProgressService(repository)
+
+        await expect(service.updateNote({ freeNote: 'Mi nota' })).rejects.toThrow('¡Ups! Algo salió mal')
+    })
+
 })
 
 describe('Unit - Progress Service', () => {
@@ -61,6 +69,22 @@ describe('Unit - Progress Service', () => {
 
         expect(receivedData).toEqual({ secondsToAdd: 30 })
         expect(progress.getTimeSpentSeconds()).toBe(150)
+    })
+
+    test('updateNote should send the note data and map the response to a ProgressModel', async () => {
+        let receivedData
+        const fakeRepository = {
+            updateNote: (noteData) => {
+                receivedData = noteData
+                return Promise.resolve({ ...progressDto, freeNote: 'Nueva nota' })
+            }
+        }
+        const service = new ProgressService(fakeRepository)
+
+        const progress = await service.updateNote({ freeNote: 'Nueva nota' })
+
+        expect(receivedData).toEqual({ freeNote: 'Nueva nota' })
+        expect(progress.getFreeNote()).toBe('Nueva nota')
     })
 
 })
