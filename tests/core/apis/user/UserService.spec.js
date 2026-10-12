@@ -73,6 +73,31 @@ describe('Integration - User Service', () => {
         expect(profile.getFullName()).toBe('Clara Vega')
     })
 
+    test('changePassword should send the passwords to the backend and resolve with no content', async () => {
+        const passwordData = { currentPassword: 'Secret123', newPassword: 'Secret456', newPasswordConfirmation: 'Secret456' }
+        const fetchMock = vi.fn().mockResolvedValue({
+            ok: true,
+            status: 204,
+            json: () => Promise.reject(new SyntaxError('Unexpected end of JSON input'))
+        })
+        vi.stubGlobal('fetch', fetchMock)
+        const service = new UserService(new UserRepository())
+
+        const result = await service.changePassword(passwordData)
+
+        expect(fetchMock.mock.calls[0][0]).toContain('/users/me/password')
+        expect(fetchMock.mock.calls[0][1].method).toBe('PUT')
+        expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual(passwordData)
+        expect(result).toBeUndefined()
+    })
+
+    test('changePassword should throw \'¡Ups! Algo salió mal\' when the backend responds with an error status', async () => {
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false }))
+        const service = new UserService(new UserRepository())
+
+        await expect(service.changePassword({})).rejects.toThrow('¡Ups! Algo salió mal')
+    })
+
 })
 
 describe('Unit - User Service', () => {
@@ -114,6 +139,17 @@ describe('Unit - User Service', () => {
         expect(spy).toHaveBeenCalledWith(profileData)
         expect(profile.getEmail()).toBe('clara.vega@example.com')
         expect(profile.getAvatarId()).toBe(3)
+    })
+
+    test('changePassword should pass the passwords to the repository as they are', async () => {
+        const repository = new UserRepository()
+        const service = new UserService(repository)
+        const passwordData = { currentPassword: 'Secret123', newPassword: 'Secret456', newPasswordConfirmation: 'Secret456' }
+        const spy = vi.spyOn(repository, 'changePassword').mockResolvedValue(null)
+
+        await service.changePassword(passwordData)
+
+        expect(spy).toHaveBeenCalledWith(passwordData)
     })
 
 })
