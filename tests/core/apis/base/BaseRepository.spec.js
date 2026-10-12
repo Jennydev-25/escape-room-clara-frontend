@@ -215,4 +215,18 @@ describe('BaseRepository', () => {
         expect(data).toEqual({ message: 'ok' })
     })
 
+    test('authGet should log out and throw \'¡Ups! Algo salió mal\' when the session cannot be refreshed', async () => {
+        setActivePinia(createPinia())
+        const authStore = useAuthStore()
+        authStore.setSession('expired-token', 'expired-refresh-token')
+        const fetchMock = vi.fn().mockResolvedValue({ ok: false, status: 401 })
+        vi.stubGlobal('fetch', fetchMock)
+        const repository = new BaseRepository('http://localhost:8080/api/v1')
+
+        await expect(repository.authGet('/progress')).rejects.toThrow('¡Ups! Algo salió mal')
+
+        expect(authStore.isAuthenticated).toBe(false)
+        expect(fetchMock).toHaveBeenCalledTimes(2)
+    })
+
 })
