@@ -21,7 +21,11 @@ describe('FolderList', () => {
         const wrapper = mountFolderList()
         await flushPromises()
 
-        expect(wrapper.findAll('button').map((button) => button.text())).toEqual(['Tomás', 'Fraude'])
+        const buttons = wrapper.findAll('button')
+
+        expect(buttons).toHaveLength(2)
+        expect(buttons[0].text()).toContain('Tomás')
+        expect(buttons[1].text()).toContain('Fraude')
     })
 
     it('marks as new only the folders that have not been opened yet', async () => {

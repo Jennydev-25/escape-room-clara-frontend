@@ -1,9 +1,10 @@
 import GameView from '@/views/game/GameView.vue'
 import { flushPromises, mount } from '@vue/test-utils'
+import { createPinia } from 'pinia'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 const listFolders = vi.fn().mockResolvedValue([{ getCode: () => 'tomas', getName: () => 'Tomás' }])
-const mountGameView = () => mount(GameView, { global: { provide: { FolderService: { listFolders } } } })
+const mountGameView = () => mount(GameView, { global: { plugins: [createPinia()], provide: { FolderService: { listFolders } } } })
 
 const supportFullscreen = () => Object.defineProperty(document, 'fullscreenEnabled', { value: true, configurable: true })
 const enterFullscreen = () => Object.defineProperty(document, 'fullscreenElement', { value: document.documentElement, configurable: true })
