@@ -1,5 +1,9 @@
 <script setup>
+import { Maximize } from '@lucide/vue'
 import wallpaper from '@/assets/images/game/desktop/wallpaper.webp'
+
+// el navegador decide si deja pantalla completa (en iPhone no)
+const canFullscreen = document.fullscreenEnabled === true
 </script>
 
 <template>
@@ -9,9 +13,17 @@ import wallpaper from '@/assets/images/game/desktop/wallpaper.webp'
 
         <h1 class="sr-only">Escritorio de ClaraOS</h1>
 
-        <footer class="relative mt-auto flex items-center gap-3 border-t border-outline bg-surface-container/90 px-4 py-3 backdrop-blur-sm sm:px-6">
+        <footer class="relative mt-auto flex items-center gap-3 border-t border-outline bg-surface-container/90 px-4 py-3 backdrop-blur-sm sm:px-6 md:py-2">
             <span class="size-2 shrink-0 animate-pulse rounded-full bg-primary motion-reduce:animate-none" aria-hidden="true"></span>
             <p class="min-w-0 truncate text-xs text-on-surface sm:text-sm"><span class="text-primary">ClaraOS</span> · Bienvenida de nuevo, Clara</p>
+            <button
+                v-if="canFullscreen"
+                type="button"
+                aria-label="Pantalla completa"
+                class="ml-auto hidden size-7 shrink-0 items-center justify-center rounded-lg text-primary transition-colors hover:bg-surface-container-high focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:flex"
+            >
+                <Maximize class="size-4" aria-hidden="true" />
+            </button>
         </footer>
     </main>
 </template>
