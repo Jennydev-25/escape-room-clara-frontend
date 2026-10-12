@@ -33,4 +33,15 @@ export default class PuzzleModel {
         return this.question
     }
 
+    static create(dto, mapper) {
+        return new PuzzleModel(
+            mapper.id(dto),
+            mapper.type(dto),
+            mapper.minChapter(dto),
+            mapper.displayOrder(dto),
+            mapper.files(dto),
+            mapper.question(dto)
+        )
+    }
+
 }
