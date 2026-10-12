@@ -1,5 +1,5 @@
 import GameView from '@/views/game/GameView.vue'
-import { mount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 describe('GameView', () => {
@@ -57,6 +57,29 @@ describe('GameView', () => {
         await wrapper.get('footer button').trigger('click')
 
         expect(document.exitFullscreen).toHaveBeenCalledOnce()
+    })
+
+    it('shows the exit label when the browser enters fullscreen', async () => {
+        Object.defineProperty(document, 'fullscreenEnabled', { value: true, configurable: true })
+        const wrapper = mount(GameView)
+
+        Object.defineProperty(document, 'fullscreenElement', { value: document.documentElement, configurable: true })
+        document.dispatchEvent(new Event('fullscreenchange'))
+        await flushPromises()
+
+        expect(wrapper.find('button[aria-label="Salir de pantalla completa"]').exists()).toBe(true)
+    })
+
+    it('shows the enter label again when the browser leaves fullscreen', async () => {
+        Object.defineProperty(document, 'fullscreenEnabled', { value: true, configurable: true })
+        Object.defineProperty(document, 'fullscreenElement', { value: document.documentElement, configurable: true })
+        const wrapper = mount(GameView)
+
+        delete document.fullscreenElement
+        document.dispatchEvent(new Event('fullscreenchange'))
+        await flushPromises()
+
+        expect(wrapper.find('button[aria-label="Pantalla completa"]').exists()).toBe(true)
     })
 
 })
