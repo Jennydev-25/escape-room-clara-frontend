@@ -76,6 +76,10 @@ export default class BaseRepository {
         return this.#authSend('POST', path, body)
     }
 
+    async authPut(path, body) {
+        return this.#authSend('PUT', path, body)
+    }
+
     async #authSend(method, path, body) {
         const authStore = useAuthStore()
 
