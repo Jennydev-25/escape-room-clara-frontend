@@ -9,8 +9,22 @@ import { TextPlugin } from 'gsap/TextPlugin'
 import App from './App.vue'
 import AuthRepository from './core/apis/auth/AuthRepository'
 import AuthService from './core/apis/auth/AuthService'
+import ChatRepository from './core/apis/chat/ChatRepository'
+import ChatService from './core/apis/chat/ChatService'
 import ContactRepository from './core/apis/contact/ContactRepository'
 import ContactService from './core/apis/contact/ContactService'
+import EmailRepository from './core/apis/email/EmailRepository'
+import EmailService from './core/apis/email/EmailService'
+import FolderRepository from './core/apis/folder/FolderRepository'
+import FolderService from './core/apis/folder/FolderService'
+import ProgressRepository from './core/apis/progress/ProgressRepository'
+import ProgressService from './core/apis/progress/ProgressService'
+import PuzzleRepository from './core/apis/puzzle/PuzzleRepository'
+import PuzzleService from './core/apis/puzzle/PuzzleService'
+import TrashRepository from './core/apis/trash/TrashRepository'
+import TrashService from './core/apis/trash/TrashService'
+import UserRepository from './core/apis/user/UserRepository'
+import UserService from './core/apis/user/UserService'
 import router from './router'
 
 gsap.registerPlugin(ScrollTrigger, TextPlugin)
@@ -25,7 +39,14 @@ gsap.ticker.lagSmoothing(0)
 const app = createApp(App)
 
 app.provide('AuthService', new AuthService(new AuthRepository()))
+app.provide('ChatService', new ChatService(new ChatRepository()))
 app.provide('ContactService', new ContactService(new ContactRepository()))
+app.provide('EmailService', new EmailService(new EmailRepository()))
+app.provide('FolderService', new FolderService(new FolderRepository()))
+app.provide('ProgressService', new ProgressService(new ProgressRepository()))
+app.provide('PuzzleService', new PuzzleService(new PuzzleRepository()))
+app.provide('TrashService', new TrashService(new TrashRepository()))
+app.provide('UserService', new UserService(new UserRepository()))
 
 app.use(createPinia())
 app.use(router)
