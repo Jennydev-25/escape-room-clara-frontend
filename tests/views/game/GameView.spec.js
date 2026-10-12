@@ -97,4 +97,12 @@ describe('GameView', () => {
         expect(wrapper.find('button[aria-label="Pantalla completa"]').exists()).toBe(true)
     })
 
+    it('shows the trash on the desktop', () => {
+        const wrapper = mountGameView()
+
+        const trash = wrapper.findAll('main button').find((button) => button.text() === 'Papelera')
+
+        expect(trash).toBeDefined()
+    })
+
 })
