@@ -229,4 +229,30 @@ describe('BaseRepository', () => {
         expect(fetchMock).toHaveBeenCalledTimes(2)
     })
 
+    test('authPost should refresh the session and retry the request when the token has expired', async () => {
+        setActivePinia(createPinia())
+        useAuthStore().setSession('expired-token', 'refresh-token')
+        const fetchMock = vi.fn()
+            .mockResolvedValueOnce({ ok: false, status: 401 })
+            .mockResolvedValueOnce({
+                ok: true,
+                json: () => Promise.resolve({ token: 'new-token', refreshToken: 'new-refresh-token' }),
+            })
+            .mockResolvedValueOnce({
+                ok: true,
+                json: () => Promise.resolve({ message: 'ok' }),
+            })
+        vi.stubGlobal('fetch', fetchMock)
+        const repository = new BaseRepository('http://localhost:8080/api/v1')
+
+        const data = await repository.authPost('/puzzles/1/answer', { answer: 'ABC' })
+
+        expect(fetchMock).toHaveBeenNthCalledWith(3, 'http://localhost:8080/api/v1/puzzles/1/answer', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: 'Bearer new-token' },
+            body: JSON.stringify({ answer: 'ABC' }),
+        })
+        expect(data).toEqual({ message: 'ok' })
+    })
+
 })
