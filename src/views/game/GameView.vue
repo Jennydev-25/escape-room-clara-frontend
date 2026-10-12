@@ -4,6 +4,15 @@ import wallpaper from '@/assets/images/game/desktop/wallpaper.webp'
 
 // el navegador decide si deja pantalla completa (en iPhone no)
 const canFullscreen = document.fullscreenEnabled === true
+
+// entra o sale de pantalla completa según el estado actual
+function toggleFullscreen() {
+    if (document.fullscreenElement) {
+        document.exitFullscreen()
+    } else {
+        document.documentElement.requestFullscreen()
+    }
+}
 </script>
 
 <template>
@@ -20,6 +29,7 @@ const canFullscreen = document.fullscreenEnabled === true
                 v-if="canFullscreen"
                 type="button"
                 aria-label="Pantalla completa"
+                @click="toggleFullscreen"
                 class="ml-auto hidden size-7 shrink-0 items-center justify-center rounded-lg text-primary transition-colors hover:bg-surface-container-high focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:flex"
             >
                 <Maximize class="size-4" aria-hidden="true" />
