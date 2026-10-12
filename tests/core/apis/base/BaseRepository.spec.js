@@ -255,4 +255,34 @@ describe('BaseRepository', () => {
         expect(data).toEqual({ message: 'ok' })
     })
 
+    test('should refresh the session only once when several requests expire at the same time', async () => {
+        setActivePinia(createPinia())
+        useAuthStore().setSession('expired-token', 'refresh-token')
+        const fetchMock = vi.fn().mockImplementation((url, options) => {
+            if (url.endsWith('/auth/refresh')) {
+                return Promise.resolve({
+                    ok: true,
+                    json: () => Promise.resolve({ token: 'new-token', refreshToken: 'new-refresh-token' }),
+                })
+            }
+
+            if (options.headers.Authorization === 'Bearer expired-token') {
+                return Promise.resolve({ ok: false, status: 401 })
+            }
+
+            return Promise.resolve({ ok: true, json: () => Promise.resolve({ message: 'ok' }) })
+        })
+        vi.stubGlobal('fetch', fetchMock)
+        const repository = new BaseRepository('http://localhost:8080/api/v1')
+
+        const results = await Promise.all([
+            repository.authGet('/progress'),
+            repository.authGet('/folders'),
+        ])
+
+        const refreshCalls = fetchMock.mock.calls.filter(([url]) => url.endsWith('/auth/refresh'))
+        expect(refreshCalls).toHaveLength(1)
+        expect(results).toEqual([{ message: 'ok' }, { message: 'ok' }])
+    })
+
 })
