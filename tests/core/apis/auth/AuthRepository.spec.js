@@ -53,4 +53,24 @@ describe('Integration - Auth Repository', () => {
         vi.unstubAllGlobals()
     })
 
+    test('refresh should throw \'¡Ups! Algo salió mal\' when the uri is invalid', async () => {
+        const repository = new AuthRepository()
+        repository.uri = ''
+
+        await expect(repository.refresh({ refreshToken: 'refresh-token' })).rejects.toThrow('¡Ups! Algo salió mal')
+    })
+
+    test('refresh should return the response data when the refresh token is valid', async () => {
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+            ok: true,
+            json: () => Promise.resolve({ token: 'new-jwt-token', refreshToken: 'new-refresh-token' }),
+        }))
+        const repository = new AuthRepository()
+
+        const data = await repository.refresh({ refreshToken: 'refresh-token' })
+
+        expect(data).toEqual({ token: 'new-jwt-token', refreshToken: 'new-refresh-token' })
+        vi.unstubAllGlobals()
+    })
+
 })
