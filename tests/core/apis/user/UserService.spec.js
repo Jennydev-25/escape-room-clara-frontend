@@ -55,6 +55,24 @@ describe('Integration - User Service', () => {
         expect(profile.getFullName()).toBe('Clara Vega')
     })
 
+    test('updateProfile should send the data to the backend and return the profile as UserProfileModel', async () => {
+        const profileData = { alias: 'clara', email: 'clara.vega@example.com', emailConfirmation: 'clara.vega@example.com', avatarId: 3 }
+        const fetchMock = vi.fn().mockResolvedValue({
+            ok: true,
+            json: () => Promise.resolve({ alias: 'clara', email: 'clara.vega@example.com', avatarId: 3, fullName: 'Clara Vega' })
+        })
+        vi.stubGlobal('fetch', fetchMock)
+        const service = new UserService(new UserRepository())
+
+        const profile = await service.updateProfile(profileData)
+
+        expect(fetchMock.mock.calls[0][0]).toContain('/users/me')
+        expect(fetchMock.mock.calls[0][1].method).toBe('PUT')
+        expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual(profileData)
+        expect(profile.getAlias()).toBe('clara')
+        expect(profile.getFullName()).toBe('Clara Vega')
+    })
+
 })
 
 describe('Unit - User Service', () => {
@@ -79,6 +97,19 @@ describe('Unit - User Service', () => {
         const spy = vi.spyOn(repository, 'completeProfile').mockResolvedValue({ alias: 'clara', email: 'clara.vega@example.com', avatarId: 3, fullName: 'Clara Vega' })
 
         const profile = await service.completeProfile(profileData)
+
+        expect(spy).toHaveBeenCalledWith(profileData)
+        expect(profile.getEmail()).toBe('clara.vega@example.com')
+        expect(profile.getAvatarId()).toBe(3)
+    })
+
+    test('updateProfile should pass the data to the repository and map the response to a UserProfileModel', async () => {
+        const repository = new UserRepository()
+        const service = new UserService(repository)
+        const profileData = { alias: 'clara', email: 'clara.vega@example.com', emailConfirmation: 'clara.vega@example.com', avatarId: 3 }
+        const spy = vi.spyOn(repository, 'updateProfile').mockResolvedValue({ alias: 'clara', email: 'clara.vega@example.com', avatarId: 3, fullName: 'Clara Vega' })
+
+        const profile = await service.updateProfile(profileData)
 
         expect(spy).toHaveBeenCalledWith(profileData)
         expect(profile.getEmail()).toBe('clara.vega@example.com')
