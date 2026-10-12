@@ -23,4 +23,13 @@ export default class ValidatedAnswerModel {
         return this.unlocks
     }
 
+    static create(dto, mapper) {
+        return new ValidatedAnswerModel(
+            mapper.correct(dto),
+            mapper.updatesChapter(dto),
+            mapper.newHudLetter(dto),
+            mapper.unlocks(dto)
+        )
+    }
+
 }
