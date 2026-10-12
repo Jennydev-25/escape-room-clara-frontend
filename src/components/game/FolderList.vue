@@ -2,6 +2,7 @@
 import { Folder } from '@lucide/vue'
 import { inject, onMounted, ref } from 'vue'
 import FolderWindow from '@/components/game/FolderWindow.vue'
+import { shouldOpenOnClick } from '@/composables/game/shouldOpenOnClick'
 import { useSeenStore } from '@/stores/seen'
 
 const folderService = inject('FolderService')
@@ -32,12 +33,6 @@ const isNew = (folder) => !seenStore.isSeen(`folder:${folder.getCode()}`)
 // amarillo: carpeta ya abierta a la que le han llegado archivos nuevos
 const hasNewFiles = (folder) => !isNew(folder) && puzzlesOf(folder).some((puzzle) => !seenStore.isSeen(`known:${puzzle.getId()}`))
 
-// teclado (detail 0) o pantalla táctil abren con un solo gesto; el ratón, con doble clic
-const isTouch = () => window.matchMedia?.('(pointer: coarse)').matches
-function onClick(event, folder) {
-    if (event.detail === 0 || isTouch()) open(folder)
-}
-
 function open(folder) {
     openCode.value = folder.getCode()
     seenStore.markSeen(`folder:${folder.getCode()}`)
@@ -55,7 +50,7 @@ function open(folder) {
                 <button
                     type="button"
                     class="flex w-16 flex-col items-center gap-1 rounded-2xl p-2 text-center text-xs font-medium tracking-wide text-on-surface uppercase transition-colors hover:bg-surface-container/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-20"
-                    @click="onClick($event, folder)"
+                    @click="shouldOpenOnClick($event) && open(folder)"
                     @dblclick="open(folder)"
                 >
                     <span class="relative">
