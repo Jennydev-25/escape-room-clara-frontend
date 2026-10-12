@@ -37,6 +37,24 @@ describe('Integration - User Service', () => {
         await expect(service.getProfile()).rejects.toThrow('¡Ups! Algo salió mal')
     })
 
+    test('completeProfile should send the data to the backend and return the profile as UserProfileModel', async () => {
+        const profileData = { fullName: 'Clara Vega', alias: 'clara' }
+        const fetchMock = vi.fn().mockResolvedValue({
+            ok: true,
+            json: () => Promise.resolve({ alias: 'clara', email: 'clara.vega@example.com', avatarId: 3, fullName: 'Clara Vega' })
+        })
+        vi.stubGlobal('fetch', fetchMock)
+        const service = new UserService(new UserRepository())
+
+        const profile = await service.completeProfile(profileData)
+
+        expect(fetchMock.mock.calls[0][0]).toContain('/users/me/complete-profile')
+        expect(fetchMock.mock.calls[0][1].method).toBe('PUT')
+        expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual(profileData)
+        expect(profile.getAlias()).toBe('clara')
+        expect(profile.getFullName()).toBe('Clara Vega')
+    })
+
 })
 
 describe('Unit - User Service', () => {
@@ -52,6 +70,19 @@ describe('Unit - User Service', () => {
         expect(profile.getEmail()).toBe('clara.vega@example.com')
         expect(profile.getAvatarId()).toBe(3)
         expect(profile.getFullName()).toBe('Clara Vega')
+    })
+
+    test('completeProfile should pass the data to the repository and map the response to a UserProfileModel', async () => {
+        const repository = new UserRepository()
+        const service = new UserService(repository)
+        const profileData = { fullName: 'Clara Vega', alias: 'clara' }
+        const spy = vi.spyOn(repository, 'completeProfile').mockResolvedValue({ alias: 'clara', email: 'clara.vega@example.com', avatarId: 3, fullName: 'Clara Vega' })
+
+        const profile = await service.completeProfile(profileData)
+
+        expect(spy).toHaveBeenCalledWith(profileData)
+        expect(profile.getEmail()).toBe('clara.vega@example.com')
+        expect(profile.getAvatarId()).toBe(3)
     })
 
 })
