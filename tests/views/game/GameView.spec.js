@@ -1,11 +1,14 @@
 import GameView from '@/views/game/GameView.vue'
 import { mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 describe('GameView', () => {
 
     afterEach(() => {
         delete document.fullscreenEnabled
+        delete document.fullscreenElement
+        delete document.exitFullscreen
+        delete document.documentElement.requestFullscreen
     })
 
     it('shows the ClaraOS desktop with the ClaraOS theme', () => {
@@ -33,6 +36,27 @@ describe('GameView', () => {
         const wrapper = mount(GameView)
 
         expect(wrapper.find('button[aria-label="Pantalla completa"]').exists()).toBe(false)
+    })
+
+    it('requests fullscreen when the button is clicked', async () => {
+        Object.defineProperty(document, 'fullscreenEnabled', { value: true, configurable: true })
+        document.documentElement.requestFullscreen = vi.fn()
+        const wrapper = mount(GameView)
+
+        await wrapper.get('footer button').trigger('click')
+
+        expect(document.documentElement.requestFullscreen).toHaveBeenCalledOnce()
+    })
+
+    it('exits fullscreen when the button is clicked while in fullscreen', async () => {
+        Object.defineProperty(document, 'fullscreenEnabled', { value: true, configurable: true })
+        Object.defineProperty(document, 'fullscreenElement', { value: document.documentElement, configurable: true })
+        document.exitFullscreen = vi.fn()
+        const wrapper = mount(GameView)
+
+        await wrapper.get('footer button').trigger('click')
+
+        expect(document.exitFullscreen).toHaveBeenCalledOnce()
     })
 
 })
