@@ -24,4 +24,8 @@ export default class UserService {
         return UserProfileModel.create(dto, userProfileMapper)
     }
 
+    async changePassword(passwordData) {
+        await this.#repo.changePassword(passwordData)
+    }
+
 }
