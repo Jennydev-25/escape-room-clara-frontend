@@ -1,6 +1,7 @@
 <script setup>
 import { Folder } from '@lucide/vue'
 import { inject, onMounted, ref } from 'vue'
+import FolderWindow from '@/components/game/FolderWindow.vue'
 import { useSeenStore } from '@/stores/seen'
 
 const folderService = inject('FolderService')
@@ -8,6 +9,7 @@ const seenStore = useSeenStore()
 const folders = ref([])
 const puzzlesByFolder = ref({})
 const errorMessage = ref('')
+const openCode = ref(null)
 
 onMounted(async () => {
     try {
@@ -31,6 +33,7 @@ const isNew = (folder) => !seenStore.isSeen(`folder:${folder.getCode()}`)
 const hasNewFiles = (folder) => !isNew(folder) && puzzlesOf(folder).some((puzzle) => !seenStore.isSeen(`known:${puzzle.getId()}`))
 
 function open(folder) {
+    openCode.value = folder.getCode()
     seenStore.markSeen(`folder:${folder.getCode()}`)
     puzzlesOf(folder).forEach((puzzle) => seenStore.markSeen(`known:${puzzle.getId()}`))
 }
@@ -61,5 +64,7 @@ function open(folder) {
                 </button>
             </li>
         </ul>
+
+        <FolderWindow v-if="openCode" :code="openCode" @close="openCode = null" />
     </div>
 </template>
