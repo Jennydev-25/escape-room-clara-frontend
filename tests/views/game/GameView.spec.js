@@ -11,4 +11,10 @@ describe('GameView', () => {
         expect(wrapper.get('h1').text()).toBe('Escritorio de ClaraOS')
     })
 
+    it('shows the welcome message in the taskbar', () => {
+        const wrapper = mount(GameView)
+
+        expect(wrapper.get('footer').text()).toContain('ClaraOS · Bienvenida de nuevo, Clara')
+    })
+
 })
