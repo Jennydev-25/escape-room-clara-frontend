@@ -10,17 +10,22 @@ const emit = defineEmits(['close'])
 
 const staticFileService = inject('StaticFileService')
 const name = props.path.split('/').pop()
+const isImage = ['png', 'jpg', 'jpeg', 'webp'].includes(name.split('.').pop().toLowerCase())
+const url = ref('')
 const text = ref('')
 
 onMounted(async () => {
-    const url = await staticFileService.getFileUrl(props.path)
-    const response = await fetch(url)
-    text.value = await response.text()
+    url.value = await staticFileService.getFileUrl(props.path)
+    if (!isImage) {
+        const response = await fetch(url.value)
+        text.value = await response.text()
+    }
 })
 </script>
 
 <template>
     <BaseWindow :title="name" @close="emit('close')">
-        <pre class="font-mono text-sm leading-relaxed whitespace-pre-wrap text-on-surface">{{ text }}</pre>
+        <img v-if="isImage" :src="url" :alt="name" class="mx-auto max-h-full max-w-full rounded-lg object-contain">
+        <pre v-else class="font-mono text-sm leading-relaxed whitespace-pre-wrap text-on-surface">{{ text }}</pre>
     </BaseWindow>
 </template>
