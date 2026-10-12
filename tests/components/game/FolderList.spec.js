@@ -88,4 +88,14 @@ describe('FolderList', () => {
         expect(JSON.parse(localStorage.getItem('seen'))).toEqual(expect.arrayContaining(['known:1', 'known:2']))
     })
 
+    it('shows an error message when the folders cannot be loaded', async () => {
+        listFolders.mockRejectedValue(new Error('¡Ups! Algo salió mal'))
+
+        const wrapper = mountFolderList()
+        await flushPromises()
+
+        expect(wrapper.get('[role="alert"]').text()).toContain('¡Ups! Algo salió mal')
+        expect(wrapper.findAll('button')).toHaveLength(0)
+    })
+
 })
