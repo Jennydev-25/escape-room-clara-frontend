@@ -1,4 +1,5 @@
 <script setup>
+import { inject } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import DashboardHeader from '@/shared/dashboard/DashboardHeader.vue'
@@ -14,8 +15,15 @@ defineProps({
 
 const router = useRouter()
 const authStore = useAuthStore()
+const authService = inject('AuthService')
 
-const handleLogout = () => {
+const handleLogout = async () => {
+    try {
+        await authService.logout({ refreshToken: authStore.refreshToken })
+    } catch (error) {
+        // The session is closed locally even if the backend cannot revoke the token
+    }
+
     authStore.logout()
     router.push('/')
 }

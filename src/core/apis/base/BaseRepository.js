@@ -3,6 +3,8 @@ import { useAuthStore } from "@/stores/auth";
 
 export default class BaseRepository {
 
+    static #refreshing = null
+
     constructor(uri) {
         this.uri = uri
     }
@@ -55,12 +57,8 @@ export default class BaseRepository {
     }
 
     async authGet(path) {
-        const authStore = useAuthStore()
-
         try {
-            const response = await fetch(`${this.uri}${path}`, {
-                headers: { Authorization: `Bearer ${authStore.token}` },
-            })
+            const response = await this.#authFetch(path)
 
             if (!response.ok) {
                 throw new Error('Error en la respuesta');
@@ -85,12 +83,10 @@ export default class BaseRepository {
     }
 
     async #authSend(method, path, body) {
-        const authStore = useAuthStore()
-
         try {
-            const response = await fetch(`${this.uri}${path}`, {
+            const response = await this.#authFetch(path, {
                 method,
-                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${authStore.token}` },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body),
             })
 
@@ -105,6 +101,57 @@ export default class BaseRepository {
             return await response.json()
         } catch (error) {
             throw new Error("¡Ups! Algo salió mal")
+        }
+    }
+
+    async #authFetch(path, options = {}) {
+        const authStore = useAuthStore()
+        const send = () => fetch(`${this.uri}${path}`, {
+            ...options,
+            headers: { ...options.headers, Authorization: `Bearer ${authStore.token}` },
+        })
+
+        const response = await send()
+
+        if (response.status !== 401) {
+            return response
+        }
+
+        if (!await this.#refreshSession()) {
+            return response
+        }
+
+        return send()
+    }
+
+    #refreshSession() {
+        BaseRepository.#refreshing ??= this.#requestNewTokens().finally(() => {
+            BaseRepository.#refreshing = null
+        })
+
+        return BaseRepository.#refreshing
+    }
+
+    async #requestNewTokens() {
+        const authStore = useAuthStore()
+
+        try {
+            const response = await fetch(`${this.uri}/auth/refresh`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ refreshToken: authStore.refreshToken }),
+            })
+
+            if (!response.ok) {
+                throw new Error('Error en la respuesta');
+            }
+
+            const data = await response.json()
+            authStore.setSession(data.token, data.refreshToken)
+            return true
+        } catch (error) {
+            authStore.logout()
+            return false
         }
     }
 

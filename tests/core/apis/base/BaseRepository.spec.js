@@ -186,4 +186,103 @@ describe('BaseRepository', () => {
         expect(data).toBeNull()
     })
 
+    test('authGet should refresh the session and retry the request when the token has expired', async () => {
+        setActivePinia(createPinia())
+        useAuthStore().setSession('expired-token', 'refresh-token')
+        const fetchMock = vi.fn()
+            .mockResolvedValueOnce({ ok: false, status: 401 })
+            .mockResolvedValueOnce({
+                ok: true,
+                json: () => Promise.resolve({ token: 'new-token', refreshToken: 'new-refresh-token' }),
+            })
+            .mockResolvedValueOnce({
+                ok: true,
+                json: () => Promise.resolve({ message: 'ok' }),
+            })
+        vi.stubGlobal('fetch', fetchMock)
+        const repository = new BaseRepository('http://localhost:8080/api/v1')
+
+        const data = await repository.authGet('/progress')
+
+        expect(fetchMock).toHaveBeenNthCalledWith(2, 'http://localhost:8080/api/v1/auth/refresh', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refreshToken: 'refresh-token' }),
+        })
+        expect(fetchMock).toHaveBeenNthCalledWith(3, 'http://localhost:8080/api/v1/progress', {
+            headers: { Authorization: 'Bearer new-token' },
+        })
+        expect(data).toEqual({ message: 'ok' })
+    })
+
+    test('authGet should log out and throw \'¡Ups! Algo salió mal\' when the session cannot be refreshed', async () => {
+        setActivePinia(createPinia())
+        const authStore = useAuthStore()
+        authStore.setSession('expired-token', 'expired-refresh-token')
+        const fetchMock = vi.fn().mockResolvedValue({ ok: false, status: 401 })
+        vi.stubGlobal('fetch', fetchMock)
+        const repository = new BaseRepository('http://localhost:8080/api/v1')
+
+        await expect(repository.authGet('/progress')).rejects.toThrow('¡Ups! Algo salió mal')
+
+        expect(authStore.isAuthenticated).toBe(false)
+        expect(fetchMock).toHaveBeenCalledTimes(2)
+    })
+
+    test('authPost should refresh the session and retry the request when the token has expired', async () => {
+        setActivePinia(createPinia())
+        useAuthStore().setSession('expired-token', 'refresh-token')
+        const fetchMock = vi.fn()
+            .mockResolvedValueOnce({ ok: false, status: 401 })
+            .mockResolvedValueOnce({
+                ok: true,
+                json: () => Promise.resolve({ token: 'new-token', refreshToken: 'new-refresh-token' }),
+            })
+            .mockResolvedValueOnce({
+                ok: true,
+                json: () => Promise.resolve({ message: 'ok' }),
+            })
+        vi.stubGlobal('fetch', fetchMock)
+        const repository = new BaseRepository('http://localhost:8080/api/v1')
+
+        const data = await repository.authPost('/puzzles/1/answer', { answer: 'ABC' })
+
+        expect(fetchMock).toHaveBeenNthCalledWith(3, 'http://localhost:8080/api/v1/puzzles/1/answer', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: 'Bearer new-token' },
+            body: JSON.stringify({ answer: 'ABC' }),
+        })
+        expect(data).toEqual({ message: 'ok' })
+    })
+
+    test('should refresh the session only once when several requests expire at the same time', async () => {
+        setActivePinia(createPinia())
+        useAuthStore().setSession('expired-token', 'refresh-token')
+        const fetchMock = vi.fn().mockImplementation((url, options) => {
+            if (url.endsWith('/auth/refresh')) {
+                return Promise.resolve({
+                    ok: true,
+                    json: () => Promise.resolve({ token: 'new-token', refreshToken: 'new-refresh-token' }),
+                })
+            }
+
+            if (options.headers.Authorization === 'Bearer expired-token') {
+                return Promise.resolve({ ok: false, status: 401 })
+            }
+
+            return Promise.resolve({ ok: true, json: () => Promise.resolve({ message: 'ok' }) })
+        })
+        vi.stubGlobal('fetch', fetchMock)
+        const repository = new BaseRepository('http://localhost:8080/api/v1')
+
+        const results = await Promise.all([
+            repository.authGet('/progress'),
+            repository.authGet('/folders'),
+        ])
+
+        const refreshCalls = fetchMock.mock.calls.filter(([url]) => url.endsWith('/auth/refresh'))
+        expect(refreshCalls).toHaveLength(1)
+        expect(results).toEqual([{ message: 'ok' }, { message: 'ok' }])
+    })
+
 })
