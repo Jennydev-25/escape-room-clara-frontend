@@ -171,4 +171,19 @@ describe('BaseRepository', () => {
         expect(data).toEqual({ message: 'ok' })
     })
 
+    test('authPut should return null when the backend responds with no content', async () => {
+        setActivePinia(createPinia())
+        useAuthStore().setSession('jwt-token', 'refresh-token')
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+            ok: true,
+            status: 204,
+            json: () => Promise.reject(new SyntaxError('Unexpected end of JSON input')),
+        }))
+        const repository = new BaseRepository('http://localhost:8080/api/v1')
+
+        const data = await repository.authPut('/users/me/password', { currentPassword: 'Secret123' })
+
+        expect(data).toBeNull()
+    })
+
 })
