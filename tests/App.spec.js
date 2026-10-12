@@ -115,4 +115,24 @@ describe('App', () => {
     expect(router.currentRoute.value.name).toBe('home')
   })
 
+  it('keeps the user on a public page when the session starts or ends', async () => {
+    const pinia = createPinia()
+    setActivePinia(pinia)
+    const authStore = useAuthStore()
+    await router.push('/')
+
+    mount(App, {
+      global: {
+        plugins: [router, pinia],
+      },
+    })
+
+    authStore.setSession('jwt-token', 'refresh-token')
+    await flushPromises()
+    authStore.logout()
+    await flushPromises()
+
+    expect(router.currentRoute.value.name).toBe('home')
+  })
+
 })
