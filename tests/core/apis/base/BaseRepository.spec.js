@@ -285,4 +285,23 @@ describe('BaseRepository', () => {
         expect(results).toEqual([{ message: 'ok' }, { message: 'ok' }])
     })
 
+    test('authGetBlob should send the stored token as a Bearer header and return the blob', async () => {
+        setActivePinia(createPinia())
+        useAuthStore().setSession('jwt-token', 'refresh-token')
+        const blob = new Blob(['file content'])
+        const fetchMock = vi.fn().mockResolvedValue({
+            ok: true,
+            blob: () => Promise.resolve(blob),
+        })
+        vi.stubGlobal('fetch', fetchMock)
+        const repository = new BaseRepository('http://localhost:8080/api/v1')
+
+        const data = await repository.authGetBlob('http://localhost:8080/tomas/libreta_tomas.png')
+
+        expect(fetchMock).toHaveBeenCalledWith('http://localhost:8080/tomas/libreta_tomas.png', {
+            headers: { Authorization: 'Bearer jwt-token' },
+        })
+        expect(data).toBe(blob)
+    })
+
 })
