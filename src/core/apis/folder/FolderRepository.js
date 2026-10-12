@@ -10,4 +10,8 @@ export default class FolderRepository extends BaseRepository {
         return this.authGet('/folders')
     }
 
+    async getFolder(code) {
+        return this.authGet(`/folders/${code}`)
+    }
+
 }
