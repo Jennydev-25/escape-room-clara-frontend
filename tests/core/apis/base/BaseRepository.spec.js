@@ -96,4 +96,24 @@ describe('BaseRepository', () => {
         await expect(repository.authGet('/progress')).rejects.toThrow('¡Ups! Algo salió mal')
     })
 
+    test('authPost should send the body as JSON with the Bearer token and return the response data', async () => {
+        setActivePinia(createPinia())
+        useAuthStore().setSession('jwt-token', 'refresh-token')
+        const fetchMock = vi.fn().mockResolvedValue({
+            ok: true,
+            json: () => Promise.resolve({ message: 'ok' }),
+        })
+        vi.stubGlobal('fetch', fetchMock)
+        const repository = new BaseRepository('http://localhost:8080/api/v1')
+
+        const data = await repository.authPost('/puzzles/1/answer', { answer: 'ABC' })
+
+        expect(fetchMock).toHaveBeenCalledWith('http://localhost:8080/api/v1/puzzles/1/answer', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: 'Bearer jwt-token' },
+            body: JSON.stringify({ answer: 'ABC' }),
+        })
+        expect(data).toEqual({ message: 'ok' })
+    })
+
 })
