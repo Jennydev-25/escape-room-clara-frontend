@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useAuthStore } from "@/stores/auth";
 
 export default class BaseRepository {
 
@@ -48,6 +49,56 @@ export default class BaseRepository {
 
             const data = await response.json()
             return data
+        } catch (error) {
+            throw new Error("¡Ups! Algo salió mal")
+        }
+    }
+
+    async authGet(path) {
+        const authStore = useAuthStore()
+
+        try {
+            const response = await fetch(`${this.uri}${path}`, {
+                headers: { Authorization: `Bearer ${authStore.token}` },
+            })
+
+            if (!response.ok) {
+                throw new Error('Error en la respuesta');
+            }
+
+            return await response.json()
+        } catch (error) {
+            throw new Error("¡Ups! Algo salió mal")
+        }
+    }
+
+    async authPost(path, body) {
+        return this.#authSend('POST', path, body)
+    }
+
+    async authPut(path, body) {
+        return this.#authSend('PUT', path, body)
+    }
+
+    async authPatch(path, body) {
+        return this.#authSend('PATCH', path, body)
+    }
+
+    async #authSend(method, path, body) {
+        const authStore = useAuthStore()
+
+        try {
+            const response = await fetch(`${this.uri}${path}`, {
+                method,
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${authStore.token}` },
+                body: JSON.stringify(body),
+            })
+
+            if (!response.ok) {
+                throw new Error('Error en la respuesta');
+            }
+
+            return await response.json()
         } catch (error) {
             throw new Error("¡Ups! Algo salió mal")
         }
