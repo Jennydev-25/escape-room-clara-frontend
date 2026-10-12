@@ -4,14 +4,18 @@ import { createPinia } from 'pinia'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const listFolders = vi.fn()
-const mountFolderList = () => mount(FolderList, { global: { plugins: [createPinia()], provide: { FolderService: { listFolders } } } })
+const getFolder = vi.fn()
+const mountFolderList = () => mount(FolderList, { global: { plugins: [createPinia()], provide: { FolderService: { listFolders, getFolder } } } })
 
 const folder = (code, name) => ({ getCode: () => code, getName: () => name })
+const folderWithPuzzles = (...ids) => ({ getPuzzles: () => ids.map((id) => ({ getId: () => id })) })
 
 describe('FolderList', () => {
 
     beforeEach(() => {
         listFolders.mockReset()
+        getFolder.mockReset()
+        getFolder.mockResolvedValue(folderWithPuzzles())
         localStorage.clear()
     })
 
@@ -49,6 +53,39 @@ describe('FolderList', () => {
 
         expect(wrapper.get('button').text()).not.toContain('con contenido nuevo')
         expect(JSON.parse(localStorage.getItem('seen'))).toContain('folder:tomas')
+    })
+
+    it('marks an opened folder when it has files the player does not know yet', async () => {
+        localStorage.setItem('seen', JSON.stringify(['folder:tomas', 'known:1']))
+        listFolders.mockResolvedValue([folder('tomas', 'Tomás')])
+        getFolder.mockResolvedValue(folderWithPuzzles(1, 2))
+
+        const wrapper = mountFolderList()
+        await flushPromises()
+
+        expect(wrapper.get('button').text()).toContain('con archivos nuevos')
+    })
+
+    it('does not mark an opened folder when all its files are known', async () => {
+        localStorage.setItem('seen', JSON.stringify(['folder:tomas', 'known:1', 'known:2']))
+        listFolders.mockResolvedValue([folder('tomas', 'Tomás')])
+        getFolder.mockResolvedValue(folderWithPuzzles(1, 2))
+
+        const wrapper = mountFolderList()
+        await flushPromises()
+
+        expect(wrapper.get('button').text()).not.toContain('nuevo')
+    })
+
+    it('remembers the files of a folder when it is opened', async () => {
+        listFolders.mockResolvedValue([folder('tomas', 'Tomás')])
+        getFolder.mockResolvedValue(folderWithPuzzles(1, 2))
+        const wrapper = mountFolderList()
+        await flushPromises()
+
+        await wrapper.get('button').trigger('click')
+
+        expect(JSON.parse(localStorage.getItem('seen'))).toEqual(expect.arrayContaining(['known:1', 'known:2']))
     })
 
 })
