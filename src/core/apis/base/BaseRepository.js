@@ -70,6 +70,20 @@ export default class BaseRepository {
         }
     }
 
+    async authGetBlob(url) {
+        try {
+            const response = await this.#authFetch(url)
+
+            if (!response.ok) {
+                throw new Error('Error en la respuesta');
+            }
+
+            return await response.blob()
+        } catch (error) {
+            throw new Error("¡Ups! Algo salió mal")
+        }
+    }
+
     async authPost(path, body) {
         return this.#authSend('POST', path, body)
     }
