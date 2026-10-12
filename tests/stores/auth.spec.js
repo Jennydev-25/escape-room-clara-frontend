@@ -18,6 +18,17 @@ describe('useAuthStore', () => {
         expect(store.refreshToken).toBe('refresh-token')
     })
 
+    test('isAuthenticated should be true only while there is a token', () => {
+        const store = useAuthStore()
+        expect(store.isAuthenticated).toBe(false)
+
+        store.setSession('jwt-token', 'refresh-token')
+        expect(store.isAuthenticated).toBe(true)
+
+        store.logout()
+        expect(store.isAuthenticated).toBe(false)
+    })
+
     test('logout should clear the token and the refreshToken', () => {
         const store = useAuthStore()
         store.setSession('jwt-token', 'refresh-token')
