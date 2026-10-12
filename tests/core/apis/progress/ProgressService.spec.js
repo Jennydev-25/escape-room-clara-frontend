@@ -22,6 +22,14 @@ describe('Integration - Progress Service', () => {
         await expect(service.getProgress()).rejects.toThrow('¡Ups! Algo salió mal')
     })
 
+    test('accumulateTime should throw \'¡Ups! Algo salió mal\' when the uri is invalid', async () => {
+        const repository = new ProgressRepository()
+        repository.uri = ''
+        const service = new ProgressService(repository)
+
+        await expect(service.accumulateTime({ secondsToAdd: 30 })).rejects.toThrow('¡Ups! Algo salió mal')
+    })
+
 })
 
 describe('Unit - Progress Service', () => {
@@ -37,6 +45,22 @@ describe('Unit - Progress Service', () => {
         expect(progress.getCurrentChapter()).toBe(2)
         expect(progress.getHudLetters()).toBe('AB')
         expect(progress.getTimeSpentSeconds()).toBe(120)
+    })
+
+    test('accumulateTime should send the time data and map the response to a ProgressModel', async () => {
+        let receivedData
+        const fakeRepository = {
+            accumulateTime: (timeData) => {
+                receivedData = timeData
+                return Promise.resolve({ ...progressDto, timeSpentSeconds: 150 })
+            }
+        }
+        const service = new ProgressService(fakeRepository)
+
+        const progress = await service.accumulateTime({ secondsToAdd: 30 })
+
+        expect(receivedData).toEqual({ secondsToAdd: 30 })
+        expect(progress.getTimeSpentSeconds()).toBe(150)
     })
 
 })
