@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
-import { mount } from '@vue/test-utils'
-import { createPinia } from 'pinia'
+import { flushPromises, mount } from '@vue/test-utils'
+import { createPinia, setActivePinia } from 'pinia'
+import { useAuthStore } from '@/stores/auth'
 import App from '@/App.vue'
 import router from '@/router'
 
@@ -94,4 +95,24 @@ describe('App', () => {
     readyStateSpy.mockRestore()
     vi.useRealTimers()
   })
+
+  it('sends the user back to the home when the session ends on a protected page', async () => {
+    const pinia = createPinia()
+    setActivePinia(pinia)
+    const authStore = useAuthStore()
+    authStore.setSession('jwt-token', 'refresh-token')
+    await router.push('/perfil')
+
+    mount(App, {
+      global: {
+        plugins: [router, pinia],
+      },
+    })
+
+    authStore.logout()
+    await flushPromises()
+
+    expect(router.currentRoute.value.name).toBe('home')
+  })
+
 })
