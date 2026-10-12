@@ -14,4 +14,8 @@ export default class PuzzleRepository extends BaseRepository {
         return this.authGet(`/puzzles/${id}/hints/${number}`)
     }
 
+    async validateAnswer(id, answerData) {
+        return this.authPost(`/puzzles/${id}/answer`, answerData)
+    }
+
 }
