@@ -18,4 +18,8 @@ export default class UserRepository extends BaseRepository {
         return this.authPut('/users/me', profileData)
     }
 
+    async changePassword(passwordData) {
+        return this.authPut('/users/me/password', passwordData)
+    }
+
 }
