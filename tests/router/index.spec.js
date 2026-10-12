@@ -33,4 +33,20 @@ describe('router', () => {
 
         expect(router.currentRoute.value.name).toBe('summary')
     })
+
+    it('redirects to the home when a visitor without a session opens /escritorio', async () => {
+        await router.push('/')
+        await router.push('/escritorio')
+
+        expect(router.currentRoute.value.name).toBe('home')
+    })
+
+    it('resolves the /escritorio route to the GameView component', async () => {
+        useAuthStore().setSession('jwt-token', 'refresh-token')
+        await router.push('/')
+        await router.push('/escritorio')
+        await router.isReady()
+
+        expect(router.currentRoute.value.name).toBe('game')
+    })
 })
