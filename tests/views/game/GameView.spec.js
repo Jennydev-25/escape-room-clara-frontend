@@ -5,6 +5,9 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 const listFolders = vi.fn().mockResolvedValue([{ getCode: () => 'tomas', getName: () => 'Tomás' }])
 const mountGameView = () => mount(GameView, { global: { provide: { FolderService: { listFolders } } } })
 
+const supportFullscreen = () => Object.defineProperty(document, 'fullscreenEnabled', { value: true, configurable: true })
+const enterFullscreen = () => Object.defineProperty(document, 'fullscreenElement', { value: document.documentElement, configurable: true })
+
 describe('GameView', () => {
 
     afterEach(() => {
@@ -35,7 +38,7 @@ describe('GameView', () => {
     })
 
     it('shows a fullscreen button when the browser supports it', () => {
-        Object.defineProperty(document, 'fullscreenEnabled', { value: true, configurable: true })
+        supportFullscreen()
 
         const wrapper = mountGameView()
 
@@ -49,7 +52,7 @@ describe('GameView', () => {
     })
 
     it('requests fullscreen when the button is clicked', async () => {
-        Object.defineProperty(document, 'fullscreenEnabled', { value: true, configurable: true })
+        supportFullscreen()
         document.documentElement.requestFullscreen = vi.fn()
         const wrapper = mountGameView()
 
@@ -59,8 +62,8 @@ describe('GameView', () => {
     })
 
     it('exits fullscreen when the button is clicked while in fullscreen', async () => {
-        Object.defineProperty(document, 'fullscreenEnabled', { value: true, configurable: true })
-        Object.defineProperty(document, 'fullscreenElement', { value: document.documentElement, configurable: true })
+        supportFullscreen()
+        enterFullscreen()
         document.exitFullscreen = vi.fn()
         const wrapper = mountGameView()
 
@@ -70,10 +73,10 @@ describe('GameView', () => {
     })
 
     it('shows the exit label when the browser enters fullscreen', async () => {
-        Object.defineProperty(document, 'fullscreenEnabled', { value: true, configurable: true })
+        supportFullscreen()
         const wrapper = mountGameView()
 
-        Object.defineProperty(document, 'fullscreenElement', { value: document.documentElement, configurable: true })
+        enterFullscreen()
         document.dispatchEvent(new Event('fullscreenchange'))
         await flushPromises()
 
@@ -81,8 +84,8 @@ describe('GameView', () => {
     })
 
     it('shows the enter label again when the browser leaves fullscreen', async () => {
-        Object.defineProperty(document, 'fullscreenEnabled', { value: true, configurable: true })
-        Object.defineProperty(document, 'fullscreenElement', { value: document.documentElement, configurable: true })
+        supportFullscreen()
+        enterFullscreen()
         const wrapper = mountGameView()
 
         delete document.fullscreenElement
