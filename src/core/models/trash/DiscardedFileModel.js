@@ -23,4 +23,13 @@ export default class DiscardedFileModel {
         return this.body
     }
 
+    static create(dto, mapper) {
+        return new DiscardedFileModel(
+            mapper.id(dto),
+            mapper.name(dto),
+            mapper.type(dto),
+            mapper.body(dto)
+        )
+    }
+
 }
