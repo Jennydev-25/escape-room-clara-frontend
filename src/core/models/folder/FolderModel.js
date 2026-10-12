@@ -18,4 +18,12 @@ export default class FolderModel {
         return this.puzzles
     }
 
+    static create(dto, mapper) {
+        return new FolderModel(
+            mapper.code(dto),
+            mapper.name(dto),
+            mapper.puzzles(dto)
+        )
+    }
+
 }
