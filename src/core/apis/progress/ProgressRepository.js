@@ -14,4 +14,8 @@ export default class ProgressRepository extends BaseRepository {
         return this.authPatch('/progress/time', timeData)
     }
 
+    async updateNote(noteData) {
+        return this.authPatch('/progress/note', noteData)
+    }
+
 }
