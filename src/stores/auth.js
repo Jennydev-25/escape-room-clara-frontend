@@ -1,9 +1,11 @@
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 
 export const useAuthStore = defineStore('auth', () => {
     const token = ref(localStorage.getItem('token'))
     const refreshToken = ref(localStorage.getItem('refreshToken'))
+
+    const isAuthenticated = computed(() => token.value !== null)
 
     function setSession(newToken, newRefreshToken) {
         token.value = newToken
@@ -19,5 +21,5 @@ export const useAuthStore = defineStore('auth', () => {
         localStorage.removeItem('refreshToken')
     }
 
-    return { token, refreshToken, setSession, logout }
+    return { token, refreshToken, isAuthenticated, setSession, logout }
 })
