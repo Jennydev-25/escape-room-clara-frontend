@@ -21,4 +21,9 @@ export default class AuthService {
         return LoginModel.create(dto, loginMapper)
     }
 
+    async refresh(refreshData) {
+        const dto = await this.#repo.refresh(refreshData)
+        return LoginModel.create(dto, loginMapper)
+    }
+
 }
