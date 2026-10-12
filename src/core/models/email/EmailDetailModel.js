@@ -33,4 +33,15 @@ export default class EmailDetailModel {
         return this.body
     }
 
+    static create(dto, mapper) {
+        return new EmailDetailModel(
+            mapper.id(dto),
+            mapper.sender(dto),
+            mapper.recipient(dto),
+            mapper.subject(dto),
+            mapper.sentDate(dto),
+            mapper.body(dto)
+        )
+    }
+
 }
