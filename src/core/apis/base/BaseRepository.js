@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useAuthStore } from "@/stores/auth";
 
 export default class BaseRepository {
@@ -23,15 +22,6 @@ export default class BaseRepository {
 
             const data = await response.json()
             return data
-        } catch (error) {
-            throw new Error("¡Ups! Algo salió mal")
-        }
-    }
-
-    async getAxios() {
-        try {
-            const response = await axios.get(this.uri)
-            return response.data
         } catch (error) {
             throw new Error("¡Ups! Algo salió mal")
         }

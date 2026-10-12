@@ -36,22 +36,6 @@ describe('BaseRepository', () => {
         expect(data).toEqual({ message: 'ok' })
     })
 
-    test('getAxios should throw \'¡Ups! Algo salió mal\' when the uri is invalid', async () => {
-        const repository = new BaseRepository('')
-
-        await expect(repository.getAxios()).rejects.toThrow('¡Ups! Algo salió mal')
-    })
-
-    test('getAxios should return the response data when the backend responds with success', async () => {
-        const axios = (await import('axios')).default
-        vi.spyOn(axios, 'get').mockResolvedValue({ data: { message: 'ok' } })
-        const repository = new BaseRepository('http://localhost:8080/api/v1')
-
-        const data = await repository.getAxios()
-
-        expect(data).toEqual({ message: 'ok' })
-    })
-
     test('getUri should return the uri passed to the constructor', () => {
         const repository = new BaseRepository('http://localhost:8080/api/v1')
 
