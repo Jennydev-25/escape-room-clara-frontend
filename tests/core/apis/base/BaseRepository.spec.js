@@ -304,4 +304,12 @@ describe('BaseRepository', () => {
         expect(data).toBe(blob)
     })
 
+    test('authGetBlob should throw \'¡Ups! Algo salió mal\' when the backend responds with an error status', async () => {
+        setActivePinia(createPinia())
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false }))
+        const repository = new BaseRepository('http://localhost:8080/api/v1')
+
+        await expect(repository.authGetBlob('http://localhost:8080/tomas/libreta_tomas.png')).rejects.toThrow('¡Ups! Algo salió mal')
+    })
+
 })
