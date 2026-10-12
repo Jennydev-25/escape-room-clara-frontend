@@ -72,4 +72,20 @@ export default class BaseRepository {
         }
     }
 
+    async authPost(path, body) {
+        return this.#authSend('POST', path, body)
+    }
+
+    async #authSend(method, path, body) {
+        const authStore = useAuthStore()
+
+        const response = await fetch(`${this.uri}${path}`, {
+            method,
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${authStore.token}` },
+            body: JSON.stringify(body),
+        })
+
+        return await response.json()
+    }
+
 }
