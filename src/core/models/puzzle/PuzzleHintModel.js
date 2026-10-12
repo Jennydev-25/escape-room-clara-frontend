@@ -13,4 +13,11 @@ export default class PuzzleHintModel {
         return this.text
     }
 
+    static create(dto, mapper) {
+        return new PuzzleHintModel(
+            mapper.number(dto),
+            mapper.text(dto)
+        )
+    }
+
 }
