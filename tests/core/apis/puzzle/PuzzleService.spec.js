@@ -29,6 +29,14 @@ describe('Integration - Puzzle Service', () => {
         await expect(service.getHint(2, 1)).rejects.toThrow('¡Ups! Algo salió mal')
     })
 
+    test('validateAnswer should throw \'¡Ups! Algo salió mal\' when the uri is invalid', async () => {
+        const repository = new PuzzleRepository()
+        repository.uri = ''
+        const service = new PuzzleService(repository)
+
+        await expect(service.validateAnswer(2, { value: 'CLARA' })).rejects.toThrow('¡Ups! Algo salió mal')
+    })
+
 })
 
 describe('Unit - Puzzle Service', () => {
@@ -66,6 +74,24 @@ describe('Unit - Puzzle Service', () => {
         expect(receivedArgs).toEqual([2, 1])
         expect(hint.getNumber()).toBe(1)
         expect(hint.getText()).toBe('Fíjate en el orden de las letras del índice.')
+    })
+
+    test('validateAnswer should send the answer data and map the response to a ValidatedAnswerModel', async () => {
+        let receivedArgs
+        const fakeRepository = {
+            validateAnswer: (id, answerData) => {
+                receivedArgs = [id, answerData]
+                return Promise.resolve({ correct: true, updatesChapter: true, newHudLetter: 'M', unlocks: ['fraude'] })
+            }
+        }
+        const service = new PuzzleService(fakeRepository)
+
+        const result = await service.validateAnswer(2, { value: 'CLARA' })
+
+        expect(receivedArgs).toEqual([2, { value: 'CLARA' }])
+        expect(result.isCorrect()).toBe(true)
+        expect(result.getNewHudLetter()).toBe('M')
+        expect(result.getUnlocks()).toEqual(['fraude'])
     })
 
 })
