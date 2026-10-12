@@ -57,11 +57,19 @@ export default class BaseRepository {
     async authGet(path) {
         const authStore = useAuthStore()
 
-        const response = await fetch(`${this.uri}${path}`, {
-            headers: { Authorization: `Bearer ${authStore.token}` },
-        })
+        try {
+            const response = await fetch(`${this.uri}${path}`, {
+                headers: { Authorization: `Bearer ${authStore.token}` },
+            })
 
-        return await response.json()
+            if (!response.ok) {
+                throw new Error('Error en la respuesta');
+            }
+
+            return await response.json()
+        } catch (error) {
+            throw new Error("¡Ups! Algo salió mal")
+        }
     }
 
 }
