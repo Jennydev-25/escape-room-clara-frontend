@@ -144,4 +144,24 @@ describe('BaseRepository', () => {
         expect(data).toEqual({ message: 'ok' })
     })
 
+    test('authPatch should send the body as JSON with the Bearer token and return the response data', async () => {
+        setActivePinia(createPinia())
+        useAuthStore().setSession('jwt-token', 'refresh-token')
+        const fetchMock = vi.fn().mockResolvedValue({
+            ok: true,
+            json: () => Promise.resolve({ message: 'ok' }),
+        })
+        vi.stubGlobal('fetch', fetchMock)
+        const repository = new BaseRepository('http://localhost:8080/api/v1')
+
+        const data = await repository.authPatch('/progress/time', { alias: 'clara' })
+
+        expect(fetchMock).toHaveBeenCalledWith('http://localhost:8080/api/v1/progress/time', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', Authorization: 'Bearer jwt-token' },
+            body: JSON.stringify({ alias: 'clara' }),
+        })
+        expect(data).toEqual({ message: 'ok' })
+    })
+
 })
