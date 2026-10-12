@@ -3,6 +3,8 @@ import { useAuthStore } from "@/stores/auth";
 
 export default class BaseRepository {
 
+    static #refreshing = null
+
     constructor(uri) {
         this.uri = uri
     }
@@ -122,7 +124,15 @@ export default class BaseRepository {
         return send()
     }
 
-    async #refreshSession() {
+    #refreshSession() {
+        BaseRepository.#refreshing ??= this.#requestNewTokens().finally(() => {
+            BaseRepository.#refreshing = null
+        })
+
+        return BaseRepository.#refreshing
+    }
+
+    async #requestNewTokens() {
         const authStore = useAuthStore()
 
         try {
