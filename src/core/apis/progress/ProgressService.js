@@ -19,4 +19,9 @@ export default class ProgressService {
         return ProgressModel.create(dto, progressMapper)
     }
 
+    async updateNote(noteData) {
+        const dto = await this.#repo.updateNote(noteData)
+        return ProgressModel.create(dto, progressMapper)
+    }
+
 }
