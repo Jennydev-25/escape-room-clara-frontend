@@ -38,4 +38,16 @@ export default class ProgressModel {
         return this.lastHudLetterAdded
     }
 
+    static create(dto, mapper) {
+        return new ProgressModel(
+            mapper.currentChapter(dto),
+            mapper.hudLetters(dto),
+            mapper.investigationSubmitted(dto),
+            mapper.timeSpentSeconds(dto),
+            mapper.freeNote(dto),
+            mapper.updatedAt(dto),
+            mapper.lastHudLetterAdded(dto)
+        )
+    }
+
 }
