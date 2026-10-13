@@ -1,5 +1,6 @@
 <script setup>
 import { inject, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import CompleteProfileForm from '@/components/auth/CompleteProfileForm.vue'
 import LoginForm from '@/components/auth/LoginForm.vue'
 import RegisterForm from '@/components/auth/RegisterForm.vue'
@@ -19,6 +20,7 @@ const fullName = ref('')
 const alias = ref('')
 const isCompletingProfile = ref(false)
 
+const router = useRouter()
 const authService = inject('AuthService')
 const userService = inject('UserService')
 const authStore = useAuthStore()
@@ -44,6 +46,7 @@ async function handleRegisterSubmit({ recaptchaToken }) {
 
 async function handleCompleteProfileSubmit() {
     await userService.completeProfile({ fullName: fullName.value, alias: alias.value })
+    router.push('/resumen')
 }
 
 async function handleLoginSubmit() {
