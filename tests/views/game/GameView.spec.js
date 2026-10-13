@@ -19,6 +19,8 @@ const mountGameView = (services = {}) => mount(GameView, {
     },
 })
 
+const findExitButton = (wrapper) => wrapper.findAll('main button').find((button) => button.text() === 'Salir de ClaraOS')
+
 const supportFullscreen = () => Object.defineProperty(document, 'fullscreenEnabled', { value: true, configurable: true })
 const enterFullscreen = () => Object.defineProperty(document, 'fullscreenElement', { value: document.documentElement, configurable: true })
 
@@ -236,14 +238,14 @@ describe('GameView', () => {
     it('shows the exit ClaraOS button next to the clock', () => {
         const wrapper = mountGameView()
 
-        const exit = wrapper.findAll('main button').find((button) => button.text() === 'Salir de ClaraOS')
+        const exit = findExitButton(wrapper)
 
         expect(exit).toBeDefined()
     })
 
     it('shows the loading screen with Volviendo... when leaving ClaraOS', async () => {
         const wrapper = mountGameView()
-        const exit = wrapper.findAll('main button').find((button) => button.text() === 'Salir de ClaraOS')
+        const exit = findExitButton(wrapper)
 
         await exit.trigger('click')
 
@@ -252,7 +254,7 @@ describe('GameView', () => {
 
     it('shows the leaving message in the loading screen when leaving ClaraOS', async () => {
         const wrapper = mountGameView()
-        const exit = wrapper.findAll('main button').find((button) => button.text() === 'Salir de ClaraOS')
+        const exit = findExitButton(wrapper)
 
         await exit.trigger('click')
 
@@ -262,7 +264,7 @@ describe('GameView', () => {
     it('fills the loading bar while leaving ClaraOS', async () => {
         vi.useFakeTimers()
         const wrapper = mountGameView()
-        const exit = wrapper.findAll('main button').find((button) => button.text() === 'Salir de ClaraOS')
+        const exit = findExitButton(wrapper)
 
         await exit.trigger('click')
         await vi.advanceTimersByTimeAsync(600)
@@ -274,7 +276,7 @@ describe('GameView', () => {
         vi.useFakeTimers()
         const push = vi.spyOn(router, 'push').mockResolvedValue()
         const wrapper = mountGameView()
-        const exit = wrapper.findAll('main button').find((button) => button.text() === 'Salir de ClaraOS')
+        const exit = findExitButton(wrapper)
 
         await exit.trigger('click')
         await vi.advanceTimersByTimeAsync(800)
