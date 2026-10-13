@@ -79,4 +79,14 @@ describe('PuzzleWindow', () => {
         expect(wrapper.find('button[aria-label="Pistas"]').exists()).toBe(true)
     })
 
+    it('shows the three hints folded when the hints button is clicked', async () => {
+        const wrapper = mountPuzzleWindow()
+
+        await wrapper.get('button[aria-label="Pistas"]').trigger('click')
+
+        const hints = wrapper.findAll('button').filter((button) => button.text().startsWith('Pista '))
+        expect(hints.map((hint) => hint.text())).toEqual(['Pista 1', 'Pista 2', 'Pista 3'])
+        expect(hints.map((hint) => hint.attributes('aria-expanded'))).toEqual(['false', 'false', 'false'])
+    })
+
 })
