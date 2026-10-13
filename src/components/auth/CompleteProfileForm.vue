@@ -3,10 +3,12 @@ import BaseButton from '@/shared/BaseButton.vue'
 
 const fullName = defineModel('fullName', { type: String, default: '' })
 const alias = defineModel('alias', { type: String, default: '' })
+
+defineEmits(['submit'])
 </script>
 
 <template>
-    <form class="complete-profile-form flex flex-col gap-4">
+    <form class="complete-profile-form flex flex-col gap-4" @submit.prevent="$emit('submit')">
         <div class="complete-profile-form__field flex flex-col gap-1">
             <label for="complete-profile-full-name">Nombre completo</label>
             <input
