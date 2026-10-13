@@ -1,6 +1,7 @@
 <script setup>
 import { X } from '@lucide/vue'
 import { inject, ref, useId } from 'vue'
+import BaseButton from '@/shared/BaseButton.vue'
 import BaseWindow from '@/shared/BaseWindow.vue'
 
 const props = defineProps({
@@ -32,14 +33,16 @@ async function submitAnswer() {
         <form class="flex flex-col gap-4" @submit.prevent="submitAnswer">
             <p class="text-base leading-relaxed text-on-surface">{{ question }}</p>
 
-            <label :for="answerId" class="text-sm text-on-surface-variant">Tu respuesta</label>
-            <input
-                :id="answerId"
-                v-model="answer"
-                type="text"
-                autocomplete="off"
-                class="w-full rounded-lg border border-outline bg-surface px-3 py-2 text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-            >
+            <div class="flex flex-col gap-1">
+                <label :for="answerId">Tu respuesta</label>
+                <input
+                    :id="answerId"
+                    v-model="answer"
+                    type="text"
+                    autocomplete="off"
+                    class="w-full rounded-md border border-outline bg-surface px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
+                >
+            </div>
 
             <div v-if="isWrong" role="alert" class="flex items-center justify-between gap-3 rounded-2xl border border-error bg-error/25 px-4 py-3 text-sm text-os-on-rust">
                 <p>Respuesta incorrecta</p>
@@ -53,10 +56,9 @@ async function submitAnswer() {
                 </button>
             </div>
 
-            <button
-                type="submit"
-                class="self-end rounded-lg bg-primary px-4 py-2 text-sm font-medium text-on-primary transition-colors hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-            >Comprobar</button>
+            <BaseButton type="submit">
+                Comprobar
+            </BaseButton>
         </form>
     </BaseWindow>
 </template>
