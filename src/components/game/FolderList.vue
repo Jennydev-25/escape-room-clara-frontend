@@ -55,7 +55,7 @@ function open(folder) {
                 >
                     <span class="relative">
                         <Folder class="size-9 fill-os-folder/25 text-os-folder sm:size-10" aria-hidden="true" />
-                        <span v-if="isNew(folder) || hasNewFiles(folder)" class="absolute top-3 right-0 flex size-3" aria-hidden="true">
+                        <span v-if="isNew(folder) || hasNewFiles(folder)" class="absolute top-0 right-0 flex size-3" aria-hidden="true">
                             <span class="absolute inline-flex size-full animate-ping rounded-full opacity-75 motion-reduce:animate-none" :class="isNew(folder) ? 'bg-primary' : 'bg-os-clue'"></span>
                             <span class="relative inline-flex size-3 rounded-full" :class="isNew(folder) ? 'bg-primary' : 'bg-os-clue'"></span>
                         </span>
