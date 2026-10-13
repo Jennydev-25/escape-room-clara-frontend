@@ -34,4 +34,15 @@ describe('FileViewer', () => {
         expect(wrapper.find('pre').exists()).toBe(false)
     })
 
+    it('shows a pdf file in a frame titled with the file name', async () => {
+        getFileUrl.mockResolvedValue('blob:facturas')
+
+        const wrapper = mountFileViewer('/fraude/hoja_calculo_facturas.pdf')
+        await flushPromises()
+
+        expect(wrapper.get('iframe').attributes('src')).toBe('blob:facturas')
+        expect(wrapper.get('iframe').attributes('title')).toBe('hoja_calculo_facturas.pdf')
+        expect(wrapper.find('pre').exists()).toBe(false)
+    })
+
 })
