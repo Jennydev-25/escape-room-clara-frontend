@@ -11,7 +11,8 @@ const login = vi.fn().mockResolvedValue({
     getRefreshToken: () => 'refresh-token',
 })
 const setSession = vi.fn()
-const withAuthService = { global: { provide: { AuthService: { register, login } } } }
+const completeProfile = vi.fn().mockResolvedValue({})
+const withAuthService = { global: { provide: { AuthService: { register, login }, UserService: { completeProfile } } } }
 
 vi.mock('@/stores/auth', () => ({
     useAuthStore: () => ({ setSession }),
@@ -86,6 +87,21 @@ describe('AccessPanel', () => {
 
         expect(wrapper.findComponent(RegisterForm).exists()).toBe(false)
         expect(wrapper.findComponent(CompleteProfileForm).exists()).toBe(true)
+    })
+
+    it('completes the profile with the full name and the alias on submit', async () => {
+        const wrapper = mount(AccessPanel, {
+            ...withAuthService,
+            props: { open: true, tab: 'register' },
+        })
+        await wrapper.findComponent(RegisterForm).vm.$emit('submit', { recaptchaToken: 'mocked-token' })
+        await flushPromises()
+
+        await wrapper.find('#complete-profile-full-name').setValue('Clara Rey')
+        await wrapper.find('#complete-profile-alias').setValue('jugador_01')
+        await wrapper.findComponent(CompleteProfileForm).vm.$emit('submit')
+
+        expect(completeProfile).toHaveBeenCalledWith({ fullName: 'Clara Rey', alias: 'jugador_01' })
     })
 
     it('shows an error message when the register request fails', async () => {
