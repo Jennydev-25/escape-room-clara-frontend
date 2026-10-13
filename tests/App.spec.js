@@ -1,0 +1,164 @@
+import { describe, it, expect, vi } from 'vitest'
+import { flushPromises, mount } from '@vue/test-utils'
+import { createPinia, setActivePinia } from 'pinia'
+import { useAuthStore } from '@/stores/auth'
+import App from '@/App.vue'
+import router from '@/router'
+
+describe('App', () => {
+  it('shows the loading screen before the route renders', async () => {
+    router.push('/')
+    await router.isReady()
+
+    const wrapper = mount(App, {
+      global: {
+        plugins: [router, createPinia()],
+      },
+    })
+
+    expect(wrapper.text()).toContain('Bienvenid@')
+    expect(wrapper.text()).not.toContain('El último archivo de Clara')
+  })
+
+  it('starts the progress bar at 0%', async () => {
+    router.push('/')
+    await router.isReady()
+
+    const wrapper = mount(App, {
+      global: {
+        plugins: [router, createPinia()],
+      },
+    })
+
+    expect(wrapper.get('.loading-screen__bar').attributes('style')).toContain('width: 0%')
+  })
+
+  it('fills the progress bar gradually while it waits', async () => {
+    vi.useFakeTimers()
+    router.push('/')
+    await router.isReady()
+
+    const wrapper = mount(App, {
+      global: {
+        plugins: [router, createPinia()],
+      },
+    })
+
+    await vi.advanceTimersByTimeAsync(600)
+
+    const width = Number(wrapper.get('.loading-screen__bar').attributes('style').match(/width: (\d+)%/)[1])
+    expect(width).toBeGreaterThan(0)
+    expect(width).toBeLessThan(100)
+
+    vi.useRealTimers()
+  })
+
+  it('renders the current route inside RouterView', async () => {
+    vi.useFakeTimers()
+    router.push('/')
+    await router.isReady()
+
+    const wrapper = mount(App, {
+      global: {
+        plugins: [router, createPinia()],
+      },
+    })
+
+    await vi.advanceTimersByTimeAsync(1200)
+
+    expect(wrapper.text()).toContain('El último archivo de Clara')
+    vi.useRealTimers()
+  })
+
+  it('keeps the loading screen until the window finishes loading, even past the minimum duration', async () => {
+    vi.useFakeTimers()
+    const readyStateSpy = vi.spyOn(document, 'readyState', 'get').mockReturnValue('loading')
+
+    router.push('/')
+    await router.isReady()
+
+    const wrapper = mount(App, {
+      global: {
+        plugins: [router, createPinia()],
+      },
+    })
+
+    await vi.advanceTimersByTimeAsync(5000)
+
+    expect(wrapper.text()).toContain('Bienvenid@')
+
+    window.dispatchEvent(new Event('load'))
+    await vi.advanceTimersByTimeAsync(300)
+
+    expect(wrapper.text()).toContain('El último archivo de Clara')
+
+    readyStateSpy.mockRestore()
+    vi.useRealTimers()
+  })
+
+  it('sends the user back to the home when the session ends on a protected page', async () => {
+    const pinia = createPinia()
+    setActivePinia(pinia)
+    const authStore = useAuthStore()
+    authStore.setSession('jwt-token', 'refresh-token')
+    await router.push('/perfil')
+
+    mount(App, {
+      global: {
+        plugins: [router, pinia],
+      },
+    })
+
+    authStore.logout()
+    await flushPromises()
+
+    expect(router.currentRoute.value.name).toBe('home')
+  })
+
+  it('keeps the user on a public page when the session starts or ends', async () => {
+    const pinia = createPinia()
+    setActivePinia(pinia)
+    const authStore = useAuthStore()
+    await router.push('/')
+
+    mount(App, {
+      global: {
+        plugins: [router, pinia],
+      },
+    })
+
+    authStore.setSession('jwt-token', 'refresh-token')
+    await flushPromises()
+    authStore.logout()
+    await flushPromises()
+
+    expect(router.currentRoute.value.name).toBe('home')
+  })
+
+  it.each([
+    ['/escritorio', 'Entrando...', 'Cargando ClaraOS'],
+    ['/resumen', 'Cargando...', 'Recuperando tu expediente'],
+    ['/perfil', 'Cargando...', 'Recuperando tu expediente'],
+  ])('shows the loading screen with its own texts when changing to %s', async (path, title, message) => {
+    vi.useFakeTimers()
+    const pinia = createPinia()
+    setActivePinia(pinia)
+    useAuthStore().setSession('jwt-token', 'refresh-token')
+    await router.push('/')
+
+    const wrapper = mount(App, {
+      global: {
+        plugins: [router, pinia],
+      },
+    })
+    await vi.advanceTimersByTimeAsync(1200)
+
+    await router.push(path)
+    await flushPromises()
+
+    expect(wrapper.text()).toContain(title)
+    expect(wrapper.text()).toContain(message)
+    vi.useRealTimers()
+  })
+
+})

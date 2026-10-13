@@ -1,0 +1,109 @@
+import AuthRepository from "@/core/apis/auth/AuthRepository";
+import AuthService from "@/core/apis/auth/AuthService";
+import { describe, expect, test } from "vitest";
+
+describe('Integration - Auth Service', () => {
+
+    test('register should throw \'¡Ups! Algo salió mal\' when the uri is invalid', async () => {
+        const repository = new AuthRepository()
+        repository.uri = ''
+        const service = new AuthService(repository)
+
+        await expect(service.register({
+            email: 'test@test.com',
+            password: 'Test1234',
+            confirmPassword: 'Test1234',
+            recaptchaToken: 'token'
+        })).rejects.toThrow('¡Ups! Algo salió mal')
+    })
+
+    test('login should throw \'¡Ups! Algo salió mal\' when the uri is invalid', async () => {
+        const repository = new AuthRepository()
+        repository.uri = ''
+        const service = new AuthService(repository)
+
+        await expect(service.login('test@test.com', 'Test1234')).rejects.toThrow('¡Ups! Algo salió mal')
+    })
+
+    test('refresh should throw \'¡Ups! Algo salió mal\' when the uri is invalid', async () => {
+        const repository = new AuthRepository()
+        repository.uri = ''
+        const service = new AuthService(repository)
+
+        await expect(service.refresh({ refreshToken: 'refresh-token' })).rejects.toThrow('¡Ups! Algo salió mal')
+    })
+
+    test('logout should throw \'¡Ups! Algo salió mal\' when the uri is invalid', async () => {
+        const repository = new AuthRepository()
+        repository.uri = ''
+        const service = new AuthService(repository)
+
+        await expect(service.logout({ refreshToken: 'refresh-token' })).rejects.toThrow('¡Ups! Algo salió mal')
+    })
+
+})
+
+describe('Unit - Auth Service', () => {
+
+    test('register should map the backend response to a RegisterModel on success', async () => {
+        const fakeRepository = {
+            register: () => Promise.resolve({ message: 'User stored successfully' })
+        }
+        const service = new AuthService(fakeRepository)
+
+        const register = await service.register({
+            email: 'test@test.com',
+            password: 'Test1234',
+            confirmPassword: 'Test1234',
+            recaptchaToken: 'token'
+        })
+
+        expect(register.getMessage()).toBe('User stored successfully')
+    })
+
+    test('login should map the backend response to a LoginModel on success', async () => {
+        const fakeRepository = {
+            login: () => Promise.resolve({ token: 'jwt-token', refreshToken: 'refresh-token' })
+        }
+        const service = new AuthService(fakeRepository)
+
+        const login = await service.login('test@test.com', 'Test1234')
+
+        expect(login.getToken()).toBe('jwt-token')
+        expect(login.getRefreshToken()).toBe('refresh-token')
+    })
+
+    test('refresh should pass the refresh token to the repository and map the response to a LoginModel', async () => {
+        let received
+        const fakeRepository = {
+            refresh: (refreshData) => {
+                received = refreshData
+                return Promise.resolve({ token: 'new-jwt-token', refreshToken: 'new-refresh-token' })
+            }
+        }
+        const service = new AuthService(fakeRepository)
+
+        const login = await service.refresh({ refreshToken: 'refresh-token' })
+
+        expect(received).toEqual({ refreshToken: 'refresh-token' })
+        expect(login.getToken()).toBe('new-jwt-token')
+        expect(login.getRefreshToken()).toBe('new-refresh-token')
+    })
+
+    test('logout should pass the refresh token to the repository and map the response to a LogoutModel', async () => {
+        let received
+        const fakeRepository = {
+            logout: (logoutData) => {
+                received = logoutData
+                return Promise.resolve({ message: 'Sesión cerrada correctamente' })
+            }
+        }
+        const service = new AuthService(fakeRepository)
+
+        const logout = await service.logout({ refreshToken: 'refresh-token' })
+
+        expect(received).toEqual({ refreshToken: 'refresh-token' })
+        expect(logout.getMessage()).toBe('Sesión cerrada correctamente')
+    })
+
+})
