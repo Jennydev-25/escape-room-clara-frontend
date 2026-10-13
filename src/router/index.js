@@ -12,19 +12,19 @@ const router = createRouter({
     {
       path: '/perfil',
       name: 'profile',
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, loading: { title: 'Cargando...', message: 'Recuperando tu expediente' } },
       component: () => import('@/views/user/ProfileView.vue'),
     },
     {
       path: '/resumen',
       name: 'summary',
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, loading: { title: 'Cargando...', message: 'Recuperando tu expediente' } },
       component: () => import('@/views/user/ResumenView.vue'),
     },
     {
       path: '/escritorio',
       name: 'game',
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, loading: { title: 'Entrando...', message: 'Cargando ClaraOS' } },
       component: () => import('@/views/game/GameView.vue'),
     },
   ],
