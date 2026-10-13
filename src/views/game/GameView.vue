@@ -70,7 +70,7 @@ function toggleFullscreen() {
                 type="button"
                 aria-label="Siguiente capítulo"
                 @click="openCurrentPuzzle"
-                class="group absolute left-1/2 flex h-7 -translate-x-1/2 items-center gap-2 rounded-lg px-2 text-xs font-medium tracking-wide text-primary uppercase transition-colors hover:bg-surface-container-high focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                class="group absolute left-1/2 flex h-7 -translate-x-1/2 items-center gap-2 rounded-lg px-2 text-xs font-medium tracking-wide text-os-clue uppercase transition-colors hover:bg-surface-container-high focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-os-clue"
             >
                 <Footprints class="size-4" aria-hidden="true" />
                 <span class="hidden group-hover:inline group-focus-visible:inline">Siguiente capítulo</span>
