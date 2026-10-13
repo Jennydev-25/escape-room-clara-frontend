@@ -41,11 +41,11 @@ function open(folder) {
 </script>
 
 <template>
-    <div>
+    <div class="flex flex-col">
         <p v-if="errorMessage" role="alert" class="relative m-4 w-fit max-w-md rounded-2xl border border-error bg-error/25 px-4 py-3 text-sm text-os-on-rust sm:m-6">
             {{ errorMessage }}
         </p>
-        <ul class="relative grid grid-cols-[repeat(auto-fill,4rem)] content-start justify-start gap-1 p-2 sm:grid-cols-[repeat(auto-fill,5rem)] sm:p-3">
+        <ul class="relative flex min-h-0 flex-1 flex-col flex-wrap content-start gap-1 p-2 sm:p-3">
             <li v-for="folder in folders" :key="folder.getCode()">
                 <button
                     type="button"

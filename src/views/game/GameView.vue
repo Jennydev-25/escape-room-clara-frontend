@@ -57,7 +57,7 @@ function toggleFullscreen() {
 </script>
 
 <template>
-    <main class="theme-clara-os relative flex min-h-dvh flex-col overflow-hidden bg-surface font-body text-on-surface">
+    <main class="theme-clara-os relative flex h-dvh flex-col overflow-hidden bg-surface font-body text-on-surface">
         <img :src="wallpaper" alt="" aria-hidden="true" class="absolute inset-0 h-full w-full object-cover">
         <div class="absolute inset-0 bg-surface/60" aria-hidden="true"></div>
 
