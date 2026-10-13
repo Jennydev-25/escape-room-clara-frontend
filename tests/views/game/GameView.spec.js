@@ -258,4 +258,15 @@ describe('GameView', () => {
 
         expect(wrapper.getComponent(LoadingScreen).props('message')).toBe('Saliendo del sistema de ClaraOS')
     })
+
+    it('fills the loading bar while leaving ClaraOS', async () => {
+        vi.useFakeTimers()
+        const wrapper = mountGameView()
+        const exit = wrapper.findAll('main button').find((button) => button.text() === 'Salir de ClaraOS')
+
+        await exit.trigger('click')
+        await vi.advanceTimersByTimeAsync(600)
+
+        expect(wrapper.getComponent(LoadingScreen).props('progress')).toBe(90)
+    })
 })
