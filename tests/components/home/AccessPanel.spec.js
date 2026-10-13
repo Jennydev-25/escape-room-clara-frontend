@@ -11,8 +11,13 @@ const login = vi.fn().mockResolvedValue({
     getRefreshToken: () => 'refresh-token',
 })
 const setSession = vi.fn()
+const push = vi.fn()
 const completeProfile = vi.fn().mockResolvedValue({})
 const withAuthService = { global: { provide: { AuthService: { register, login }, UserService: { completeProfile } } } }
+
+vi.mock('vue-router', () => ({
+    useRouter: () => ({ push }),
+}))
 
 vi.mock('@/stores/auth', () => ({
     useAuthStore: () => ({ setSession }),
@@ -102,6 +107,20 @@ describe('AccessPanel', () => {
         await wrapper.findComponent(CompleteProfileForm).vm.$emit('submit')
 
         expect(completeProfile).toHaveBeenCalledWith({ fullName: 'Clara Rey', alias: 'jugador_01' })
+    })
+
+    it('goes to the summary after completing the profile', async () => {
+        const wrapper = mount(AccessPanel, {
+            ...withAuthService,
+            props: { open: true, tab: 'register' },
+        })
+        await wrapper.findComponent(RegisterForm).vm.$emit('submit', { recaptchaToken: 'mocked-token' })
+        await flushPromises()
+
+        await wrapper.findComponent(CompleteProfileForm).vm.$emit('submit')
+        await flushPromises()
+
+        expect(push).toHaveBeenCalledWith('/resumen')
     })
 
     it('shows an error message when the register request fails', async () => {
