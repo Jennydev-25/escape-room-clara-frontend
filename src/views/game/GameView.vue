@@ -19,6 +19,15 @@ const isTrashOpen = ref(false)
 const formatTime = (date) => date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
 const time = ref(formatTime(new Date()))
 
+// se comprueba cada segundo para que el minuto cambie justo cuando toca
+let clockTimer
+onMounted(() => {
+    clockTimer = setInterval(() => {
+        time.value = formatTime(new Date())
+    }, 1000)
+})
+onUnmounted(() => clearInterval(clockTimer))
+
 // busca entre las carpetas visibles el puzzle con pregunta del capítulo actual
 async function openCurrentPuzzle() {
     const progress = await progressService.getProgress()
