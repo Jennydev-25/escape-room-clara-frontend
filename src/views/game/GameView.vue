@@ -10,6 +10,7 @@ const progressService = inject('ProgressService')
 const puzzleService = inject('PuzzleService')
 const currentPuzzle = ref(null)
 const isComingSoon = ref(false)
+const foldersKey = ref(0)
 
 // busca entre las carpetas visibles el puzzle con pregunta del capítulo actual
 async function openCurrentPuzzle() {
@@ -24,6 +25,12 @@ async function openCurrentPuzzle() {
         return
     }
     currentPuzzle.value = { id: summaries[index].getId(), title: summaries[index].getTitle(), question: puzzles[index].getQuestion() }
+}
+
+// al acertar se cierra la ventana y se recargan las carpetas para ver las nuevas
+function onSolved() {
+    currentPuzzle.value = null
+    foldersKey.value++
 }
 
 // el navegador decide si deja pantalla completa (en iPhone no)
@@ -56,7 +63,7 @@ function toggleFullscreen() {
 
         <h1 class="sr-only">Escritorio de ClaraOS</h1>
 
-        <FolderList class="relative" />
+        <FolderList :key="foldersKey" class="relative" />
 
         <div class="relative mt-auto flex justify-end p-4 sm:p-6">
             <button
@@ -104,6 +111,6 @@ function toggleFullscreen() {
             </button>
         </footer>
 
-        <PuzzleWindow v-if="currentPuzzle" v-bind="currentPuzzle" @close="currentPuzzle = null" />
+        <PuzzleWindow v-if="currentPuzzle" v-bind="currentPuzzle" @close="currentPuzzle = null" @solved="onSolved" />
     </main>
 </template>
