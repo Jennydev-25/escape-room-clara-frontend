@@ -65,4 +65,14 @@ describe('FileViewer', () => {
         expect(wrapper.get('img').attributes('style')).toContain('zoom: 1.25')
     })
 
+    it('shrinks the image when the zoom out button is clicked', async () => {
+        getFileUrl.mockResolvedValue('blob:tomas')
+        const wrapper = mountFileViewer('/tomas/tomas_elorza.png')
+        await flushPromises()
+
+        await wrapper.get('button[aria-label="Alejar"]').trigger('click')
+
+        expect(wrapper.get('img').attributes('style')).toContain('zoom: 0.75')
+    })
+
 })
