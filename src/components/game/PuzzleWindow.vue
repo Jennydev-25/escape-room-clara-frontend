@@ -1,5 +1,5 @@
 <script setup>
-import { X } from '@lucide/vue'
+import { Lightbulb, X } from '@lucide/vue'
 import { inject, ref, useId } from 'vue'
 import BaseButton from '@/shared/BaseButton.vue'
 import BaseWindow from '@/shared/BaseWindow.vue'
@@ -31,7 +31,16 @@ async function submitAnswer() {
 <template>
     <BaseWindow :title="title" @close="emit('close')">
         <form class="flex flex-col gap-4" @submit.prevent="submitAnswer">
-            <p class="text-base leading-relaxed text-on-surface">{{ question }}</p>
+            <div class="flex items-start justify-between gap-3">
+                <p class="text-lg leading-relaxed text-on-surface">{{ question }}</p>
+                <button
+                    type="button"
+                    class="group flex size-10 shrink-0 items-center justify-center rounded-full text-os-clue focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-os-clue"
+                    aria-label="Pistas"
+                >
+                    <Lightbulb class="size-8 transition-colors group-hover:fill-os-clue/40" aria-hidden="true" />
+                </button>
+            </div>
 
             <div class="flex flex-col gap-1">
                 <label :for="answerId">Tu respuesta</label>
