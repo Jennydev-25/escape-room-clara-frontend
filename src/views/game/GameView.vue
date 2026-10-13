@@ -148,6 +148,6 @@ function toggleFullscreen() {
 
         <TrashWindow v-if="isTrashOpen" @close="isTrashOpen = false" />
         <PuzzleWindow v-if="currentPuzzle" v-bind="currentPuzzle" @close="currentPuzzle = null" @solved="onSolved" />
-        <LoadingScreen v-if="isLeaving" title="Volviendo..." />
+        <LoadingScreen v-if="isLeaving" title="Volviendo..." message="Saliendo del sistema de ClaraOS" />
     </main>
 </template>
