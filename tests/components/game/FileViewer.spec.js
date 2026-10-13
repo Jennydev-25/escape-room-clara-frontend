@@ -75,4 +75,19 @@ describe('FileViewer', () => {
         expect(wrapper.get('img').attributes('style')).toContain('zoom: 0.75')
     })
 
+    it.each([
+        ['Alejar', 5, 'zoom: 0.5'],
+        ['Acercar', 10, 'zoom: 3'],
+    ])('stops the zoom at its limit when %s is clicked %i times', async (label, clicks, expectedZoom) => {
+        getFileUrl.mockResolvedValue('blob:tomas')
+        const wrapper = mountFileViewer('/tomas/tomas_elorza.png')
+        await flushPromises()
+
+        for (let click = 0; click < clicks; click++) {
+            await wrapper.get(`button[aria-label="${label}"]`).trigger('click')
+        }
+
+        expect(wrapper.get('img').attributes('style')).toContain(expectedZoom)
+    })
+
 })
