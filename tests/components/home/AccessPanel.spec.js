@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
 import AccessPanel from '@/components/home/AccessPanel.vue'
 import LoginForm from '@/components/auth/LoginForm.vue'
 import RegisterForm from '@/components/auth/RegisterForm.vue'
@@ -55,6 +55,23 @@ describe('AccessPanel', () => {
             confirmPassword: 'Test1234',
             recaptchaToken: 'mocked-token',
         })
+    })
+
+    it('logs in with the register credentials after a successful register', async () => {
+        const wrapper = mount(AccessPanel, {
+            ...withAuthService,
+            props: { open: true, tab: 'register' },
+        })
+
+        await wrapper.find('#register-email').setValue('test@test.com')
+        await wrapper.find('#register-password').setValue('Test1234')
+        await wrapper.find('#register-password').trigger('focus')
+        await wrapper.find('#register-confirm-password').setValue('Test1234')
+
+        await wrapper.findComponent(RegisterForm).vm.$emit('submit', { recaptchaToken: 'mocked-token' })
+        await flushPromises()
+
+        expect(login).toHaveBeenCalledWith('test@test.com', 'Test1234')
     })
 
     it('shows an error message when the register request fails', async () => {
