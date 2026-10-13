@@ -45,8 +45,12 @@ async function handleRegisterSubmit({ recaptchaToken }) {
 }
 
 async function handleCompleteProfileSubmit() {
-    await userService.completeProfile({ fullName: fullName.value, alias: alias.value })
-    router.push('/resumen')
+    try {
+        await userService.completeProfile({ fullName: fullName.value, alias: alias.value })
+        router.push('/resumen')
+    } catch (error) {
+        status.value = { type: 'error', message: error.message }
+    }
 }
 
 async function handleLoginSubmit() {
