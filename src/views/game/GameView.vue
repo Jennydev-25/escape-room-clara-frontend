@@ -63,7 +63,7 @@ function toggleFullscreen() {
 
         <h1 class="sr-only">Escritorio de ClaraOS</h1>
 
-        <FolderList :key="foldersKey" class="relative" />
+        <FolderList :key="foldersKey" class="relative min-h-0 flex-1" />
 
         <div class="relative mt-auto flex justify-end p-4 sm:p-6">
             <button
@@ -72,18 +72,6 @@ function toggleFullscreen() {
             >
                 <Trash2 class="size-9 fill-on-surface-variant/20 text-on-surface-variant sm:size-10" aria-hidden="true" />
                 <span>Papelera</span>
-            </button>
-        </div>
-
-        <div v-if="isComingSoon" role="alert" class="relative m-4 flex w-fit max-w-md items-center justify-between gap-3 rounded-2xl border border-os-clue bg-os-clue/25 px-4 py-3 text-sm text-on-surface uppercase sm:m-6">
-            <p>Próximamente...</p>
-            <button
-                type="button"
-                class="flex size-8 shrink-0 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-white/15 hover:text-on-surface active:bg-white/25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                aria-label="Cerrar aviso"
-                @click="isComingSoon = false"
-            >
-                <X class="size-5" aria-hidden="true" />
             </button>
         </div>
 
@@ -110,6 +98,18 @@ function toggleFullscreen() {
                 <Maximize v-else class="size-4" aria-hidden="true" />
             </button>
         </footer>
+
+        <div v-if="isComingSoon" role="alert" class="fixed top-1/2 left-1/2 flex w-max max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 items-center justify-between gap-3 rounded-2xl border border-os-clue bg-surface-container px-4 py-3 text-sm text-on-surface uppercase">
+            <p>Próximamente...</p>
+            <button
+                type="button"
+                class="flex size-8 shrink-0 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-white/15 hover:text-on-surface active:bg-white/25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                aria-label="Cerrar aviso"
+                @click="isComingSoon = false"
+            >
+                <X class="size-5" aria-hidden="true" />
+            </button>
+        </div>
 
         <PuzzleWindow v-if="currentPuzzle" v-bind="currentPuzzle" @close="currentPuzzle = null" @solved="onSolved" />
     </main>
