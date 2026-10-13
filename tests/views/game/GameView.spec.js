@@ -221,4 +221,14 @@ describe('GameView', () => {
         expect(wrapper.get('main time').text()).toBe('14:35')
     })
 
+    it('updates the clock as the minutes go by', async () => {
+        vi.useFakeTimers()
+        vi.setSystemTime(new Date(2026, 9, 13, 14, 35))
+        const wrapper = mountGameView()
+
+        await vi.advanceTimersByTimeAsync(60000)
+
+        expect(wrapper.get('main time').text()).toBe('14:36')
+    })
+
 })
