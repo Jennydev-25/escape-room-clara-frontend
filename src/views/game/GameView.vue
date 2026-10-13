@@ -4,6 +4,7 @@ import { inject, onMounted, onUnmounted, ref } from 'vue'
 import FolderList from '@/components/game/FolderList.vue'
 import PuzzleWindow from '@/components/game/PuzzleWindow.vue'
 import TrashWindow from '@/components/game/TrashWindow.vue'
+import { shouldOpenOnClick } from '@/composables/game/shouldOpenOnClick'
 import wallpaper from '@/assets/images/game/desktop/wallpaper.webp'
 
 const folderService = inject('FolderService')
@@ -71,6 +72,7 @@ function toggleFullscreen() {
             <button
                 type="button"
                 class="flex w-16 flex-col items-center gap-1 rounded-2xl p-2 text-center text-xs font-medium tracking-wide text-on-surface uppercase transition-colors hover:bg-surface-container/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-20"
+                @click="shouldOpenOnClick($event) && (isTrashOpen = true)"
                 @dblclick="isTrashOpen = true"
             >
                 <Trash2 class="size-9 fill-on-surface-variant/20 text-on-surface-variant sm:size-10" aria-hidden="true" />
