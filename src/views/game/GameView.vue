@@ -9,6 +9,7 @@ const folderService = inject('FolderService')
 const progressService = inject('ProgressService')
 const puzzleService = inject('PuzzleService')
 const currentPuzzle = ref(null)
+const isComingSoon = ref(false)
 
 // busca entre las carpetas visibles el puzzle con pregunta del capítulo actual
 async function openCurrentPuzzle() {
@@ -18,6 +19,10 @@ async function openCurrentPuzzle() {
     const summaries = details.flatMap((detail) => detail.getPuzzles())
     const puzzles = await Promise.all(summaries.map((summary) => puzzleService.getPuzzle(summary.getId())))
     const index = puzzles.findIndex((puzzle) => puzzle.getMinChapter() === progress.getCurrentChapter() && puzzle.getQuestion())
+    isComingSoon.value = index === -1
+    if (isComingSoon.value) {
+        return
+    }
     currentPuzzle.value = { id: summaries[index].getId(), title: summaries[index].getTitle(), question: puzzles[index].getQuestion() }
 }
 
@@ -62,6 +67,10 @@ function toggleFullscreen() {
                 <span>Papelera</span>
             </button>
         </div>
+
+        <p v-if="isComingSoon" role="alert" class="relative m-4 w-fit max-w-md rounded-2xl border border-os-clue bg-os-clue/25 px-4 py-3 text-sm text-on-surface uppercase sm:m-6">
+            Próximamente...
+        </p>
 
         <footer class="relative flex items-center gap-3 border-t border-outline bg-surface-container/90 px-4 py-3 backdrop-blur-sm sm:px-6 md:py-2">
             <span class="size-2 shrink-0 animate-pulse rounded-full bg-primary motion-reduce:animate-none" aria-hidden="true"></span>
