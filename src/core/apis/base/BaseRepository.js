@@ -100,6 +100,8 @@ export default class BaseRepository {
     }
 
     async #authSend(method, path, body) {
+        let message = "¡Ups! Algo salió mal"
+
         try {
             const response = await this.#authFetch(`${this.uri}${path}`, {
                 method,
@@ -108,6 +110,7 @@ export default class BaseRepository {
             })
 
             if (!response.ok) {
+                message = await this.#messageOf(response)
                 throw new Error('Error en la respuesta');
             }
 
@@ -117,7 +120,7 @@ export default class BaseRepository {
 
             return await response.json()
         } catch (error) {
-            throw new Error("¡Ups! Algo salió mal")
+            throw new Error(message)
         }
     }
 
