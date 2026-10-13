@@ -8,7 +8,7 @@ const props = defineProps({
     question: { type: String, required: true },
 })
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close', 'solved'])
 
 const puzzleService = inject('PuzzleService')
 const answerId = useId()
@@ -16,7 +16,10 @@ const answer = ref('')
 
 // manda la respuesta escrita para que el backend la valide
 async function submitAnswer() {
-    await puzzleService.validateAnswer(props.id, { value: answer.value })
+    const result = await puzzleService.validateAnswer(props.id, { value: answer.value })
+    if (result.isCorrect()) {
+        emit('solved')
+    }
 }
 </script>
 
