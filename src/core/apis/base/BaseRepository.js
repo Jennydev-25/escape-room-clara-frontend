@@ -28,6 +28,8 @@ export default class BaseRepository {
     }
 
     async post(path, body) {
+        let message = "¡Ups! Algo salió mal"
+
         try {
             const response = await fetch(`${this.uri}${path}`, {
                 method: 'POST',
@@ -36,13 +38,24 @@ export default class BaseRepository {
             })
 
             if (!response.ok) {
+                message = await this.#messageOf(response)
                 throw new Error('Error en la respuesta');
             }
 
             const data = await response.json()
             return data
         } catch (error) {
-            throw new Error("¡Ups! Algo salió mal")
+            throw new Error(message)
+        }
+    }
+
+    // mensaje que manda el backend en el error; si no hay, el genérico
+    async #messageOf(response) {
+        try {
+            const error = await response.json()
+            return error.message || "¡Ups! Algo salió mal"
+        } catch {
+            return "¡Ups! Algo salió mal"
         }
     }
 
