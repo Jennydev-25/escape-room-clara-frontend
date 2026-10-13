@@ -1,6 +1,7 @@
 <script setup>
 import { DoorOpen, Footprints, Maximize, Minimize, Trash2, X } from '@lucide/vue'
 import { inject, onMounted, onUnmounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import FolderList from '@/components/game/FolderList.vue'
 import PuzzleWindow from '@/components/game/PuzzleWindow.vue'
 import TrashWindow from '@/components/game/TrashWindow.vue'
@@ -8,6 +9,7 @@ import { shouldOpenOnClick } from '@/composables/game/shouldOpenOnClick'
 import LoadingScreen from '@/shared/LoadingScreen.vue'
 import wallpaper from '@/assets/images/game/desktop/wallpaper.webp'
 
+const router = useRouter()
 const folderService = inject('FolderService')
 const progressService = inject('ProgressService')
 const puzzleService = inject('PuzzleService')
@@ -18,6 +20,7 @@ const isTrashOpen = ref(false)
 const isLeaving = ref(false)
 const leavingProgress = ref(0)
 let leavingTimer
+let leavingTimeout
 
 // hora del dispositivo en formato 24 h, sin segundos
 const formatTime = (date) => date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
@@ -38,8 +41,16 @@ function leaveClaraOS() {
     leavingTimer = setInterval(() => {
         if (leavingProgress.value < 90) leavingProgress.value += 15
     }, 100)
+    leavingTimeout = setTimeout(() => {
+        clearInterval(leavingTimer)
+        leavingProgress.value = 100
+        router.push('/resumen')
+    }, 800)
 }
-onUnmounted(() => clearInterval(leavingTimer))
+onUnmounted(() => {
+    clearInterval(leavingTimer)
+    clearTimeout(leavingTimeout)
+})
 
 // busca entre las carpetas visibles el puzzle con pregunta del capítulo actual
 async function openCurrentPuzzle() {
