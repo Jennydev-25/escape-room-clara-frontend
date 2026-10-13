@@ -209,6 +209,17 @@ describe('BaseRepository', () => {
         expect(data).toEqual({ message: 'ok' })
     })
 
+    test.each(['authPost', 'authPut', 'authPatch'])('%s should throw the message of the backend when the error response has one', async (method) => {
+        setActivePinia(createPinia())
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+            ok: false,
+            json: () => Promise.resolve({ message: 'El alias es obligatorio', code: 400 }),
+        }))
+        const repository = new BaseRepository('http://localhost:8080/api/v1')
+
+        await expect(repository[method]('/test', {})).rejects.toThrow('El alias es obligatorio')
+    })
+
     test('authGet should log out and throw \'¡Ups! Algo salió mal\' when the session cannot be refreshed', async () => {
         setActivePinia(createPinia())
         const authStore = useAuthStore()
