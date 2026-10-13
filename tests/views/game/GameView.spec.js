@@ -27,6 +27,7 @@ describe('GameView', () => {
         delete document.fullscreenElement
         delete document.exitFullscreen
         delete document.documentElement.requestFullscreen
+        delete window.matchMedia
     })
 
     it('shows the folders on the desktop', async () => {
@@ -190,6 +191,22 @@ describe('GameView', () => {
         const trash = wrapper.findAll('main button').find((button) => button.text() === 'Papelera')
 
         await trash.trigger('dblclick')
+
+        expect(wrapper.findComponent(TrashWindow).exists()).toBe(true)
+    })
+
+    it.each([
+        ['the keyboard', { detail: 0 }, false],
+        ['a single tap on a touch screen', { detail: 1 }, true],
+    ])('opens the trash window when the trash is activated with %s', async (_, clickOptions, isTouchScreen) => {
+        if (isTouchScreen) {
+            window.matchMedia = vi.fn().mockReturnValue({ matches: true })
+        }
+        const wrapper = mountGameView()
+        await flushPromises()
+        const trash = wrapper.findAll('main button').find((button) => button.text() === 'Papelera')
+
+        await trash.trigger('click', clickOptions)
 
         expect(wrapper.findComponent(TrashWindow).exists()).toBe(true)
     })
