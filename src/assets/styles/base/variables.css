@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Flamenco:wght@300;400&family=Federo&family=Syne:wght@400;500;600;700;800&family=Courier+Prime:wght@400;700&display=swap');
 
 @theme {
-  /* Colors */
+  /* Colores */
   --color-surface: #0d1917;
   --color-surface-container: #142521;
   --color-surface-container-high: #1c332d;
@@ -14,9 +14,38 @@
   --color-error: #b2502e;
   --color-success: #4caf6e;
 
-  /* Typography */
+  /* ClaraOS (vista del juego) */
+  --color-os-bg: #17191c;
+  --color-os-panel: #24272d;
+  --color-os-panel-high: #2d3138;
+  --color-os-line: #3b4048;
+  --color-os-text: #f4f5f7;
+  --color-os-text-dim: #c2c7cc;
+  --color-os-sage: #7da98d;
+  --color-os-sage-hover: #95c2a6;
+  --color-os-on-sage: #0c1310;
+  --color-os-folder: #d7c17a;
+  --color-os-clue: #c98a35;
+  --color-os-rust: #a85b58;
+  --color-os-on-rust: #f3d3d1;
+
+  /* Tipografías */
   --font-display: "Flamenco", serif;
   --font-body: "Federo", sans-serif;
   --font-label: "Syne", sans-serif;
   --font-mono: "Courier Prime", monospace;
+}
+
+/* Dentro del juego, el botón y las cards usan los colores de ClaraOS */
+.theme-clara-os {
+  --color-surface: var(--color-os-bg);
+  --color-surface-container: var(--color-os-panel);
+  --color-surface-container-high: var(--color-os-panel-high);
+  --color-outline: var(--color-os-line);
+  --color-on-surface: var(--color-os-text);
+  --color-on-surface-variant: var(--color-os-text-dim);
+  --color-primary: var(--color-os-sage);
+  --color-primary-hover: var(--color-os-sage-hover);
+  --color-on-primary: var(--color-os-on-sage);
+  --color-error: var(--color-os-rust);
 }

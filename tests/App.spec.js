@@ -135,4 +135,30 @@ describe('App', () => {
     expect(router.currentRoute.value.name).toBe('home')
   })
 
+  it.each([
+    ['/escritorio', 'Entrando...', 'Cargando ClaraOS'],
+    ['/resumen', 'Cargando...', 'Recuperando tu expediente'],
+    ['/perfil', 'Cargando...', 'Recuperando tu expediente'],
+  ])('shows the loading screen with its own texts when changing to %s', async (path, title, message) => {
+    vi.useFakeTimers()
+    const pinia = createPinia()
+    setActivePinia(pinia)
+    useAuthStore().setSession('jwt-token', 'refresh-token')
+    await router.push('/')
+
+    const wrapper = mount(App, {
+      global: {
+        plugins: [router, pinia],
+      },
+    })
+    await vi.advanceTimersByTimeAsync(1200)
+
+    await router.push(path)
+    await flushPromises()
+
+    expect(wrapper.text()).toContain(title)
+    expect(wrapper.text()).toContain(message)
+    vi.useRealTimers()
+  })
+
 })
