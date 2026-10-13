@@ -40,7 +40,8 @@ async function submitAnswer() {
                     v-model="answer"
                     type="text"
                     autocomplete="off"
-                    class="w-full rounded-md border border-outline bg-surface px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
+                    placeholder="Respuestas sólo en mayúsculas"
+                    class="w-full rounded-md border border-outline bg-surface px-3 py-2 text-on-surface placeholder:text-error focus:border-primary focus:outline-none"
                 >
             </div>
 
