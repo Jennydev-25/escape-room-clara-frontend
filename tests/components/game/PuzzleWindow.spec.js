@@ -89,4 +89,18 @@ describe('PuzzleWindow', () => {
         expect(hints.map((hint) => hint.attributes('aria-expanded'))).toEqual(['false', 'false', 'false'])
     })
 
+    it('asks for a hint and shows its text when it is opened', async () => {
+        getHint.mockResolvedValue({ getText: () => 'Vuelve a leer la nota con calma.' })
+        const wrapper = mountPuzzleWindow()
+        await wrapper.get('button[aria-label="Pistas"]').trigger('click')
+        const hint = wrapper.findAll('button').find((button) => button.text() === 'Pista 1')
+
+        await hint.trigger('click')
+        await flushPromises()
+
+        expect(getHint).toHaveBeenCalledWith(1, 1)
+        expect(hint.attributes('aria-expanded')).toBe('true')
+        expect(wrapper.text()).toContain('Vuelve a leer la nota con calma.')
+    })
+
 })
