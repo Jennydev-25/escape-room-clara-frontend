@@ -54,6 +54,7 @@ async function handleLoginSubmit() {
         const login = await authService.login(loginEmail.value, loginPassword.value)
         authStore.setSession(login.getToken(), login.getRefreshToken())
         close()
+        router.push('/resumen')
     } catch (error) {
         status.value = { type: 'error', message: error.message }
     }
