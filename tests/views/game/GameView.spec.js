@@ -105,4 +105,10 @@ describe('GameView', () => {
         expect(trash).toBeDefined()
     })
 
+    it('shows the next chapter button in the taskbar', () => {
+        const wrapper = mountGameView()
+
+        expect(wrapper.get('footer').get('button[aria-label="Siguiente capítulo"]').exists()).toBe(true)
+    })
+
 })
