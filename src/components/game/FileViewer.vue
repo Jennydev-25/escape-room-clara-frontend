@@ -25,7 +25,7 @@ onMounted(async () => {
 
 <template>
     <BaseWindow :title="name" @close="emit('close')">
-        <img v-if="isImage" :src="url" :alt="name" class="mx-auto max-h-full max-w-full rounded-lg object-contain">
+        <img v-if="isImage" :src="url" :alt="name" class="mx-auto max-h-[calc(100dvh-8rem)] max-w-full rounded-lg object-contain md:max-h-[calc(85dvh-8rem)]">
         <pre v-else class="font-mono text-sm leading-relaxed whitespace-pre-wrap text-on-surface">{{ text }}</pre>
     </BaseWindow>
 </template>
