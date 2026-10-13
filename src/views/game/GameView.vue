@@ -1,8 +1,25 @@
 <script setup>
 import { Footprints, Maximize, Minimize, Trash2 } from '@lucide/vue'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { inject, onMounted, onUnmounted, ref } from 'vue'
 import FolderList from '@/components/game/FolderList.vue'
+import PuzzleWindow from '@/components/game/PuzzleWindow.vue'
 import wallpaper from '@/assets/images/game/desktop/wallpaper.webp'
+
+const folderService = inject('FolderService')
+const progressService = inject('ProgressService')
+const puzzleService = inject('PuzzleService')
+const currentPuzzle = ref(null)
+
+// busca entre las carpetas visibles el puzzle con pregunta del capítulo actual
+async function openCurrentPuzzle() {
+    const progress = await progressService.getProgress()
+    const folders = await folderService.listFolders()
+    const details = await Promise.all(folders.map((folder) => folderService.getFolder(folder.getCode())))
+    const summaries = details.flatMap((detail) => detail.getPuzzles())
+    const puzzles = await Promise.all(summaries.map((summary) => puzzleService.getPuzzle(summary.getId())))
+    const index = puzzles.findIndex((puzzle) => puzzle.getMinChapter() === progress.getCurrentChapter() && puzzle.getQuestion())
+    currentPuzzle.value = { id: summaries[index].getId(), title: summaries[index].getTitle(), question: puzzles[index].getQuestion() }
+}
 
 // el navegador decide si deja pantalla completa (en iPhone no)
 const canFullscreen = document.fullscreenEnabled === true
@@ -52,6 +69,7 @@ function toggleFullscreen() {
             <button
                 type="button"
                 aria-label="Siguiente capítulo"
+                @click="openCurrentPuzzle"
                 class="group absolute left-1/2 flex h-7 -translate-x-1/2 items-center gap-2 rounded-lg px-2 text-xs font-medium tracking-wide text-primary uppercase transition-colors hover:bg-surface-container-high focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
                 <Footprints class="size-4" aria-hidden="true" />
@@ -68,5 +86,7 @@ function toggleFullscreen() {
                 <Maximize v-else class="size-4" aria-hidden="true" />
             </button>
         </footer>
+
+        <PuzzleWindow v-if="currentPuzzle" v-bind="currentPuzzle" @close="currentPuzzle = null" />
     </main>
 </template>
