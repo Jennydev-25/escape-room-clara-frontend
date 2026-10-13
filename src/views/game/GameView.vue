@@ -75,14 +75,16 @@ function toggleFullscreen() {
             </button>
         </div>
 
-        <footer class="relative flex items-center gap-3 border-t border-outline bg-surface-container/90 px-4 py-3 backdrop-blur-sm sm:px-6 md:py-2">
-            <span class="size-2 shrink-0 animate-pulse rounded-full bg-primary motion-reduce:animate-none" aria-hidden="true"></span>
-            <p class="min-w-0 truncate text-xs text-on-surface sm:text-sm"><span class="text-primary">ClaraOS</span> · Bienvenida de nuevo, Clara</p>
+        <footer class="relative grid grid-cols-[1fr_auto_1fr] items-center gap-3 border-t border-outline bg-surface-container/90 px-4 py-3 backdrop-blur-sm sm:px-6 md:py-2">
+            <div class="flex min-w-0 items-center gap-3">
+                <span class="size-2 shrink-0 animate-pulse rounded-full bg-primary motion-reduce:animate-none" aria-hidden="true"></span>
+                <p class="min-w-0 truncate text-xs text-on-surface sm:text-sm"><span class="text-primary">ClaraOS</span> · Bienvenida de nuevo, Clara</p>
+            </div>
             <button
                 type="button"
                 aria-label="Siguiente capítulo"
                 @click="openCurrentPuzzle"
-                class="group absolute left-1/2 flex h-7 -translate-x-1/2 items-center gap-2 rounded-lg px-2 text-xs font-medium tracking-wide text-os-clue uppercase transition-colors hover:bg-surface-container-high focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-os-clue"
+                class="group flex h-7 items-center gap-2 rounded-lg px-2 text-xs font-medium tracking-wide text-os-clue uppercase transition-colors hover:bg-surface-container-high focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-os-clue"
             >
                 <Footprints class="size-4" aria-hidden="true" />
                 <span class="hidden group-hover:inline group-focus-visible:inline">Siguiente capítulo</span>
@@ -92,7 +94,7 @@ function toggleFullscreen() {
                 type="button"
                 :aria-label="isFullscreen ? 'Salir de pantalla completa' : 'Pantalla completa'"
                 @click="toggleFullscreen"
-                class="ml-auto hidden size-7 shrink-0 items-center justify-center rounded-lg text-primary transition-colors hover:bg-surface-container-high focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:flex"
+                class="hidden size-7 justify-self-end shrink-0 items-center justify-center rounded-lg text-primary transition-colors hover:bg-surface-container-high focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:flex"
             >
                 <Minimize v-if="isFullscreen" class="size-4" aria-hidden="true" />
                 <Maximize v-else class="size-4" aria-hidden="true" />
