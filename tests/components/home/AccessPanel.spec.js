@@ -124,6 +124,22 @@ describe('AccessPanel', () => {
         expect(push).toHaveBeenCalledWith('/resumen')
     })
 
+    it('shows an error message and does not leave when completing the profile fails', async () => {
+        completeProfile.mockRejectedValueOnce(new Error('El alias es obligatorio'))
+        const wrapper = mount(AccessPanel, {
+            ...withAuthService,
+            props: { open: true, tab: 'register' },
+        })
+        await wrapper.findComponent(RegisterForm).vm.$emit('submit', { recaptchaToken: 'mocked-token' })
+        await flushPromises()
+
+        await wrapper.findComponent(CompleteProfileForm).vm.$emit('submit')
+        await flushPromises()
+
+        expect(wrapper.find('.access-panel__feedback').text()).toBe('El alias es obligatorio')
+        expect(push).not.toHaveBeenCalled()
+    })
+
     it('shows an error message when the register request fails', async () => {
         register.mockRejectedValueOnce(new Error('¡Ups! Algo salió mal'))
         const wrapper = mount(AccessPanel, {
