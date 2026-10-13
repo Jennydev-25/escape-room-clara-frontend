@@ -7,7 +7,8 @@ import { clickWith } from '../../helpers/clickWith.js'
 
 const listFolders = vi.fn()
 const getFolder = vi.fn()
-const mountFolderList = () => mount(FolderList, { global: { plugins: [createPinia()], provide: { FolderService: { listFolders, getFolder } } } })
+const getPuzzle = vi.fn()
+const mountFolderList = () => mount(FolderList, { global: { plugins: [createPinia()], provide: { FolderService: { listFolders, getFolder }, PuzzleService: { getPuzzle } } } })
 
 const folder = (code, name) => ({ getCode: () => code, getName: () => name })
 const folderWithPuzzles = (...ids) => ({ getName: () => 'Tomás', getPuzzles: () => ids.map((id) => ({ getId: () => id })) })
@@ -18,6 +19,8 @@ describe('FolderList', () => {
         listFolders.mockReset()
         getFolder.mockReset()
         getFolder.mockResolvedValue(folderWithPuzzles())
+        getPuzzle.mockReset()
+        getPuzzle.mockResolvedValue({ getFiles: () => [] })
         localStorage.clear()
     })
 
