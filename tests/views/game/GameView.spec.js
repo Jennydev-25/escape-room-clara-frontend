@@ -231,4 +231,12 @@ describe('GameView', () => {
         expect(wrapper.get('main time').text()).toBe('14:36')
     })
 
+    it('shows the exit ClaraOS button next to the clock', () => {
+        const wrapper = mountGameView()
+
+        const exit = wrapper.findAll('main button').find((button) => button.text() === 'Salir de ClaraOS')
+
+        expect(exit).toBeDefined()
+    })
+
 })
