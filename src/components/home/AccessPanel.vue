@@ -20,6 +20,7 @@ const alias = ref('')
 const isCompletingProfile = ref(false)
 
 const authService = inject('AuthService')
+const userService = inject('UserService')
 const authStore = useAuthStore()
 const status = ref(null)
 
@@ -39,6 +40,10 @@ async function handleRegisterSubmit({ recaptchaToken }) {
     } catch (error) {
         status.value = { type: 'error', message: error.message }
     }
+}
+
+async function handleCompleteProfileSubmit() {
+    await userService.completeProfile({ fullName: fullName.value, alias: alias.value })
 }
 
 async function handleLoginSubmit() {
@@ -123,6 +128,7 @@ function close() {
           v-if="isCompletingProfile"
           v-model:fullName="fullName"
           v-model:alias="alias"
+          @submit="handleCompleteProfileSubmit"
         />
         <LoginForm
           v-else-if="tab === 'login'"
