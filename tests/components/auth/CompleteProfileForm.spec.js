@@ -23,4 +23,12 @@ describe('CompleteProfileForm', () => {
         expect(wrapper.emitted(`update:${model}`)[0]).toEqual([value])
     })
 
+    it('emits submit when the form is sent', async () => {
+        const wrapper = mount(CompleteProfileForm)
+
+        await wrapper.get('form').trigger('submit.prevent')
+
+        expect(wrapper.emitted('submit')).toHaveLength(1)
+    })
+
 })
