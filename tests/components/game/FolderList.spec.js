@@ -3,6 +3,7 @@ import FolderWindow from '@/components/game/FolderWindow.vue'
 import { flushPromises, mount } from '@vue/test-utils'
 import { createPinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { clickWith } from '../../helpers/clickWith.js'
 
 const listFolders = vi.fn()
 const getFolder = vi.fn()
@@ -129,7 +130,7 @@ describe('FolderList', () => {
         const wrapper = mountFolderList()
         await flushPromises()
 
-        await wrapper.get('button').trigger('click', { detail: 1 })
+        await clickWith(wrapper.get('button'), { detail: 1 })
 
         expect(wrapper.findComponent(FolderWindow).exists()).toBe(false)
         expect(localStorage.getItem('seen')).toBeNull()
@@ -151,7 +152,7 @@ describe('FolderList', () => {
         const wrapper = mountFolderList()
         await flushPromises()
 
-        await wrapper.get('button').trigger('click', { detail: 1 })
+        await clickWith(wrapper.get('button'), { detail: 1 })
 
         expect(wrapper.findComponent(FolderWindow).props('code')).toBe('tomas')
     })
