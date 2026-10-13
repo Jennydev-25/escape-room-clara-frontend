@@ -139,4 +139,14 @@ describe('GameView', () => {
         })
     })
 
+    it('shows a coming soon notice when there is no puzzle for the current chapter', async () => {
+        const wrapper = mountGameView()
+        await flushPromises()
+
+        await wrapper.get('button[aria-label="Siguiente capítulo"]').trigger('click')
+        await flushPromises()
+
+        expect(wrapper.get('[role="alert"]').text()).toBe('Próximamente...')
+    })
+
 })
