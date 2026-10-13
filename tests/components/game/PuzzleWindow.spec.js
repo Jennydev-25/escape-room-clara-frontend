@@ -67,4 +67,10 @@ describe('PuzzleWindow', () => {
         expect(wrapper.find('[role="alert"]').exists()).toBe(false)
     })
 
+    it('tells the player in the answer field that the answers go in capital letters', () => {
+        const wrapper = mountPuzzleWindow()
+
+        expect(wrapper.get('input').attributes('placeholder')).toBe('Respuestas sólo en mayúsculas')
+    })
+
 })
