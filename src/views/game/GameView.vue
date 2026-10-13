@@ -1,5 +1,5 @@
 <script setup>
-import { Footprints, Maximize, Minimize, Trash2, X } from '@lucide/vue'
+import { DoorOpen, Footprints, Maximize, Minimize, Trash2, X } from '@lucide/vue'
 import { inject, onMounted, onUnmounted, ref } from 'vue'
 import FolderList from '@/components/game/FolderList.vue'
 import PuzzleWindow from '@/components/game/PuzzleWindow.vue'
@@ -83,6 +83,14 @@ function toggleFullscreen() {
 
         <div class="absolute top-0 right-0 flex items-center gap-2 p-3 sm:p-4">
             <time class="inline-flex items-center gap-1.5 rounded-full border border-outline/30 px-5 py-2 font-label text-xl uppercase tracking-widest text-on-surface-variant">{{ time }}</time>
+            <button
+                type="button"
+                aria-label="Salir de ClaraOS"
+                class="group inline-flex items-center gap-2 rounded-full border border-outline/30 px-4 py-2 font-label text-sm uppercase tracking-widest text-on-surface-variant/60 transition-colors hover:border-error focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+                <DoorOpen class="size-6 text-error" aria-hidden="true" />
+                <span class="hidden text-on-surface-variant group-hover:inline group-focus-visible:inline">Salir de <span class="text-primary">ClaraOS</span></span>
+            </button>
         </div>
 
         <div class="relative mt-auto flex justify-end p-4 sm:p-6">
