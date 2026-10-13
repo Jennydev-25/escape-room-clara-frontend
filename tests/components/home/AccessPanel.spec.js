@@ -34,6 +34,7 @@ vi.mock('@/composables/useRecaptcha', () => ({
 describe('AccessPanel', () => {
 
     beforeEach(() => {
+        push.mockClear()
         register.mockClear()
         register.mockResolvedValue({ getMessage: () => 'User stored successfully' })
         login.mockClear()
@@ -160,6 +161,17 @@ describe('AccessPanel', () => {
         expect(setSession).toHaveBeenCalledWith('jwt-token', 'refresh-token')
         await Promise.resolve()
         expect(wrapper.emitted('update:open')[0]).toEqual([false])
+    })
+
+    it('goes to the summary after a successful login', async () => {
+        const wrapper = mount(AccessPanel, { ...withAuthService, props: { open: true } })
+
+        await wrapper.find('#login-email').setValue('test@test.com')
+        await wrapper.find('#login-password').setValue('Test1234')
+        await wrapper.findComponent(LoginForm).vm.$emit('submit')
+        await flushPromises()
+
+        expect(push).toHaveBeenCalledWith('/resumen')
     })
 
     it('shows an error message when the login request fails', async () => {
