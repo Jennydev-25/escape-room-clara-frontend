@@ -13,12 +13,15 @@ const emit = defineEmits(['close', 'solved'])
 const puzzleService = inject('PuzzleService')
 const answerId = useId()
 const answer = ref('')
+const isWrong = ref(false)
 
 // manda la respuesta escrita para que el backend la valide
 async function submitAnswer() {
     const result = await puzzleService.validateAnswer(props.id, { value: answer.value })
     if (result.isCorrect()) {
         emit('solved')
+    } else {
+        isWrong.value = true
     }
 }
 </script>
@@ -36,6 +39,10 @@ async function submitAnswer() {
                 autocomplete="off"
                 class="w-full rounded-lg border border-outline bg-surface px-3 py-2 text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
+
+            <p v-if="isWrong" role="alert" class="rounded-2xl border border-error bg-error/25 px-4 py-3 text-sm text-os-on-rust">
+                Respuesta incorrecta
+            </p>
 
             <button
                 type="submit"
