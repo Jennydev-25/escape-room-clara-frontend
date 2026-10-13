@@ -18,6 +18,20 @@ const answer = ref('')
 const isWrong = ref(false)
 const showHints = ref(false)
 const openHint = ref(null)
+const hintTexts = ref({})
+
+// abre una pista (solo una a la vez), la cierra si ya estaba abierta y pide su texto la primera vez
+async function toggleHint(number) {
+    if (openHint.value === number) {
+        openHint.value = null
+        return
+    }
+    openHint.value = number
+    if (!hintTexts.value[number]) {
+        const hint = await puzzleService.getHint(props.id, number)
+        hintTexts.value[number] = hint.getText()
+    }
+}
 
 // manda la respuesta escrita para que el backend la valide
 async function submitAnswer() {
@@ -51,9 +65,11 @@ async function submitAnswer() {
                         type="button"
                         class="w-full rounded-md border border-outline px-3 py-2 text-left text-on-surface-variant transition-colors hover:bg-surface-container-high focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                         :aria-expanded="openHint === number"
+                        @click="toggleHint(number)"
                     >
                         Pista {{ number }}
                     </button>
+                    <p v-if="openHint === number" class="px-3 py-2 text-sm leading-relaxed text-on-surface">{{ hintTexts[number] }}</p>
                 </li>
             </ul>
 
