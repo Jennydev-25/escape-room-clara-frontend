@@ -21,4 +21,15 @@ describe('PuzzleWindow', () => {
         expect(wrapper.get('button[type="submit"]').text()).toBe('Comprobar')
     })
 
+    it('sends the typed answer to validate it when the form is submitted', async () => {
+        validateAnswer.mockResolvedValue({ isCorrect: () => false })
+        const wrapper = mountPuzzleWindow()
+
+        await wrapper.get('input').setValue('CLARA')
+        await wrapper.get('form').trigger('submit')
+        await flushPromises()
+
+        expect(validateAnswer).toHaveBeenCalledWith(1, { value: 'CLARA' })
+    })
+
 })
