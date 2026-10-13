@@ -16,6 +16,8 @@ const puzzleService = inject('PuzzleService')
 const answerId = useId()
 const answer = ref('')
 const isWrong = ref(false)
+const showHints = ref(false)
+const openHint = ref(null)
 
 // manda la respuesta escrita para que el backend la valide
 async function submitAnswer() {
@@ -37,13 +39,26 @@ async function submitAnswer() {
                     type="button"
                     class="group flex size-10 shrink-0 items-center justify-center rounded-full text-os-clue focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-os-clue"
                     aria-label="Pistas"
+                    @click="showHints = !showHints"
                 >
                     <Lightbulb class="size-8 transition-colors group-hover:fill-os-clue/40" aria-hidden="true" />
                 </button>
             </div>
 
+            <ul v-if="showHints" class="flex flex-col gap-2">
+                <li v-for="number in 3" :key="number">
+                    <button
+                        type="button"
+                        class="w-full rounded-md border border-outline px-3 py-2 text-left text-on-surface-variant transition-colors hover:bg-surface-container-high focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                        :aria-expanded="openHint === number"
+                    >
+                        Pista {{ number }}
+                    </button>
+                </li>
+            </ul>
+
             <div class="flex flex-col gap-1">
-                <label :for="answerId">Tu respuesta</label>
+                <label :for="answerId" class="text-on-surface-variant">Tu respuesta</label>
                 <input
                     :id="answerId"
                     v-model="answer"
