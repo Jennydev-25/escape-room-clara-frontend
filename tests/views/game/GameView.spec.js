@@ -1,5 +1,7 @@
 import PuzzleWindow from '@/components/game/PuzzleWindow.vue'
 import TrashWindow from '@/components/game/TrashWindow.vue'
+import router from '@/router'
+import LoadingScreen from '@/shared/LoadingScreen.vue'
 import GameView from '@/views/game/GameView.vue'
 import { flushPromises, mount } from '@vue/test-utils'
 import { createPinia } from 'pinia'
@@ -12,7 +14,7 @@ const getPuzzle = vi.fn().mockResolvedValue({ getMinChapter: () => 1, getQuestio
 const listDiscardedFiles = vi.fn().mockResolvedValue([])
 const mountGameView = (services = {}) => mount(GameView, {
     global: {
-        plugins: [createPinia()],
+        plugins: [createPinia(), router],
         provide: { FolderService: { listFolders, getFolder }, ProgressService: { getProgress }, PuzzleService: { getPuzzle }, TrashService: { listDiscardedFiles }, ...services },
     },
 })
@@ -237,6 +239,15 @@ describe('GameView', () => {
         const exit = wrapper.findAll('main button').find((button) => button.text() === 'Salir de ClaraOS')
 
         expect(exit).toBeDefined()
+    })
+
+    it('shows the loading screen with Volviendo... when leaving ClaraOS', async () => {
+        const wrapper = mountGameView()
+        const exit = wrapper.findAll('main button').find((button) => button.text() === 'Salir de ClaraOS')
+
+        await exit.trigger('click')
+
+        expect(wrapper.getComponent(LoadingScreen).props('title')).toBe('Volviendo...')
     })
 
 })
