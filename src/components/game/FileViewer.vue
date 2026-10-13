@@ -16,16 +16,19 @@ const isImage = ['png', 'jpg', 'jpeg', 'webp'].includes(extension)
 const isPdf = extension === 'pdf'
 const url = ref('')
 const text = ref('')
+const MIN_ZOOM = 0.5
+const MAX_ZOOM = 3
+const ZOOM_STEP = 0.25
 const zoom = ref(1)
 
-// cada clic en acercar amplía un paso fijo
+// cada clic en acercar amplía un paso fijo sin pasar del máximo
 function zoomIn() {
-    zoom.value += 0.25
+    zoom.value = Math.min(zoom.value + ZOOM_STEP, MAX_ZOOM)
 }
 
-// cada clic en alejar reduce un paso fijo
+// cada clic en alejar reduce un paso fijo sin bajar del mínimo
 function zoomOut() {
-    zoom.value -= 0.25
+    zoom.value = Math.max(zoom.value - ZOOM_STEP, MIN_ZOOM)
 }
 
 onMounted(async () => {
