@@ -3,6 +3,7 @@ import { Footprints, Maximize, Minimize, Trash2, X } from '@lucide/vue'
 import { inject, onMounted, onUnmounted, ref } from 'vue'
 import FolderList from '@/components/game/FolderList.vue'
 import PuzzleWindow from '@/components/game/PuzzleWindow.vue'
+import TrashWindow from '@/components/game/TrashWindow.vue'
 import wallpaper from '@/assets/images/game/desktop/wallpaper.webp'
 
 const folderService = inject('FolderService')
@@ -11,6 +12,7 @@ const puzzleService = inject('PuzzleService')
 const currentPuzzle = ref(null)
 const isComingSoon = ref(false)
 const foldersKey = ref(0)
+const isTrashOpen = ref(false)
 
 // busca entre las carpetas visibles el puzzle con pregunta del capítulo actual
 async function openCurrentPuzzle() {
@@ -69,6 +71,7 @@ function toggleFullscreen() {
             <button
                 type="button"
                 class="flex w-16 flex-col items-center gap-1 rounded-2xl p-2 text-center text-xs font-medium tracking-wide text-on-surface uppercase transition-colors hover:bg-surface-container/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-20"
+                @dblclick="isTrashOpen = true"
             >
                 <Trash2 class="size-9 fill-on-surface-variant/20 text-on-surface-variant sm:size-10" aria-hidden="true" />
                 <span>Papelera</span>
@@ -113,6 +116,7 @@ function toggleFullscreen() {
             </button>
         </div>
 
+        <TrashWindow v-if="isTrashOpen" @close="isTrashOpen = false" />
         <PuzzleWindow v-if="currentPuzzle" v-bind="currentPuzzle" @close="currentPuzzle = null" @solved="onSolved" />
     </main>
 </template>
