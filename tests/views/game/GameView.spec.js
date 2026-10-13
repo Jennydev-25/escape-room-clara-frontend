@@ -160,4 +160,26 @@ describe('GameView', () => {
         expect(wrapper.find('[role="alert"]').exists()).toBe(false)
     })
 
+    it('closes the puzzle and reloads the folders when it is solved', async () => {
+        const leeme = { getCode: () => 'leeme', getName: () => 'Léeme' }
+        const tomas = { getCode: () => 'tomas', getName: () => 'Tomás' }
+        const wrapper = mountGameView({
+            FolderService: {
+                listFolders: vi.fn().mockResolvedValueOnce([leeme]).mockResolvedValueOnce([leeme]).mockResolvedValue([leeme, tomas]),
+                getFolder: vi.fn().mockResolvedValue({ getPuzzles: () => [{ getId: () => 1, getTitle: () => 'Capítulo 1: La desaparición' }] }),
+            },
+            PuzzleService: { getPuzzle: vi.fn().mockResolvedValue({ getMinChapter: () => 1, getQuestion: () => 'Según la nota, ¿en qué no debes confiar nunca?' }) },
+        })
+        await flushPromises()
+        await wrapper.get('button[aria-label="Siguiente capítulo"]').trigger('click')
+        await flushPromises()
+        expect(wrapper.get('main').text()).not.toContain('Tomás')
+
+        wrapper.getComponent(PuzzleWindow).vm.$emit('solved')
+        await flushPromises()
+
+        expect(wrapper.findComponent(PuzzleWindow).exists()).toBe(false)
+        expect(wrapper.get('main').text()).toContain('Tomás')
+    })
+
 })
