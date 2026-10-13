@@ -250,4 +250,12 @@ describe('GameView', () => {
         expect(wrapper.getComponent(LoadingScreen).props('title')).toBe('Volviendo...')
     })
 
+    it('shows the leaving message in the loading screen when leaving ClaraOS', async () => {
+        const wrapper = mountGameView()
+        const exit = wrapper.findAll('main button').find((button) => button.text() === 'Salir de ClaraOS')
+
+        await exit.trigger('click')
+
+        expect(wrapper.getComponent(LoadingScreen).props('message')).toBe('Saliendo del sistema de ClaraOS')
+    })
 })
