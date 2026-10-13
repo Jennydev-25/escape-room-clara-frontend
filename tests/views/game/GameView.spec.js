@@ -75,7 +75,7 @@ describe('GameView', () => {
         document.documentElement.requestFullscreen = vi.fn()
         const wrapper = mountGameView()
 
-        await wrapper.get('footer button').trigger('click')
+        await wrapper.get('button[aria-label="Pantalla completa"]').trigger('click')
 
         expect(document.documentElement.requestFullscreen).toHaveBeenCalledOnce()
     })
@@ -86,7 +86,7 @@ describe('GameView', () => {
         document.exitFullscreen = vi.fn()
         const wrapper = mountGameView()
 
-        await wrapper.get('footer button').trigger('click')
+        await wrapper.get('button[aria-label="Salir de pantalla completa"]').trigger('click')
 
         expect(document.exitFullscreen).toHaveBeenCalledOnce()
     })
