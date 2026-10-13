@@ -15,6 +15,10 @@ const isComingSoon = ref(false)
 const foldersKey = ref(0)
 const isTrashOpen = ref(false)
 
+// hora del dispositivo en formato 24 h, sin segundos
+const formatTime = (date) => date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
+const time = ref(formatTime(new Date()))
+
 // busca entre las carpetas visibles el puzzle con pregunta del capítulo actual
 async function openCurrentPuzzle() {
     const progress = await progressService.getProgress()
@@ -67,6 +71,10 @@ function toggleFullscreen() {
         <h1 class="sr-only">Escritorio de ClaraOS</h1>
 
         <FolderList :key="foldersKey" class="relative min-h-0 flex-1" />
+
+        <div class="absolute top-0 right-0 flex items-center gap-2 p-3 sm:p-4">
+            <time class="inline-flex items-center gap-1.5 rounded-full border border-outline/30 px-5 py-2 font-label text-xl uppercase tracking-widest text-on-surface-variant">{{ time }}</time>
+        </div>
 
         <div class="relative mt-auto flex justify-end p-4 sm:p-6">
             <button
