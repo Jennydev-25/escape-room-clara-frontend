@@ -28,6 +28,7 @@ describe('GameView', () => {
         delete document.exitFullscreen
         delete document.documentElement.requestFullscreen
         delete window.matchMedia
+        vi.useRealTimers()
     })
 
     it('shows the folders on the desktop', async () => {
@@ -209,6 +210,15 @@ describe('GameView', () => {
         await trash.trigger('click', clickOptions)
 
         expect(wrapper.findComponent(TrashWindow).exists()).toBe(true)
+    })
+
+    it('shows the current time in 24 hour format at the top right', () => {
+        vi.useFakeTimers()
+        vi.setSystemTime(new Date(2026, 9, 13, 14, 35))
+
+        const wrapper = mountGameView()
+
+        expect(wrapper.get('main time').text()).toBe('14:35')
     })
 
 })
