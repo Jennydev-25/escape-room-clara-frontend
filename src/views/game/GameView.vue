@@ -1,5 +1,5 @@
 <script setup>
-import { Maximize, Minimize, Trash2 } from '@lucide/vue'
+import { Footprints, Maximize, Minimize, Trash2 } from '@lucide/vue'
 import { onMounted, onUnmounted, ref } from 'vue'
 import FolderList from '@/components/game/FolderList.vue'
 import wallpaper from '@/assets/images/game/desktop/wallpaper.webp'
@@ -49,6 +49,14 @@ function toggleFullscreen() {
         <footer class="relative flex items-center gap-3 border-t border-outline bg-surface-container/90 px-4 py-3 backdrop-blur-sm sm:px-6 md:py-2">
             <span class="size-2 shrink-0 animate-pulse rounded-full bg-primary motion-reduce:animate-none" aria-hidden="true"></span>
             <p class="min-w-0 truncate text-xs text-on-surface sm:text-sm"><span class="text-primary">ClaraOS</span> · Bienvenida de nuevo, Clara</p>
+            <button
+                type="button"
+                aria-label="Siguiente capítulo"
+                class="group absolute left-1/2 flex h-7 -translate-x-1/2 items-center gap-2 rounded-lg px-2 text-xs font-medium tracking-wide text-primary uppercase transition-colors hover:bg-surface-container-high focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+                <Footprints class="size-4" aria-hidden="true" />
+                <span class="hidden group-hover:inline group-focus-visible:inline">Siguiente capítulo</span>
+            </button>
             <button
                 v-if="canFullscreen"
                 type="button"
