@@ -32,4 +32,15 @@ describe('PuzzleWindow', () => {
         expect(validateAnswer).toHaveBeenCalledWith(1, { value: 'CLARA' })
     })
 
+    it('emits solved when the answer is correct', async () => {
+        validateAnswer.mockResolvedValue({ isCorrect: () => true })
+        const wrapper = mountPuzzleWindow()
+
+        await wrapper.get('input').setValue('CLARA')
+        await wrapper.get('form').trigger('submit')
+        await flushPromises()
+
+        expect(wrapper.emitted('solved')).toHaveLength(1)
+    })
+
 })
