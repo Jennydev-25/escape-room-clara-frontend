@@ -73,4 +73,10 @@ describe('PuzzleWindow', () => {
         expect(wrapper.get('input').attributes('placeholder')).toBe('Respuestas sólo en mayúsculas')
     })
 
+    it('shows the hints button', () => {
+        const wrapper = mountPuzzleWindow()
+
+        expect(wrapper.find('button[aria-label="Pistas"]').exists()).toBe(true)
+    })
+
 })
