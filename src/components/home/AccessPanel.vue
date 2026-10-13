@@ -27,6 +27,9 @@ async function handleRegisterSubmit({ recaptchaToken }) {
             recaptchaToken,
         })
         status.value = { type: 'success', message: register.getMessage() }
+
+        const login = await authService.login(registerEmail.value, registerPassword.value)
+        authStore.setSession(login.getToken(), login.getRefreshToken())
     } catch (error) {
         status.value = { type: 'error', message: error.message }
     }
