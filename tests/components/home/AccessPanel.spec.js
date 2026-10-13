@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import AccessPanel from '@/components/home/AccessPanel.vue'
+import CompleteProfileForm from '@/components/auth/CompleteProfileForm.vue'
 import LoginForm from '@/components/auth/LoginForm.vue'
 import RegisterForm from '@/components/auth/RegisterForm.vue'
 
@@ -72,6 +73,19 @@ describe('AccessPanel', () => {
         await flushPromises()
 
         expect(login).toHaveBeenCalledWith('test@test.com', 'Test1234')
+    })
+
+    it('replaces the register form with the complete profile form after a successful register', async () => {
+        const wrapper = mount(AccessPanel, {
+            ...withAuthService,
+            props: { open: true, tab: 'register' },
+        })
+
+        await wrapper.findComponent(RegisterForm).vm.$emit('submit', { recaptchaToken: 'mocked-token' })
+        await flushPromises()
+
+        expect(wrapper.findComponent(RegisterForm).exists()).toBe(false)
+        expect(wrapper.findComponent(CompleteProfileForm).exists()).toBe(true)
     })
 
     it('shows an error message when the register request fails', async () => {
