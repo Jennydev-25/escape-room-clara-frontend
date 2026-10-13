@@ -149,4 +149,15 @@ describe('GameView', () => {
         expect(wrapper.get('[role="alert"]').text()).toBe('Próximamente...')
     })
 
+    it('hides the coming soon notice when it is dismissed', async () => {
+        const wrapper = mountGameView()
+        await flushPromises()
+        await wrapper.get('button[aria-label="Siguiente capítulo"]').trigger('click')
+        await flushPromises()
+
+        await wrapper.get('[role="alert"] button[aria-label="Cerrar aviso"]').trigger('click')
+
+        expect(wrapper.find('[role="alert"]').exists()).toBe(false)
+    })
+
 })
