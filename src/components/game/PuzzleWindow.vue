@@ -1,4 +1,5 @@
 <script setup>
+import { X } from '@lucide/vue'
 import { inject, ref, useId } from 'vue'
 import BaseWindow from '@/shared/BaseWindow.vue'
 
@@ -40,9 +41,17 @@ async function submitAnswer() {
                 class="w-full rounded-lg border border-outline bg-surface px-3 py-2 text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
 
-            <p v-if="isWrong" role="alert" class="rounded-2xl border border-error bg-error/25 px-4 py-3 text-sm text-os-on-rust">
-                Respuesta incorrecta
-            </p>
+            <div v-if="isWrong" role="alert" class="flex items-center justify-between gap-3 rounded-2xl border border-error bg-error/25 px-4 py-3 text-sm text-os-on-rust">
+                <p>Respuesta incorrecta</p>
+                <button
+                    type="button"
+                    class="flex size-8 shrink-0 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-white/15 hover:text-on-surface active:bg-white/25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    aria-label="Cerrar aviso"
+                    @click="isWrong = false"
+                >
+                    <X class="size-5" aria-hidden="true" />
+                </button>
+            </div>
 
             <button
                 type="submit"
