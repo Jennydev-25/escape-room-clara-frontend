@@ -1,5 +1,5 @@
 <script setup>
-import { Footprints, Maximize, Minimize, Trash2 } from '@lucide/vue'
+import { Footprints, Maximize, Minimize, Trash2, X } from '@lucide/vue'
 import { inject, onMounted, onUnmounted, ref } from 'vue'
 import FolderList from '@/components/game/FolderList.vue'
 import PuzzleWindow from '@/components/game/PuzzleWindow.vue'
@@ -68,9 +68,17 @@ function toggleFullscreen() {
             </button>
         </div>
 
-        <p v-if="isComingSoon" role="alert" class="relative m-4 w-fit max-w-md rounded-2xl border border-os-clue bg-os-clue/25 px-4 py-3 text-sm text-on-surface uppercase sm:m-6">
-            Próximamente...
-        </p>
+        <div v-if="isComingSoon" role="alert" class="relative m-4 flex w-fit max-w-md items-center justify-between gap-3 rounded-2xl border border-os-clue bg-os-clue/25 px-4 py-3 text-sm text-on-surface uppercase sm:m-6">
+            <p>Próximamente...</p>
+            <button
+                type="button"
+                class="flex size-8 shrink-0 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-white/15 hover:text-on-surface active:bg-white/25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                aria-label="Cerrar aviso"
+                @click="isComingSoon = false"
+            >
+                <X class="size-5" aria-hidden="true" />
+            </button>
+        </div>
 
         <footer class="relative flex items-center gap-3 border-t border-outline bg-surface-container/90 px-4 py-3 backdrop-blur-sm sm:px-6 md:py-2">
             <span class="size-2 shrink-0 animate-pulse rounded-full bg-primary motion-reduce:animate-none" aria-hidden="true"></span>
