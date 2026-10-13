@@ -6,6 +6,7 @@ import GameView from '@/views/game/GameView.vue'
 import { flushPromises, mount } from '@vue/test-utils'
 import { createPinia } from 'pinia'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { clickWith } from '../../helpers/clickWith.js'
 
 const listFolders = vi.fn().mockResolvedValue([{ getCode: () => 'tomas', getName: () => 'Tomás' }])
 const getFolder = vi.fn().mockResolvedValue({ getPuzzles: () => [] })
@@ -74,7 +75,7 @@ describe('GameView', () => {
         document.documentElement.requestFullscreen = vi.fn()
         const wrapper = mountGameView()
 
-        await wrapper.get('footer button').trigger('click')
+        await wrapper.get('button[aria-label="Pantalla completa"]').trigger('click')
 
         expect(document.documentElement.requestFullscreen).toHaveBeenCalledOnce()
     })
@@ -85,7 +86,7 @@ describe('GameView', () => {
         document.exitFullscreen = vi.fn()
         const wrapper = mountGameView()
 
-        await wrapper.get('footer button').trigger('click')
+        await wrapper.get('button[aria-label="Salir de pantalla completa"]').trigger('click')
 
         expect(document.exitFullscreen).toHaveBeenCalledOnce()
     })
@@ -211,7 +212,7 @@ describe('GameView', () => {
         await flushPromises()
         const trash = wrapper.findAll('main button').find((button) => button.text() === 'Papelera')
 
-        await trash.trigger('click', clickOptions)
+        await clickWith(trash, clickOptions)
 
         expect(wrapper.findComponent(TrashWindow).exists()).toBe(true)
     })

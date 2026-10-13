@@ -2,6 +2,7 @@ import FileViewer from '@/components/game/FileViewer.vue'
 import FolderWindow from '@/components/game/FolderWindow.vue'
 import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { clickWith } from '../../helpers/clickWith.js'
 
 const puzzle = (id) => ({ getId: () => id })
 const puzzleWithFiles = (...files) => ({ getFiles: () => files })
@@ -56,7 +57,7 @@ describe('FolderWindow', () => {
         const wrapper = mountFolderWindow()
         await flushPromises()
 
-        await wrapper.get('li button').trigger('click', { detail: 1 })
+        await clickWith(wrapper.get('li button'), { detail: 1 })
 
         expect(wrapper.findComponent(FileViewer).exists()).toBe(false)
     })
@@ -66,7 +67,7 @@ describe('FolderWindow', () => {
         const wrapper = mountFolderWindow()
         await flushPromises()
 
-        await wrapper.get('li button').trigger('click', { detail: 0 })
+        await clickWith(wrapper.get('li button'), { detail: 0 })
 
         expect(wrapper.findComponent(FileViewer).props('path')).toBe('/leeme/leeme.txt')
     })
@@ -77,7 +78,7 @@ describe('FolderWindow', () => {
         const wrapper = mountFolderWindow()
         await flushPromises()
 
-        await wrapper.get('li button').trigger('click', { detail: 1 })
+        await clickWith(wrapper.get('li button'), { detail: 1 })
 
         expect(wrapper.findComponent(FileViewer).props('path')).toBe('/leeme/leeme.txt')
     })

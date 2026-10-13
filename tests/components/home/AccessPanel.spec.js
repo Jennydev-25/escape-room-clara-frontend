@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
 import AccessPanel from '@/components/home/AccessPanel.vue'
+import CompleteProfileForm from '@/components/auth/CompleteProfileForm.vue'
 import LoginForm from '@/components/auth/LoginForm.vue'
 import RegisterForm from '@/components/auth/RegisterForm.vue'
 
@@ -10,7 +11,13 @@ const login = vi.fn().mockResolvedValue({
     getRefreshToken: () => 'refresh-token',
 })
 const setSession = vi.fn()
-const withAuthService = { global: { provide: { AuthService: { register, login } } } }
+const push = vi.fn()
+const completeProfile = vi.fn().mockResolvedValue({})
+const withAuthService = { global: { provide: { AuthService: { register, login }, UserService: { completeProfile } } } }
+
+vi.mock('vue-router', () => ({
+    useRouter: () => ({ push }),
+}))
 
 vi.mock('@/stores/auth', () => ({
     useAuthStore: () => ({ setSession }),
@@ -27,6 +34,7 @@ vi.mock('@/composables/useRecaptcha', () => ({
 describe('AccessPanel', () => {
 
     beforeEach(() => {
+        push.mockClear()
         register.mockClear()
         register.mockResolvedValue({ getMessage: () => 'User stored successfully' })
         login.mockClear()
@@ -55,6 +63,81 @@ describe('AccessPanel', () => {
             confirmPassword: 'Test1234',
             recaptchaToken: 'mocked-token',
         })
+    })
+
+    it('logs in with the register credentials after a successful register', async () => {
+        const wrapper = mount(AccessPanel, {
+            ...withAuthService,
+            props: { open: true, tab: 'register' },
+        })
+
+        await wrapper.find('#register-email').setValue('test@test.com')
+        await wrapper.find('#register-password').setValue('Test1234')
+        await wrapper.find('#register-password').trigger('focus')
+        await wrapper.find('#register-confirm-password').setValue('Test1234')
+
+        await wrapper.findComponent(RegisterForm).vm.$emit('submit', { recaptchaToken: 'mocked-token' })
+        await flushPromises()
+
+        expect(login).toHaveBeenCalledWith('test@test.com', 'Test1234')
+    })
+
+    it('replaces the register form with the complete profile form after a successful register', async () => {
+        const wrapper = mount(AccessPanel, {
+            ...withAuthService,
+            props: { open: true, tab: 'register' },
+        })
+
+        await wrapper.findComponent(RegisterForm).vm.$emit('submit', { recaptchaToken: 'mocked-token' })
+        await flushPromises()
+
+        expect(wrapper.findComponent(RegisterForm).exists()).toBe(false)
+        expect(wrapper.findComponent(CompleteProfileForm).exists()).toBe(true)
+    })
+
+    it('completes the profile with the full name and the alias on submit', async () => {
+        const wrapper = mount(AccessPanel, {
+            ...withAuthService,
+            props: { open: true, tab: 'register' },
+        })
+        await wrapper.findComponent(RegisterForm).vm.$emit('submit', { recaptchaToken: 'mocked-token' })
+        await flushPromises()
+
+        await wrapper.find('#complete-profile-full-name').setValue('Clara Rey')
+        await wrapper.find('#complete-profile-alias').setValue('jugador_01')
+        await wrapper.findComponent(CompleteProfileForm).vm.$emit('submit')
+
+        expect(completeProfile).toHaveBeenCalledWith({ fullName: 'Clara Rey', alias: 'jugador_01' })
+    })
+
+    it('goes to the summary after completing the profile', async () => {
+        const wrapper = mount(AccessPanel, {
+            ...withAuthService,
+            props: { open: true, tab: 'register' },
+        })
+        await wrapper.findComponent(RegisterForm).vm.$emit('submit', { recaptchaToken: 'mocked-token' })
+        await flushPromises()
+
+        await wrapper.findComponent(CompleteProfileForm).vm.$emit('submit')
+        await flushPromises()
+
+        expect(push).toHaveBeenCalledWith('/resumen')
+    })
+
+    it('shows an error message and does not leave when completing the profile fails', async () => {
+        completeProfile.mockRejectedValueOnce(new Error('El alias es obligatorio'))
+        const wrapper = mount(AccessPanel, {
+            ...withAuthService,
+            props: { open: true, tab: 'register' },
+        })
+        await wrapper.findComponent(RegisterForm).vm.$emit('submit', { recaptchaToken: 'mocked-token' })
+        await flushPromises()
+
+        await wrapper.findComponent(CompleteProfileForm).vm.$emit('submit')
+        await flushPromises()
+
+        expect(wrapper.find('.access-panel__feedback').text()).toBe('El alias es obligatorio')
+        expect(push).not.toHaveBeenCalled()
     })
 
     it('shows an error message when the register request fails', async () => {
@@ -94,6 +177,17 @@ describe('AccessPanel', () => {
         expect(setSession).toHaveBeenCalledWith('jwt-token', 'refresh-token')
         await Promise.resolve()
         expect(wrapper.emitted('update:open')[0]).toEqual([false])
+    })
+
+    it('goes to the summary after a successful login', async () => {
+        const wrapper = mount(AccessPanel, { ...withAuthService, props: { open: true } })
+
+        await wrapper.find('#login-email').setValue('test@test.com')
+        await wrapper.find('#login-password').setValue('Test1234')
+        await wrapper.findComponent(LoginForm).vm.$emit('submit')
+        await flushPromises()
+
+        expect(push).toHaveBeenCalledWith('/resumen')
     })
 
     it('shows an error message when the login request fails', async () => {

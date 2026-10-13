@@ -3,10 +3,12 @@ import FolderWindow from '@/components/game/FolderWindow.vue'
 import { flushPromises, mount } from '@vue/test-utils'
 import { createPinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { clickWith } from '../../helpers/clickWith.js'
 
 const listFolders = vi.fn()
 const getFolder = vi.fn()
-const mountFolderList = () => mount(FolderList, { global: { plugins: [createPinia()], provide: { FolderService: { listFolders, getFolder } } } })
+const getPuzzle = vi.fn()
+const mountFolderList = () => mount(FolderList, { global: { plugins: [createPinia()], provide: { FolderService: { listFolders, getFolder }, PuzzleService: { getPuzzle } } } })
 
 const folder = (code, name) => ({ getCode: () => code, getName: () => name })
 const folderWithPuzzles = (...ids) => ({ getName: () => 'Tomás', getPuzzles: () => ids.map((id) => ({ getId: () => id })) })
@@ -17,6 +19,8 @@ describe('FolderList', () => {
         listFolders.mockReset()
         getFolder.mockReset()
         getFolder.mockResolvedValue(folderWithPuzzles())
+        getPuzzle.mockReset()
+        getPuzzle.mockResolvedValue({ getFiles: () => [] })
         localStorage.clear()
     })
 
@@ -129,7 +133,7 @@ describe('FolderList', () => {
         const wrapper = mountFolderList()
         await flushPromises()
 
-        await wrapper.get('button').trigger('click', { detail: 1 })
+        await clickWith(wrapper.get('button'), { detail: 1 })
 
         expect(wrapper.findComponent(FolderWindow).exists()).toBe(false)
         expect(localStorage.getItem('seen')).toBeNull()
@@ -151,7 +155,7 @@ describe('FolderList', () => {
         const wrapper = mountFolderList()
         await flushPromises()
 
-        await wrapper.get('button').trigger('click', { detail: 1 })
+        await clickWith(wrapper.get('button'), { detail: 1 })
 
         expect(wrapper.findComponent(FolderWindow).props('code')).toBe('tomas')
     })

@@ -2,6 +2,7 @@ import FileViewer from '@/components/game/FileViewer.vue'
 import TrashWindow from '@/components/game/TrashWindow.vue'
 import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { clickWith } from '../../helpers/clickWith.js'
 
 const file = (name, body) => ({ getName: () => name, getBody: () => body })
 const listDiscardedFiles = vi.fn()
@@ -50,7 +51,7 @@ describe('TrashWindow', () => {
         const wrapper = mountTrashWindow()
         await flushPromises()
 
-        await wrapper.get('li button').trigger('click', clickOptions)
+        await clickWith(wrapper.get('li button'), clickOptions)
 
         expect(wrapper.findComponent(FileViewer).props('path')).toBe('/papelera/ideas_sueltas.txt')
     })

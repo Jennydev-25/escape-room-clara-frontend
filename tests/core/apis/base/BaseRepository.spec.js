@@ -61,6 +61,26 @@ describe('BaseRepository', () => {
         await expect(repository.post('/test', {})).rejects.toThrow('¡Ups! Algo salió mal')
     })
 
+    test('post should throw the message of the backend when the error response has one', async () => {
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+            ok: false,
+            json: () => Promise.resolve({ message: 'El email test@test.com ya está registrado.', code: 409 }),
+        }))
+        const repository = new BaseRepository('http://localhost:8080/api/v1')
+
+        await expect(repository.post('/test', {})).rejects.toThrow('El email test@test.com ya está registrado.')
+    })
+
+    test('post should throw \'¡Ups! Algo salió mal\' when the error response has a body without message', async () => {
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+            ok: false,
+            json: () => Promise.resolve({ code: 500 }),
+        }))
+        const repository = new BaseRepository('http://localhost:8080/api/v1')
+
+        await expect(repository.post('/test', {})).rejects.toThrow('¡Ups! Algo salió mal')
+    })
+
     test('authGet should send the stored token as a Bearer header and return the response data', async () => {
         setActivePinia(createPinia())
         useAuthStore().setSession('jwt-token', 'refresh-token')
@@ -197,6 +217,17 @@ describe('BaseRepository', () => {
             headers: { Authorization: 'Bearer new-token' },
         })
         expect(data).toEqual({ message: 'ok' })
+    })
+
+    test.each(['authPost', 'authPut', 'authPatch'])('%s should throw the message of the backend when the error response has one', async (method) => {
+        setActivePinia(createPinia())
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+            ok: false,
+            json: () => Promise.resolve({ message: 'El alias es obligatorio', code: 400 }),
+        }))
+        const repository = new BaseRepository('http://localhost:8080/api/v1')
+
+        await expect(repository[method]('/test', {})).rejects.toThrow('El alias es obligatorio')
     })
 
     test('authGet should log out and throw \'¡Ups! Algo salió mal\' when the session cannot be refreshed', async () => {

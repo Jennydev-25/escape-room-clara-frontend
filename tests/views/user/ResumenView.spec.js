@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createPinia } from 'pinia'
 import router from '@/router'
@@ -71,5 +71,18 @@ describe('ResumenView', () => {
 
         const button = wrapper.findAll('button').find((b) => b.text().includes('Comenzar'))
         expect(button.exists()).toBe(true)
+    })
+
+    it('goes to the game desktop when the start button is clicked', async () => {
+        const push = vi.spyOn(router, 'push').mockResolvedValue()
+        const wrapper = mount(ResumenView, {
+            global: { plugins: [router, createPinia()] },
+        })
+
+        const button = wrapper.findAll('button').find((b) => b.text().includes('Comenzar'))
+        await button.trigger('click')
+
+        expect(push).toHaveBeenCalledWith('/escritorio')
+        push.mockRestore()
     })
 })

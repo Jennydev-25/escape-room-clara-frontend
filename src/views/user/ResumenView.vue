@@ -1,7 +1,10 @@
 <script setup>
 import { BookOpen, Clock, FolderOpen, Search } from '@lucide/vue'
+import { useRouter } from 'vue-router'
 import DashboardLayout from '@/shared/dashboard/DashboardLayout.vue'
 import BaseButton from '@/shared/BaseButton.vue'
+
+const router = useRouter()
 </script>
 
 <template>
@@ -49,7 +52,7 @@ import BaseButton from '@/shared/BaseButton.vue'
             </div>
 
             <div class="resumen-view__cta mt-6 flex justify-center">
-                <BaseButton type="button">
+                <BaseButton type="button" @click="router.push('/escritorio')">
                     <span class="flex items-center gap-2">
                         Comenzar
                         <component :is="Search" :size="16" />
