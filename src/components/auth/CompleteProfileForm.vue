@@ -1,5 +1,8 @@
 <script setup>
 import BaseButton from '@/shared/BaseButton.vue'
+
+const fullName = defineModel('fullName', { type: String, default: '' })
+const alias = defineModel('alias', { type: String, default: '' })
 </script>
 
 <template>
@@ -10,6 +13,7 @@ import BaseButton from '@/shared/BaseButton.vue'
                 id="complete-profile-full-name"
                 type="text"
                 required
+                v-model="fullName"
                 class="w-full rounded-md border border-outline bg-surface-container px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
             >
         </div>
@@ -20,6 +24,7 @@ import BaseButton from '@/shared/BaseButton.vue'
                 id="complete-profile-alias"
                 type="text"
                 required
+                v-model="alias"
                 class="w-full rounded-md border border-outline bg-surface-container px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
             >
         </div>
