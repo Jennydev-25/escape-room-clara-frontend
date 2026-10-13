@@ -269,4 +269,17 @@ describe('GameView', () => {
 
         expect(wrapper.getComponent(LoadingScreen).props('progress')).toBe(90)
     })
+
+    it('goes to the summary after the loading screen when leaving ClaraOS', async () => {
+        vi.useFakeTimers()
+        const push = vi.spyOn(router, 'push').mockResolvedValue()
+        const wrapper = mountGameView()
+        const exit = wrapper.findAll('main button').find((button) => button.text() === 'Salir de ClaraOS')
+
+        await exit.trigger('click')
+        await vi.advanceTimersByTimeAsync(800)
+
+        expect(push).toHaveBeenCalledWith('/resumen')
+        push.mockRestore()
+    })
 })
