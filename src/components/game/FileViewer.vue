@@ -16,6 +16,12 @@ const isImage = ['png', 'jpg', 'jpeg', 'webp'].includes(extension)
 const isPdf = extension === 'pdf'
 const url = ref('')
 const text = ref('')
+const zoom = ref(1)
+
+// cada clic en acercar amplía un paso fijo
+function zoomIn() {
+    zoom.value += 0.25
+}
 
 onMounted(async () => {
     url.value = await staticFileService.getFileUrl(props.path)
@@ -29,12 +35,14 @@ onMounted(async () => {
 <template>
     <BaseWindow :title="name" @close="emit('close')">
         <div v-if="isImage" class="relative mx-auto w-fit max-w-full">
-            <img :src="url" :alt="name" class="max-h-[calc(100dvh-8rem)] max-w-full rounded-lg object-contain md:max-h-[calc(85dvh-8rem)]">
+            <div class="max-h-[calc(100dvh-8rem)] overflow-auto rounded-lg md:max-h-[calc(85dvh-8rem)]">
+                <img :src="url" :alt="name" :style="{ zoom }" class="max-h-[calc(100dvh-8rem)] max-w-full object-contain md:max-h-[calc(85dvh-8rem)]">
+            </div>
             <div class="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-full border border-outline bg-surface-container/90 p-1 backdrop-blur-sm">
                 <button type="button" class="flex size-8 shrink-0 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-white/15 hover:text-on-surface active:bg-white/25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" aria-label="Alejar">
                     <ZoomOut class="size-5" aria-hidden="true" />
                 </button>
-                <button type="button" class="flex size-8 shrink-0 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-white/15 hover:text-on-surface active:bg-white/25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" aria-label="Acercar">
+                <button type="button" class="flex size-8 shrink-0 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-white/15 hover:text-on-surface active:bg-white/25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" aria-label="Acercar" @click="zoomIn">
                     <ZoomIn class="size-5" aria-hidden="true" />
                 </button>
             </div>
