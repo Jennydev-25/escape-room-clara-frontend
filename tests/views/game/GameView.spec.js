@@ -1,4 +1,5 @@
 import PuzzleWindow from '@/components/game/PuzzleWindow.vue'
+import TrashWindow from '@/components/game/TrashWindow.vue'
 import GameView from '@/views/game/GameView.vue'
 import { flushPromises, mount } from '@vue/test-utils'
 import { createPinia } from 'pinia'
@@ -8,10 +9,11 @@ const listFolders = vi.fn().mockResolvedValue([{ getCode: () => 'tomas', getName
 const getFolder = vi.fn().mockResolvedValue({ getPuzzles: () => [] })
 const getProgress = vi.fn().mockResolvedValue({ getCurrentChapter: () => 1 })
 const getPuzzle = vi.fn().mockResolvedValue({ getMinChapter: () => 1, getQuestion: () => null })
+const listDiscardedFiles = vi.fn().mockResolvedValue([])
 const mountGameView = (services = {}) => mount(GameView, {
     global: {
         plugins: [createPinia()],
-        provide: { FolderService: { listFolders, getFolder }, ProgressService: { getProgress }, PuzzleService: { getPuzzle }, ...services },
+        provide: { FolderService: { listFolders, getFolder }, ProgressService: { getProgress }, PuzzleService: { getPuzzle }, TrashService: { listDiscardedFiles }, ...services },
     },
 })
 
@@ -180,6 +182,16 @@ describe('GameView', () => {
 
         expect(wrapper.findComponent(PuzzleWindow).exists()).toBe(false)
         expect(wrapper.get('main').text()).toContain('Tomás')
+    })
+
+    it('opens the trash window when the trash is double clicked', async () => {
+        const wrapper = mountGameView()
+        await flushPromises()
+        const trash = wrapper.findAll('main button').find((button) => button.text() === 'Papelera')
+
+        await trash.trigger('dblclick')
+
+        expect(wrapper.findComponent(TrashWindow).exists()).toBe(true)
     })
 
 })
