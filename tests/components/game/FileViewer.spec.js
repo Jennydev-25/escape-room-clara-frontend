@@ -55,4 +55,14 @@ describe('FileViewer', () => {
         expect(wrapper.find('button[aria-label="Alejar"]').exists()).toBe(true)
     })
 
+    it('enlarges the image when the zoom in button is clicked', async () => {
+        getFileUrl.mockResolvedValue('blob:tomas')
+        const wrapper = mountFileViewer('/tomas/tomas_elorza.png')
+        await flushPromises()
+
+        await wrapper.get('button[aria-label="Acercar"]').trigger('click')
+
+        expect(wrapper.get('img').attributes('style')).toContain('zoom: 1.25')
+    })
+
 })
