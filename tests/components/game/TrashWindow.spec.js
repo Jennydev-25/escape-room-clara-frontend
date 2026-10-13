@@ -1,10 +1,11 @@
+import FileViewer from '@/components/game/FileViewer.vue'
 import TrashWindow from '@/components/game/TrashWindow.vue'
 import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 
 const file = (name, body) => ({ getName: () => name, getBody: () => body })
 const listDiscardedFiles = vi.fn()
-const mountTrashWindow = () => mount(TrashWindow, { global: { provide: { TrashService: { listDiscardedFiles } } } })
+const mountTrashWindow = () => mount(TrashWindow, { global: { stubs: { FileViewer: true }, provide: { TrashService: { listDiscardedFiles } } } })
 
 describe('TrashWindow', () => {
 
@@ -22,6 +23,16 @@ describe('TrashWindow', () => {
             'borrador_reportaje_puerto_v1.txt',
             'salgo_fatal.png',
         ])
+    })
+
+    it('opens the file viewer with the file path when a file is double clicked', async () => {
+        listDiscardedFiles.mockResolvedValue([file('ideas_sueltas.txt', '/papelera/ideas_sueltas.txt')])
+        const wrapper = mountTrashWindow()
+        await flushPromises()
+
+        await wrapper.get('li button').trigger('dblclick')
+
+        expect(wrapper.findComponent(FileViewer).props('path')).toBe('/papelera/ideas_sueltas.txt')
     })
 
 })
