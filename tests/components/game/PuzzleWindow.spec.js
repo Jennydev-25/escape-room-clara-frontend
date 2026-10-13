@@ -55,4 +55,16 @@ describe('PuzzleWindow', () => {
         expect(wrapper.emitted('solved')).toBeUndefined()
     })
 
+    it('hides the incorrect answer alert when it is dismissed', async () => {
+        validateAnswer.mockResolvedValue({ isCorrect: () => false })
+        const wrapper = mountPuzzleWindow()
+
+        await wrapper.get('input').setValue('MAL')
+        await wrapper.get('form').trigger('submit')
+        await flushPromises()
+        await wrapper.get('[aria-label="Cerrar aviso"]').trigger('click')
+
+        expect(wrapper.find('[role="alert"]').exists()).toBe(false)
+    })
+
 })
