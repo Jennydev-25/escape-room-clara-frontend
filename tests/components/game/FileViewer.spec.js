@@ -45,4 +45,14 @@ describe('FileViewer', () => {
         expect(wrapper.find('pre').exists()).toBe(false)
     })
 
+    it('shows the zoom buttons for an image file', async () => {
+        getFileUrl.mockResolvedValue('blob:tomas')
+
+        const wrapper = mountFileViewer('/tomas/tomas_elorza.png')
+        await flushPromises()
+
+        expect(wrapper.find('button[aria-label="Acercar"]').exists()).toBe(true)
+        expect(wrapper.find('button[aria-label="Alejar"]').exists()).toBe(true)
+    })
+
 })
