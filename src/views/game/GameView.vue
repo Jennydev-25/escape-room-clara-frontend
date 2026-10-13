@@ -5,6 +5,7 @@ import FolderList from '@/components/game/FolderList.vue'
 import PuzzleWindow from '@/components/game/PuzzleWindow.vue'
 import TrashWindow from '@/components/game/TrashWindow.vue'
 import { shouldOpenOnClick } from '@/composables/game/shouldOpenOnClick'
+import LoadingScreen from '@/shared/LoadingScreen.vue'
 import wallpaper from '@/assets/images/game/desktop/wallpaper.webp'
 
 const folderService = inject('FolderService')
@@ -14,6 +15,7 @@ const currentPuzzle = ref(null)
 const isComingSoon = ref(false)
 const foldersKey = ref(0)
 const isTrashOpen = ref(false)
+const isLeaving = ref(false)
 
 // hora del dispositivo en formato 24 h, sin segundos
 const formatTime = (date) => date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
@@ -86,6 +88,7 @@ function toggleFullscreen() {
             <button
                 type="button"
                 aria-label="Salir de ClaraOS"
+                @click="isLeaving = true"
                 class="group inline-flex items-center gap-2 rounded-full border border-outline/30 px-4 py-2 font-label text-sm uppercase tracking-widest text-on-surface-variant/60 transition-colors hover:border-error focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
                 <DoorOpen class="size-6 text-error" aria-hidden="true" />
@@ -145,5 +148,6 @@ function toggleFullscreen() {
 
         <TrashWindow v-if="isTrashOpen" @close="isTrashOpen = false" />
         <PuzzleWindow v-if="currentPuzzle" v-bind="currentPuzzle" @close="currentPuzzle = null" @solved="onSolved" />
+        <LoadingScreen v-if="isLeaving" title="Volviendo..." />
     </main>
 </template>
