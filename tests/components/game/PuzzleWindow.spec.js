@@ -43,4 +43,16 @@ describe('PuzzleWindow', () => {
         expect(wrapper.emitted('solved')).toHaveLength(1)
     })
 
+    it('shows an incorrect answer alert when the answer is wrong', async () => {
+        validateAnswer.mockResolvedValue({ isCorrect: () => false })
+        const wrapper = mountPuzzleWindow()
+
+        await wrapper.get('input').setValue('MAL')
+        await wrapper.get('form').trigger('submit')
+        await flushPromises()
+
+        expect(wrapper.get('[role="alert"]').text()).toContain('Respuesta incorrecta')
+        expect(wrapper.emitted('solved')).toBeUndefined()
+    })
+
 })
