@@ -1,3 +1,4 @@
+import PuzzleWindow from '@/components/game/PuzzleWindow.vue'
 import GameView from '@/views/game/GameView.vue'
 import { flushPromises, mount } from '@vue/test-utils'
 import { createPinia } from 'pinia'
@@ -5,7 +6,14 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 
 const listFolders = vi.fn().mockResolvedValue([{ getCode: () => 'tomas', getName: () => 'Tomás' }])
 const getFolder = vi.fn().mockResolvedValue({ getPuzzles: () => [] })
-const mountGameView = () => mount(GameView, { global: { plugins: [createPinia()], provide: { FolderService: { listFolders, getFolder } } } })
+const getProgress = vi.fn().mockResolvedValue({ getCurrentChapter: () => 1 })
+const getPuzzle = vi.fn().mockResolvedValue({ getMinChapter: () => 1, getQuestion: () => null })
+const mountGameView = (services = {}) => mount(GameView, {
+    global: {
+        plugins: [createPinia()],
+        provide: { FolderService: { listFolders, getFolder }, ProgressService: { getProgress }, PuzzleService: { getPuzzle }, ...services },
+    },
+})
 
 const supportFullscreen = () => Object.defineProperty(document, 'fullscreenEnabled', { value: true, configurable: true })
 const enterFullscreen = () => Object.defineProperty(document, 'fullscreenElement', { value: document.documentElement, configurable: true })
@@ -109,6 +117,26 @@ describe('GameView', () => {
         const wrapper = mountGameView()
 
         expect(wrapper.get('footer').get('button[aria-label="Siguiente capítulo"]').exists()).toBe(true)
+    })
+
+    it('opens the puzzle of the current chapter when the next chapter button is clicked', async () => {
+        const wrapper = mountGameView({
+            FolderService: {
+                listFolders: vi.fn().mockResolvedValue([{ getCode: () => 'leeme', getName: () => 'Léeme' }]),
+                getFolder: vi.fn().mockResolvedValue({ getPuzzles: () => [{ getId: () => 1, getTitle: () => 'Capítulo 1: La desaparición' }] }),
+            },
+            PuzzleService: { getPuzzle: vi.fn().mockResolvedValue({ getMinChapter: () => 1, getQuestion: () => 'Según la nota, ¿en qué no debes confiar nunca?' }) },
+        })
+        await flushPromises()
+
+        await wrapper.get('button[aria-label="Siguiente capítulo"]').trigger('click')
+        await flushPromises()
+
+        expect(wrapper.getComponent(PuzzleWindow).props()).toEqual({
+            id: 1,
+            title: 'Capítulo 1: La desaparición',
+            question: 'Según la nota, ¿en qué no debes confiar nunca?',
+        })
     })
 
 })
