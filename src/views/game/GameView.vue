@@ -7,6 +7,7 @@ import PuzzleWindow from '@/components/game/PuzzleWindow.vue'
 import TrashWindow from '@/components/game/TrashWindow.vue'
 import WelcomeCard from '@/components/game/WelcomeCard.vue'
 import { shouldOpenOnClick } from '@/composables/game/shouldOpenOnClick'
+import { useSeenStore } from '@/stores/seen'
 import LoadingScreen from '@/shared/LoadingScreen.vue'
 import wallpaper from '@/assets/images/game/desktop/wallpaper.webp'
 
@@ -14,6 +15,8 @@ const router = useRouter()
 const folderService = inject('FolderService')
 const progressService = inject('ProgressService')
 const puzzleService = inject('PuzzleService')
+const seenService = inject('SeenService')
+const seenStore = useSeenStore()
 const currentPuzzle = ref(null)
 const isComingSoon = ref(false)
 const foldersKey = ref(0)
@@ -41,6 +44,12 @@ onUnmounted(() => clearInterval(clockTimer))
 onMounted(async () => {
     const progress = await progressService.getProgress()
     isWelcomeOpen.value = !progress.isWelcomeSeen()
+})
+
+// carga lo que el jugador ya ha visto para pintar los puntos de nuevo
+onMounted(async () => {
+    const items = await seenService.listSeen()
+    seenStore.setSeen(items.map((item) => item.getKey()))
 })
 
 // al aceptar se cierra el mensaje y se guarda que ya lo vio
