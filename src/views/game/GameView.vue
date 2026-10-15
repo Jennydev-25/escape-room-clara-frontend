@@ -1,6 +1,6 @@
 <script setup>
 import { DoorOpen, Footprints, Maximize, Minimize, Trash2, X } from '@lucide/vue'
-import { inject, onMounted, onUnmounted, ref } from 'vue'
+import { computed, inject, onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import FolderList from '@/components/game/FolderList.vue'
 import PuzzleWindow from '@/components/game/PuzzleWindow.vue'
@@ -65,6 +65,9 @@ function markSeen(key) {
     seenStore.markSeen(key)
     seenService.markSeen(key)
 }
+
+// el aviso solo sale si el jugador ya abrió la papelera y le han llegado archivos que no conocía
+const trashHasNewFiles = computed(() => seenStore.isLoaded && seenStore.isSeen('trash') && discardedFiles.value.some((file) => !seenStore.isSeen(`known:trash:${file.getId()}`)))
 
 // al abrir la papelera se anota que ya la conoce y los archivos que había
 function openTrash() {
@@ -169,8 +172,15 @@ function toggleFullscreen() {
                 @click="shouldOpenOnClick($event) && openTrash()"
                 @dblclick="openTrash()"
             >
-                <Trash2 class="size-9 fill-on-surface-variant/20 text-on-surface-variant sm:size-10" aria-hidden="true" />
+                <span class="relative">
+                    <Trash2 class="size-9 fill-on-surface-variant/20 text-on-surface-variant sm:size-10" aria-hidden="true" />
+                    <span v-if="trashHasNewFiles" class="absolute top-0 right-0 flex size-3" aria-hidden="true">
+                        <span class="absolute inline-flex size-full animate-ping rounded-full bg-os-clue opacity-75 motion-reduce:animate-none"></span>
+                        <span class="relative inline-flex size-3 rounded-full bg-os-clue"></span>
+                    </span>
+                </span>
                 <span>Papelera</span>
+                <span v-if="trashHasNewFiles" class="sr-only">, con archivos nuevos</span>
             </button>
         </div>
 
