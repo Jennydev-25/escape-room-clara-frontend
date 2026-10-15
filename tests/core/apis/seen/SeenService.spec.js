@@ -13,3 +13,23 @@ describe('Integration - Seen Service', () => {
     })
 
 })
+
+describe('Unit - Seen Service', () => {
+
+    test('listSeen should map the backend response to a list of SeenModel', async () => {
+        const fakeRepository = {
+            listSeen: () => Promise.resolve([
+                { key: 'folder:leeme', seenAt: '2026-10-15T18:30:00' },
+                { key: 'file:/tomas/tomas_elorza.png', seenAt: '2026-10-15T18:31:00' }
+            ])
+        }
+        const service = new SeenService(fakeRepository)
+
+        const seen = await service.listSeen()
+
+        expect(seen).toHaveLength(2)
+        expect(seen[0].getKey()).toBe('folder:leeme')
+        expect(seen[1].getKey()).toBe('file:/tomas/tomas_elorza.png')
+    })
+
+})
