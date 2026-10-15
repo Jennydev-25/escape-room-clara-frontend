@@ -23,5 +23,10 @@ export const useSeenStore = defineStore('seen', () => {
         isLoaded.value = true
     }
 
-    return { isLoaded, isSeen, markSeen, load }
+    function setSeen(keys) {
+        seen.value = keys
+        isLoaded.value = true
+    }
+
+    return { isLoaded, isSeen, markSeen, load, setSeen }
 })
