@@ -28,11 +28,12 @@ onMounted(async () => {
 
 const puzzlesOf = (folder) => puzzlesByFolder.value[folder.getCode()] ?? []
 
+// los puntos esperan a que lleguen las claves vistas del backend
 // verde: carpeta que nunca se ha abierto
-const isNew = (folder) => !seenStore.isSeen(`folder:${folder.getCode()}`)
+const isNew = (folder) => seenStore.isLoaded && !seenStore.isSeen(`folder:${folder.getCode()}`)
 
 // amarillo: carpeta ya abierta a la que le han llegado archivos nuevos
-const hasNewFiles = (folder) => !isNew(folder) && puzzlesOf(folder).some((puzzle) => !seenStore.isSeen(`known:${puzzle.getId()}`))
+const hasNewFiles = (folder) => seenStore.isLoaded && seenStore.isSeen(`folder:${folder.getCode()}`) && puzzlesOf(folder).some((puzzle) => !seenStore.isSeen(`known:${puzzle.getId()}`))
 
 // se marca en pantalla y se guarda en el backend lo que el jugador acaba de ver
 function markSeen(key) {
