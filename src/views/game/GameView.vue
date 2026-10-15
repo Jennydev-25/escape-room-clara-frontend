@@ -43,6 +43,12 @@ onMounted(async () => {
     isWelcomeOpen.value = !progress.isWelcomeSeen()
 })
 
+// al aceptar se cierra el mensaje y se guarda que ya lo vio
+function acceptWelcome() {
+    isWelcomeOpen.value = false
+    progressService.markWelcomeSeen()
+}
+
 // salir de ClaraOS: pantalla de carga con la barra subiendo como en App.vue
 function leaveClaraOS() {
     isLeaving.value = true
@@ -176,7 +182,7 @@ function toggleFullscreen() {
             </button>
         </div>
 
-        <WelcomeCard v-if="isWelcomeOpen" @close="isWelcomeOpen = false" />
+        <WelcomeCard v-if="isWelcomeOpen" @close="acceptWelcome" />
         <TrashWindow v-if="isTrashOpen" @close="isTrashOpen = false" />
         <PuzzleWindow v-if="currentPuzzle" v-bind="currentPuzzle" @close="currentPuzzle = null" @solved="onSolved" />
         <LoadingScreen v-if="isLeaving" title="Volviendo..." message="Saliendo del sistema de ClaraOS" :progress="leavingProgress" />
