@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 
 export const useSeenStore = defineStore('seen', () => {
     const seen = ref(JSON.parse(localStorage.getItem('seen') ?? '[]'))
+    const isLoaded = ref(false)
     let service = null
 
     function isSeen(key) {
@@ -20,7 +21,8 @@ export const useSeenStore = defineStore('seen', () => {
         service = seenService
         const items = await seenService.listSeen()
         seen.value = items.map((item) => item.getKey())
+        isLoaded.value = true
     }
 
-    return { isSeen, markSeen, load }
+    return { isLoaded, isSeen, markSeen, load }
 })
