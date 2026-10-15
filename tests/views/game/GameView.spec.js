@@ -56,6 +56,12 @@ describe('GameView', () => {
         expect(wrapper.get('footer').text()).toContain('ClaraOS · Bienvenida de nuevo, Clara')
     })
 
+    it('shows the welcome window with its title when entering the desktop', () => {
+        const wrapper = mountGameView()
+
+        expect(wrapper.get('main').text()).toContain('Sistema ClaraOS · Acceso permitido')
+    })
+
     it('shows a fullscreen button when the browser supports it', () => {
         supportFullscreen()
 
