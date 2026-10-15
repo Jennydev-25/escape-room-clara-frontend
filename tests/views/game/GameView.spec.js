@@ -189,6 +189,40 @@ describe('GameView', () => {
         expect(trash).toBeDefined()
     })
 
+    describe('trash mark', () => {
+
+        const discarded = [{ getId: () => 1, getBody: () => '/papelera/salgo_fatal.png' }, { getId: () => 2, getBody: () => '/papelera/ideas_sueltas.txt' }]
+
+        // monta el escritorio con la papelera y las claves vistas que se le indiquen
+        const mountWithTrash = async (seenKeys) => {
+            const wrapper = mountGameView({
+                TrashService: { listDiscardedFiles: vi.fn().mockResolvedValue(discarded) },
+                SeenService: { listSeen: vi.fn().mockResolvedValue(seenKeys.map((key) => ({ getKey: () => key }))), markSeen: vi.fn() },
+            })
+            await flushPromises()
+            return wrapper.findAll('main button').find((button) => button.text().startsWith('Papelera'))
+        }
+
+        it('marks the trash when discarded files arrive after it was opened', async () => {
+            const trash = await mountWithTrash(['trash', 'known:trash:1'])
+
+            expect(trash.text()).toContain('con archivos nuevos')
+        })
+
+        it('does not mark the trash the first time, before the player has opened it', async () => {
+            const trash = await mountWithTrash([])
+
+            expect(trash.text()).toBe('Papelera')
+        })
+
+        it('does not mark the trash when the player already knows all its files', async () => {
+            const trash = await mountWithTrash(['trash', 'known:trash:1', 'known:trash:2'])
+
+            expect(trash.text()).toBe('Papelera')
+        })
+
+    })
+
     it('shows the next chapter button in the taskbar', () => {
         const wrapper = mountGameView()
 
