@@ -16,7 +16,7 @@ const listDiscardedFiles = vi.fn().mockResolvedValue([])
 const mountGameView = (services = {}) => mount(GameView, {
     global: {
         plugins: [createPinia(), router],
-        provide: { FolderService: { listFolders, getFolder }, ProgressService: { getProgress }, PuzzleService: { getPuzzle }, TrashService: { listDiscardedFiles }, ...services },
+        provide: { FolderService: { listFolders, getFolder }, ProgressService: { getProgress, markWelcomeSeen: vi.fn().mockResolvedValue({}) }, PuzzleService: { getPuzzle }, TrashService: { listDiscardedFiles }, ...services },
     },
 })
 
@@ -94,6 +94,17 @@ describe('GameView', () => {
         await accept.trigger('click')
 
         expect(wrapper.find('[role="dialog"]').exists()).toBe(false)
+    })
+
+    it('marks the welcome as seen when the accept button is clicked', async () => {
+        const markWelcomeSeen = vi.fn().mockResolvedValue({})
+        const wrapper = mountGameView({ ProgressService: { getProgress, markWelcomeSeen } })
+        await flushPromises()
+        const accept = wrapper.findAll('[role="dialog"] button').find((button) => button.text() === 'Aceptar')
+
+        await accept.trigger('click')
+
+        expect(markWelcomeSeen).toHaveBeenCalledOnce()
     })
 
     it('does not show the welcome card when the welcome was already seen', async () => {
