@@ -13,4 +13,11 @@ export default class SeenModel {
         return this.seenAt
     }
 
+    static create(dto, mapper) {
+        return new SeenModel(
+            mapper.key(dto),
+            mapper.seenAt(dto)
+        )
+    }
+
 }
