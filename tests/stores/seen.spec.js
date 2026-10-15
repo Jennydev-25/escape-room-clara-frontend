@@ -56,4 +56,16 @@ describe('useSeenStore', () => {
         expect(received).toBe('folder:tomas')
     })
 
+    test('isLoaded should be false until the keys have been loaded', async () => {
+        const fakeService = {
+            listSeen: () => Promise.resolve([])
+        }
+        const store = useSeenStore()
+        expect(store.isLoaded).toBe(false)
+
+        await store.load(fakeService)
+
+        expect(store.isLoaded).toBe(true)
+    })
+
 })
