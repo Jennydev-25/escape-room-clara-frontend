@@ -10,4 +10,8 @@ export default class SeenRepository extends BaseRepository {
         return this.authGet('/seen')
     }
 
+    async markSeen(key) {
+        return this.authPost('/seen', { key })
+    }
+
 }
