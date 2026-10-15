@@ -1,9 +1,10 @@
 import FileViewer from '@/components/game/FileViewer.vue'
 import FolderWindow from '@/components/game/FolderWindow.vue'
+import BaseWindow from '@/shared/BaseWindow.vue'
 import { useSeenStore } from '@/stores/seen'
 import { flushPromises, mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { clickWith } from '../../helpers/clickWith.js'
 
 const puzzle = (id) => ({ getId: () => id })
@@ -30,6 +31,10 @@ const withOneFile = () => {
 
 describe('FolderWindow', () => {
 
+    beforeEach(() => {
+        vi.clearAllMocks()
+    })
+
     afterEach(() => {
         delete window.matchMedia
     })
@@ -55,6 +60,26 @@ describe('FolderWindow', () => {
 
         expect(markSeen).toHaveBeenCalledWith('file:/leeme/leeme.txt')
         expect(wrapper.get('li button').text()).not.toContain('archivo nuevo')
+    })
+
+    it('does not mark a file again when it was already opened', async () => {
+        withOneFile()
+        const wrapper = mountFolderWindow(['file:/leeme/leeme.txt'])
+        await flushPromises()
+
+        await wrapper.get('li button').trigger('dblclick')
+
+        expect(markSeen).not.toHaveBeenCalled()
+    })
+
+    it('asks to be closed when the window is closed', async () => {
+        withOneFile()
+        const wrapper = mountFolderWindow()
+        await flushPromises()
+
+        await wrapper.findComponent(BaseWindow).vm.$emit('close')
+
+        expect(wrapper.emitted('close')).toHaveLength(1)
     })
 
     it('shows the folder name as the title and a button for each file with its original name', async () => {
