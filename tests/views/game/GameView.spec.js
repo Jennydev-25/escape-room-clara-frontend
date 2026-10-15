@@ -62,10 +62,17 @@ describe('GameView', () => {
         expect(wrapper.get('main').text()).toContain('Sistema ClaraOS · Acceso permitido')
     })
 
-    it('shows the welcome message in the welcome card', () => {
+    it('shows each sentence of the welcome message on its own line', () => {
         const wrapper = mountGameView()
 
-        expect(wrapper.get('[role="dialog"]').text()).toContain('Has accedido al portátil de Clara. Revisa sus carpetas con calma: cada archivo puede esconder una pista. Todo lo que ella dejó está aquí dentro. Busca con cuidado: no sabes qué te vas a encontrar.')
+        const lines = wrapper.findAll('[role="dialog"] p').map((line) => line.text())
+
+        expect(lines).toEqual([
+            'Has accedido al portátil de Clara.',
+            'Revisa sus carpetas con calma: cada archivo puede esconder una pista.',
+            'Todo lo que ella dejó está aquí dentro.',
+            'Busca con cuidado: no sabes qué te vas a encontrar.',
+        ])
     })
 
     it('shows a fullscreen button when the browser supports it', () => {
