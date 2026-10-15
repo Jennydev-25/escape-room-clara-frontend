@@ -11,11 +11,11 @@ const getFolder = vi.fn()
 const getPuzzle = vi.fn()
 const markSeen = vi.fn()
 
-// rellena el store con las claves ya vistas del jugador, como haría GameView
+// rellena el store con las claves ya vistas del jugador, como haría GameView (null = aún sin cargar)
 const mountFolderList = (seenKeys = []) => {
     const pinia = createPinia()
     setActivePinia(pinia)
-    useSeenStore().setSeen(seenKeys)
+    if (seenKeys) useSeenStore().setSeen(seenKeys)
     return mount(FolderList, { global: { plugins: [pinia], provide: { FolderService: { listFolders, getFolder }, PuzzleService: { getPuzzle }, SeenService: { markSeen } } } })
 }
 
@@ -59,6 +59,16 @@ describe('FolderList', () => {
 
         expect(tomas.text()).toContain('con contenido nuevo')
         expect(fraude.text()).not.toContain('con contenido nuevo')
+    })
+
+    it('does not mark any folder as new until the seen keys are loaded', async () => {
+        listFolders.mockResolvedValue([folder('tomas', 'Tomás')])
+
+        const wrapper = mountFolderList(null)
+        await flushPromises()
+
+        expect(wrapper.get('button').text()).not.toContain('con contenido nuevo')
+        expect(wrapper.find('.animate-ping').exists()).toBe(false)
     })
 
     it('removes the new mark and remembers the folder when it is opened', async () => {
