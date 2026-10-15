@@ -10,7 +10,7 @@ import { clickWith } from '../../helpers/clickWith.js'
 
 const listFolders = vi.fn().mockResolvedValue([{ getCode: () => 'tomas', getName: () => 'Tomás' }])
 const getFolder = vi.fn().mockResolvedValue({ getPuzzles: () => [] })
-const getProgress = vi.fn().mockResolvedValue({ getCurrentChapter: () => 1 })
+const getProgress = vi.fn().mockResolvedValue({ getCurrentChapter: () => 1, isWelcomeSeen: () => false })
 const getPuzzle = vi.fn().mockResolvedValue({ getMinChapter: () => 1, getQuestion: () => null })
 const listDiscardedFiles = vi.fn().mockResolvedValue([])
 const mountGameView = (services = {}) => mount(GameView, {
@@ -88,6 +88,14 @@ describe('GameView', () => {
         const accept = wrapper.findAll('[role="dialog"] button').find((button) => button.text() === 'Aceptar')
 
         await accept.trigger('click')
+
+        expect(wrapper.find('[role="dialog"]').exists()).toBe(false)
+    })
+
+    it('does not show the welcome card when the welcome was already seen', async () => {
+        const seenProgress = vi.fn().mockResolvedValue({ getCurrentChapter: () => 1, isWelcomeSeen: () => true })
+        const wrapper = mountGameView({ ProgressService: { getProgress: seenProgress } })
+        await flushPromises()
 
         expect(wrapper.find('[role="dialog"]').exists()).toBe(false)
     })
