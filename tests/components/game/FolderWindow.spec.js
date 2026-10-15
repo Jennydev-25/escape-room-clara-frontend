@@ -46,6 +46,17 @@ describe('FolderWindow', () => {
         expect(unseen.text()).toContain('archivo nuevo')
     })
 
+    it('marks a file as seen when it is opened and removes its new mark', async () => {
+        withOneFile()
+        const wrapper = mountFolderWindow([])
+        await flushPromises()
+
+        await wrapper.get('li button').trigger('dblclick')
+
+        expect(markSeen).toHaveBeenCalledWith('file:/leeme/leeme.txt')
+        expect(wrapper.get('li button').text()).not.toContain('archivo nuevo')
+    })
+
     it('shows the folder name as the title and a button for each file with its original name', async () => {
         getFolder.mockResolvedValue({ getName: () => 'Tomás', getPuzzles: () => [puzzle(2), puzzle(3)] })
         getPuzzle.mockImplementation(async (id) => id === 2
