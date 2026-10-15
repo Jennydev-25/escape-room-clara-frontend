@@ -24,4 +24,9 @@ export default class ProgressService {
         return ProgressModel.create(dto, progressMapper)
     }
 
+    async markWelcomeSeen() {
+        const dto = await this.#repo.markWelcomeSeen()
+        return ProgressModel.create(dto, progressMapper)
+    }
+
 }
