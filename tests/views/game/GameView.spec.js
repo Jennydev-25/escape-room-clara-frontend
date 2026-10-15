@@ -285,6 +285,21 @@ describe('GameView', () => {
         expect(markSeen).toHaveBeenCalledWith('known:trash:2')
     })
 
+    it('does not save the trash again when it was already known', async () => {
+        const markSeen = vi.fn().mockResolvedValue()
+        const discarded = [{ getId: () => 1, getName: () => 'salgo_fatal.png', getBody: () => '/papelera/salgo_fatal.png' }]
+        const wrapper = mountGameView({
+            TrashService: { listDiscardedFiles: vi.fn().mockResolvedValue(discarded) },
+            SeenService: { listSeen: vi.fn().mockResolvedValue(['trash', 'known:trash:1'].map((key) => ({ getKey: () => key }))), markSeen },
+        })
+        await flushPromises()
+        const trash = wrapper.findAll('main button').find((button) => button.text() === 'Papelera')
+
+        await trash.trigger('dblclick')
+
+        expect(markSeen).not.toHaveBeenCalled()
+    })
+
     it.each([
         ['the keyboard', { detail: 0 }, false],
         ['a single tap on a touch screen', { detail: 1 }, true],
