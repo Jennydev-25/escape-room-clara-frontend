@@ -6,6 +6,7 @@ import { shouldOpenOnClick } from '@/composables/game/shouldOpenOnClick'
 import { useSeenStore } from '@/stores/seen'
 
 const folderService = inject('FolderService')
+const seenService = inject('SeenService')
 const seenStore = useSeenStore()
 const folders = ref([])
 const puzzlesByFolder = ref({})
@@ -33,10 +34,17 @@ const isNew = (folder) => !seenStore.isSeen(`folder:${folder.getCode()}`)
 // amarillo: carpeta ya abierta a la que le han llegado archivos nuevos
 const hasNewFiles = (folder) => !isNew(folder) && puzzlesOf(folder).some((puzzle) => !seenStore.isSeen(`known:${puzzle.getId()}`))
 
+// se marca en pantalla y se guarda en el backend lo que el jugador acaba de ver
+function markSeen(key) {
+    if (seenStore.isSeen(key)) return
+    seenStore.markSeen(key)
+    seenService.markSeen(key)
+}
+
 function open(folder) {
     openCode.value = folder.getCode()
-    seenStore.markSeen(`folder:${folder.getCode()}`)
-    puzzlesOf(folder).forEach((puzzle) => seenStore.markSeen(`known:${puzzle.getId()}`))
+    markSeen(`folder:${folder.getCode()}`)
+    puzzlesOf(folder).forEach((puzzle) => markSeen(`known:${puzzle.getId()}`))
 }
 </script>
 
