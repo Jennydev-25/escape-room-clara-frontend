@@ -3,7 +3,7 @@ import TrashWindow from '@/components/game/TrashWindow.vue'
 import { useSeenStore } from '@/stores/seen'
 import { flushPromises, mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { clickWith } from '../../helpers/clickWith.js'
 
 const file = (name, body) => ({ getName: () => name, getBody: () => body })
@@ -19,6 +19,10 @@ const mountTrashWindow = (seenKeys = null) => {
 }
 
 describe('TrashWindow', () => {
+
+    beforeEach(() => {
+        vi.clearAllMocks()
+    })
 
     afterEach(() => {
         delete window.matchMedia
@@ -36,6 +40,17 @@ describe('TrashWindow', () => {
 
         expect(seen.text()).not.toContain('archivo nuevo')
         expect(unseen.text()).toContain('archivo nuevo')
+    })
+
+    it('marks a discarded file as seen when it is opened and removes its new mark', async () => {
+        listDiscardedFiles.mockResolvedValue([file('ideas_sueltas.txt', '/papelera/ideas_sueltas.txt')])
+        const wrapper = mountTrashWindow([])
+        await flushPromises()
+
+        await wrapper.get('li button').trigger('dblclick')
+
+        expect(markSeen).toHaveBeenCalledWith('file:/papelera/ideas_sueltas.txt')
+        expect(wrapper.get('li button').text()).not.toContain('archivo nuevo')
     })
 
     it('shows Papelera as the title and a button for each discarded file with its original name', async () => {
