@@ -19,6 +19,15 @@ describe('useSeenStore', () => {
         expect(store.isSeen('folder:fraude')).toBe(false)
     })
 
+    test('markSeen should not add the same key twice', () => {
+        const store = useSeenStore()
+
+        store.markSeen('folder:tomas')
+        store.markSeen('folder:tomas')
+
+        expect(store.seen).toEqual(['folder:tomas'])
+    })
+
     test('markSeen should not store the keys in the browser', () => {
         useSeenStore().markSeen('folder:tomas')
 
