@@ -104,6 +104,17 @@ describe('FolderList', () => {
         expect(markSeen).toHaveBeenCalledWith('known:2')
     })
 
+    it('does not tell the backend again about a folder that was already seen', async () => {
+        listFolders.mockResolvedValue([folder('tomas', 'Tomás')])
+        getFolder.mockResolvedValue(folderWithPuzzles(1))
+        const wrapper = mountFolderList(['folder:tomas', 'known:1'])
+        await flushPromises()
+
+        await wrapper.get('button').trigger('click')
+
+        expect(markSeen).not.toHaveBeenCalled()
+    })
+
     it('shows an error message when the folders cannot be loaded', async () => {
         listFolders.mockRejectedValue(new Error('¡Ups! Algo salió mal'))
 
