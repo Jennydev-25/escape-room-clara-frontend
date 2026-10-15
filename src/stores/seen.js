@@ -2,7 +2,8 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
 export const useSeenStore = defineStore('seen', () => {
-    const seen = ref(JSON.parse(localStorage.getItem('seen') ?? '[]'))
+    const seen = ref([])
+    const isLoaded = ref(false)
 
     function isSeen(key) {
         return seen.value.includes(key)
@@ -11,8 +12,12 @@ export const useSeenStore = defineStore('seen', () => {
     function markSeen(key) {
         if (isSeen(key)) return
         seen.value.push(key)
-        localStorage.setItem('seen', JSON.stringify(seen.value))
     }
 
-    return { isSeen, markSeen }
+    function setSeen(keys) {
+        seen.value = keys
+        isLoaded.value = true
+    }
+
+    return { seen, isLoaded, isSeen, markSeen, setSeen }
 })

@@ -1,12 +1,13 @@
 <script setup>
 import { DoorOpen, Footprints, Maximize, Minimize, Trash2, X } from '@lucide/vue'
-import { inject, onMounted, onUnmounted, ref } from 'vue'
+import { computed, inject, onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import FolderList from '@/components/game/FolderList.vue'
 import PuzzleWindow from '@/components/game/PuzzleWindow.vue'
 import TrashWindow from '@/components/game/TrashWindow.vue'
 import WelcomeCard from '@/components/game/WelcomeCard.vue'
 import { shouldOpenOnClick } from '@/composables/game/shouldOpenOnClick'
+import { useSeenStore } from '@/stores/seen'
 import LoadingScreen from '@/shared/LoadingScreen.vue'
 import wallpaper from '@/assets/images/game/desktop/wallpaper.webp'
 
@@ -14,6 +15,10 @@ const router = useRouter()
 const folderService = inject('FolderService')
 const progressService = inject('ProgressService')
 const puzzleService = inject('PuzzleService')
+const seenService = inject('SeenService')
+const trashService = inject('TrashService')
+const seenStore = useSeenStore()
+const discardedFiles = ref([])
 const currentPuzzle = ref(null)
 const isComingSoon = ref(false)
 const foldersKey = ref(0)
@@ -42,6 +47,34 @@ onMounted(async () => {
     const progress = await progressService.getProgress()
     isWelcomeOpen.value = !progress.isWelcomeSeen()
 })
+
+// carga lo que el jugador ya ha visto para pintar los puntos de nuevo
+onMounted(async () => {
+    const items = await seenService.listSeen()
+    seenStore.setSeen(items.map((item) => item.getKey()))
+})
+
+// carga los archivos de la papelera para saber cuáles conoce ya el jugador
+onMounted(async () => {
+    discardedFiles.value = await trashService.listDiscardedFiles()
+})
+
+// se marca en pantalla y se guarda en el backend lo que el jugador acaba de ver
+function markSeen(key) {
+    if (seenStore.isSeen(key)) return
+    seenStore.markSeen(key)
+    seenService.markSeen(key)
+}
+
+// el aviso solo sale si el jugador ya abrió la papelera y le han llegado archivos que no conocía
+const trashHasNewFiles = computed(() => seenStore.isLoaded && seenStore.isSeen('trash') && discardedFiles.value.some((file) => !seenStore.isSeen(`known:trash:${file.getId()}`)))
+
+// al abrir la papelera se anota que ya la conoce y los archivos que había
+function openTrash() {
+    isTrashOpen.value = true
+    markSeen('trash')
+    discardedFiles.value.forEach((file) => markSeen(`known:trash:${file.getId()}`))
+}
 
 // al aceptar se cierra el mensaje y se guarda que ya lo vio
 function acceptWelcome() {
@@ -136,11 +169,18 @@ function toggleFullscreen() {
             <button
                 type="button"
                 class="flex w-16 flex-col items-center gap-1 rounded-2xl p-2 text-center text-xs font-medium tracking-wide text-on-surface uppercase transition-colors hover:bg-surface-container/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-20"
-                @click="shouldOpenOnClick($event) && (isTrashOpen = true)"
-                @dblclick="isTrashOpen = true"
+                @click="shouldOpenOnClick($event) && openTrash()"
+                @dblclick="openTrash()"
             >
-                <Trash2 class="size-9 fill-on-surface-variant/20 text-on-surface-variant sm:size-10" aria-hidden="true" />
+                <span class="relative">
+                    <Trash2 class="size-9 fill-on-surface-variant/20 text-on-surface-variant sm:size-10" aria-hidden="true" />
+                    <span v-if="trashHasNewFiles" class="absolute top-0 right-0 flex size-3" aria-hidden="true">
+                        <span class="absolute inline-flex size-full animate-ping rounded-full bg-os-clue opacity-75 motion-reduce:animate-none"></span>
+                        <span class="relative inline-flex size-3 rounded-full bg-os-clue"></span>
+                    </span>
+                </span>
                 <span>Papelera</span>
+                <span v-if="trashHasNewFiles" class="sr-only">, con archivos nuevos</span>
             </button>
         </div>
 

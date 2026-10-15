@@ -13,10 +13,11 @@ const getFolder = vi.fn().mockResolvedValue({ getPuzzles: () => [] })
 const getProgress = vi.fn().mockResolvedValue({ getCurrentChapter: () => 1, isWelcomeSeen: () => false })
 const getPuzzle = vi.fn().mockResolvedValue({ getMinChapter: () => 1, getQuestion: () => null })
 const listDiscardedFiles = vi.fn().mockResolvedValue([])
+const listSeen = vi.fn().mockResolvedValue([])
 const mountGameView = (services = {}) => mount(GameView, {
     global: {
         plugins: [createPinia(), router],
-        provide: { FolderService: { listFolders, getFolder }, ProgressService: { getProgress, markWelcomeSeen: vi.fn().mockResolvedValue({}) }, PuzzleService: { getPuzzle }, TrashService: { listDiscardedFiles }, ...services },
+        provide: { FolderService: { listFolders, getFolder }, ProgressService: { getProgress, markWelcomeSeen: vi.fn().mockResolvedValue({}) }, PuzzleService: { getPuzzle }, TrashService: { listDiscardedFiles }, SeenService: { listSeen, markSeen: vi.fn().mockResolvedValue() }, ...services },
     },
 })
 
@@ -41,6 +42,13 @@ describe('GameView', () => {
         await flushPromises()
 
         expect(wrapper.get('main').text()).toContain('Tomás')
+    })
+
+    it('loads the seen keys of the player when entering the desktop', async () => {
+        mountGameView()
+        await flushPromises()
+
+        expect(listSeen).toHaveBeenCalled()
     })
 
     it('shows the ClaraOS desktop with the ClaraOS theme', () => {
@@ -181,6 +189,40 @@ describe('GameView', () => {
         expect(trash).toBeDefined()
     })
 
+    describe('trash mark', () => {
+
+        const discarded = [{ getId: () => 1, getBody: () => '/papelera/salgo_fatal.png' }, { getId: () => 2, getBody: () => '/papelera/ideas_sueltas.txt' }]
+
+        // monta el escritorio con la papelera y las claves vistas que se le indiquen
+        const mountWithTrash = async (seenKeys) => {
+            const wrapper = mountGameView({
+                TrashService: { listDiscardedFiles: vi.fn().mockResolvedValue(discarded) },
+                SeenService: { listSeen: vi.fn().mockResolvedValue(seenKeys.map((key) => ({ getKey: () => key }))), markSeen: vi.fn() },
+            })
+            await flushPromises()
+            return wrapper.findAll('main button').find((button) => button.text().startsWith('Papelera'))
+        }
+
+        it('marks the trash when discarded files arrive after it was opened', async () => {
+            const trash = await mountWithTrash(['trash', 'known:trash:1'])
+
+            expect(trash.text()).toContain('con archivos nuevos')
+        })
+
+        it('does not mark the trash the first time, before the player has opened it', async () => {
+            const trash = await mountWithTrash([])
+
+            expect(trash.text()).toBe('Papelera')
+        })
+
+        it('does not mark the trash when the player already knows all its files', async () => {
+            const trash = await mountWithTrash(['trash', 'known:trash:1', 'known:trash:2'])
+
+            expect(trash.text()).toBe('Papelera')
+        })
+
+    })
+
     it('shows the next chapter button in the taskbar', () => {
         const wrapper = mountGameView()
 
@@ -250,6 +292,34 @@ describe('GameView', () => {
         expect(wrapper.get('main').text()).toContain('Tomás')
     })
 
+    it('closes the puzzle window when it asks to be closed', async () => {
+        const wrapper = mountGameView({
+            FolderService: {
+                listFolders: vi.fn().mockResolvedValue([{ getCode: () => 'leeme', getName: () => 'Léeme' }]),
+                getFolder: vi.fn().mockResolvedValue({ getPuzzles: () => [{ getId: () => 1, getTitle: () => 'Capítulo 1: La desaparición' }] }),
+            },
+            PuzzleService: { getPuzzle: vi.fn().mockResolvedValue({ getMinChapter: () => 1, getQuestion: () => 'Según la nota, ¿en qué no debes confiar nunca?' }) },
+        })
+        await flushPromises()
+        await wrapper.get('button[aria-label="Siguiente capítulo"]').trigger('click')
+        await flushPromises()
+
+        await wrapper.getComponent(PuzzleWindow).vm.$emit('close')
+
+        expect(wrapper.findComponent(PuzzleWindow).exists()).toBe(false)
+    })
+
+    it('closes the trash window when it asks to be closed', async () => {
+        const wrapper = mountGameView()
+        await flushPromises()
+        const trash = wrapper.findAll('main button').find((button) => button.text() === 'Papelera')
+        await trash.trigger('dblclick')
+
+        await wrapper.getComponent(TrashWindow).vm.$emit('close')
+
+        expect(wrapper.findComponent(TrashWindow).exists()).toBe(false)
+    })
+
     it('opens the trash window when the trash is double clicked', async () => {
         const wrapper = mountGameView()
         await flushPromises()
@@ -258,6 +328,38 @@ describe('GameView', () => {
         await trash.trigger('dblclick')
 
         expect(wrapper.findComponent(TrashWindow).exists()).toBe(true)
+    })
+
+    it('saves that the trash and its discarded files are known when the trash is opened', async () => {
+        const markSeen = vi.fn().mockResolvedValue()
+        const discarded = [{ getId: () => 1, getName: () => 'salgo_fatal.png', getBody: () => '/papelera/salgo_fatal.png' }, { getId: () => 2, getName: () => 'ideas_sueltas.txt', getBody: () => '/papelera/ideas_sueltas.txt' }]
+        const wrapper = mountGameView({
+            TrashService: { listDiscardedFiles: vi.fn().mockResolvedValue(discarded) },
+            SeenService: { listSeen: vi.fn().mockResolvedValue([]), markSeen },
+        })
+        await flushPromises()
+        const trash = wrapper.findAll('main button').find((button) => button.text() === 'Papelera')
+
+        await trash.trigger('dblclick')
+
+        expect(markSeen).toHaveBeenCalledWith('trash')
+        expect(markSeen).toHaveBeenCalledWith('known:trash:1')
+        expect(markSeen).toHaveBeenCalledWith('known:trash:2')
+    })
+
+    it('does not save the trash again when it was already known', async () => {
+        const markSeen = vi.fn().mockResolvedValue()
+        const discarded = [{ getId: () => 1, getName: () => 'salgo_fatal.png', getBody: () => '/papelera/salgo_fatal.png' }]
+        const wrapper = mountGameView({
+            TrashService: { listDiscardedFiles: vi.fn().mockResolvedValue(discarded) },
+            SeenService: { listSeen: vi.fn().mockResolvedValue(['trash', 'known:trash:1'].map((key) => ({ getKey: () => key }))), markSeen },
+        })
+        await flushPromises()
+        const trash = wrapper.findAll('main button').find((button) => button.text() === 'Papelera')
+
+        await trash.trigger('dblclick')
+
+        expect(markSeen).not.toHaveBeenCalled()
     })
 
     it.each([
