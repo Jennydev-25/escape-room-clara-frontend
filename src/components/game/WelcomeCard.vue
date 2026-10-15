@@ -1,5 +1,6 @@
 <script setup>
 import { useId } from 'vue'
+import BaseButton from '@/shared/BaseButton.vue'
 
 const titleId = useId()
 </script>
@@ -22,6 +23,10 @@ const titleId = useId()
                 <p>Revisa sus carpetas con calma: cada archivo puede esconder una pista.</p>
                 <p>Todo lo que ella dejó está aquí dentro.</p>
                 <p>Busca con cuidado: no sabes qué te vas a encontrar.</p>
+            </div>
+
+            <div class="flex justify-center px-4 pb-6 sm:px-6">
+                <BaseButton>Aceptar</BaseButton>
             </div>
         </section>
     </div>
