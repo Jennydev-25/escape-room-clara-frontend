@@ -83,6 +83,15 @@ describe('GameView', () => {
         expect(accept).toBeDefined()
     })
 
+    it('closes the welcome card when the accept button is clicked', async () => {
+        const wrapper = mountGameView()
+        const accept = wrapper.findAll('[role="dialog"] button').find((button) => button.text() === 'Aceptar')
+
+        await accept.trigger('click')
+
+        expect(wrapper.find('[role="dialog"]').exists()).toBe(false)
+    })
+
     it('shows a fullscreen button when the browser supports it', () => {
         supportFullscreen()
 
