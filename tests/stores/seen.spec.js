@@ -66,4 +66,16 @@ describe('useSeenStore', () => {
         expect(store.isLoaded).toBe(true)
     })
 
+    test('setSeen should keep the given keys and mark the store as loaded', () => {
+        const store = useSeenStore()
+        expect(store.isLoaded).toBe(false)
+
+        store.setSeen(['folder:tomas', 'known:1'])
+
+        expect(store.isSeen('folder:tomas')).toBe(true)
+        expect(store.isSeen('known:1')).toBe(true)
+        expect(store.isSeen('folder:fraude')).toBe(false)
+        expect(store.isLoaded).toBe(true)
+    })
+
 })
