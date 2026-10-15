@@ -39,4 +39,21 @@ describe('useSeenStore', () => {
         expect(store.isSeen('folder:fraude')).toBe(false)
     })
 
+    test('markSeen should tell the backend through the service', async () => {
+        let received
+        const fakeService = {
+            listSeen: () => Promise.resolve([]),
+            markSeen: (key) => {
+                received = key
+                return Promise.resolve()
+            }
+        }
+        const store = useSeenStore()
+        await store.load(fakeService)
+
+        store.markSeen('folder:tomas')
+
+        expect(received).toBe('folder:tomas')
+    })
+
 })
