@@ -75,6 +75,14 @@ describe('GameView', () => {
         ])
     })
 
+    it('shows the accept button in the welcome card', () => {
+        const wrapper = mountGameView()
+
+        const accept = wrapper.findAll('[role="dialog"] button').find((button) => button.text() === 'Aceptar')
+
+        expect(accept).toBeDefined()
+    })
+
     it('shows a fullscreen button when the browser supports it', () => {
         supportFullscreen()
 
