@@ -40,4 +40,19 @@ describe('Unit - Seen Service', () => {
         expect(seen[1].getKey()).toBe('file:/tomas/tomas_elorza.png')
     })
 
+    test('markSeen should pass the key to the repository', async () => {
+        let received
+        const fakeRepository = {
+            markSeen: (key) => {
+                received = key
+                return Promise.resolve(null)
+            }
+        }
+        const service = new SeenService(fakeRepository)
+
+        await service.markSeen('folder:leeme')
+
+        expect(received).toBe('folder:leeme')
+    })
+
 })
