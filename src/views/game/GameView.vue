@@ -18,6 +18,7 @@ const currentPuzzle = ref(null)
 const isComingSoon = ref(false)
 const foldersKey = ref(0)
 const isTrashOpen = ref(false)
+const isWelcomeOpen = ref(true)
 const isLeaving = ref(false)
 const leavingProgress = ref(0)
 let leavingTimer
@@ -169,7 +170,7 @@ function toggleFullscreen() {
             </button>
         </div>
 
-        <WelcomeCard />
+        <WelcomeCard v-if="isWelcomeOpen" @close="isWelcomeOpen = false" />
         <TrashWindow v-if="isTrashOpen" @close="isTrashOpen = false" />
         <PuzzleWindow v-if="currentPuzzle" v-bind="currentPuzzle" @close="currentPuzzle = null" @solved="onSolved" />
         <LoadingScreen v-if="isLeaving" title="Volviendo..." message="Saliendo del sistema de ClaraOS" :progress="leavingProgress" />

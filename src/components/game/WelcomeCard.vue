@@ -2,6 +2,8 @@
 import { useId } from 'vue'
 import BaseButton from '@/shared/BaseButton.vue'
 
+const emit = defineEmits(['close'])
+
 const titleId = useId()
 </script>
 
@@ -26,7 +28,7 @@ const titleId = useId()
             </div>
 
             <div class="flex justify-center px-4 pb-6 sm:px-6">
-                <BaseButton>Aceptar</BaseButton>
+                <BaseButton @click="emit('close')">Aceptar</BaseButton>
             </div>
         </section>
     </div>
