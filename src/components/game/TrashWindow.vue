@@ -9,6 +9,7 @@ import { useSeenStore } from '@/stores/seen'
 const emit = defineEmits(['close'])
 
 const trashService = inject('TrashService')
+const seenService = inject('SeenService')
 const seenStore = useSeenStore()
 const files = ref([])
 const openPath = ref(null)
@@ -18,6 +19,15 @@ const iconOf = (name) => icons[name.split('.').pop()] ?? File
 
 // el punto espera a que lleguen las claves vistas del backend
 const isNewFile = (file) => seenStore.isLoaded && !seenStore.isSeen(`file:${file.getBody()}`)
+
+// se marca en pantalla y se guarda en el backend el archivo que el jugador abre
+function openFile(path) {
+    openPath.value = path
+    const key = `file:${path}`
+    if (seenStore.isSeen(key)) return
+    seenStore.markSeen(key)
+    seenService.markSeen(key)
+}
 
 onMounted(async () => {
     files.value = await trashService.listDiscardedFiles()
@@ -31,8 +41,8 @@ onMounted(async () => {
                 <button
                     type="button"
                     class="flex w-24 flex-col items-center gap-2 rounded-2xl p-3 text-center text-xs text-on-surface transition-colors hover:bg-surface-container-high focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-28"
-                    @click="shouldOpenOnClick($event) && (openPath = file.getBody())"
-                    @dblclick="openPath = file.getBody()"
+                    @click="shouldOpenOnClick($event) && openFile(file.getBody())"
+                    @dblclick="openFile(file.getBody())"
                 >
                     <span class="relative">
                         <component :is="iconOf(file.getName())" class="size-10 text-primary" aria-hidden="true" />
