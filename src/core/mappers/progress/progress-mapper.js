@@ -6,5 +6,6 @@ export const progressMapper = {
     timeSpentSeconds: (dto) => dto.timeSpentSeconds,
     freeNote: (dto) => dto.freeNote,
     updatedAt: (dto) => dto.updatedAt,
-    lastHudLetterAdded: (dto) => dto.lastHudLetterAdded
+    lastHudLetterAdded: (dto) => dto.lastHudLetterAdded,
+    welcomeSeen: (dto) => dto.welcomeSeen
 }
