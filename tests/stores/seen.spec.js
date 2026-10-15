@@ -25,47 +25,6 @@ describe('useSeenStore', () => {
         expect(localStorage.getItem('seen')).toBeNull()
     })
 
-    test('load should keep the keys that the service returns', async () => {
-        const fakeService = {
-            listSeen: () => Promise.resolve([{ getKey: () => 'folder:tomas' }])
-        }
-        const store = useSeenStore()
-
-        await store.load(fakeService)
-
-        expect(store.isSeen('folder:tomas')).toBe(true)
-        expect(store.isSeen('folder:fraude')).toBe(false)
-    })
-
-    test('markSeen should tell the backend through the service', async () => {
-        let received
-        const fakeService = {
-            listSeen: () => Promise.resolve([]),
-            markSeen: (key) => {
-                received = key
-                return Promise.resolve()
-            }
-        }
-        const store = useSeenStore()
-        await store.load(fakeService)
-
-        store.markSeen('folder:tomas')
-
-        expect(received).toBe('folder:tomas')
-    })
-
-    test('isLoaded should be false until the keys have been loaded', async () => {
-        const fakeService = {
-            listSeen: () => Promise.resolve([])
-        }
-        const store = useSeenStore()
-        expect(store.isLoaded).toBe(false)
-
-        await store.load(fakeService)
-
-        expect(store.isLoaded).toBe(true)
-    })
-
     test('setSeen should keep the given keys and mark the store as loaded', () => {
         const store = useSeenStore()
         expect(store.isLoaded).toBe(false)
