@@ -56,14 +56,16 @@ describe('GameView', () => {
         expect(wrapper.get('footer').text()).toContain('ClaraOS · Bienvenida de nuevo, Clara')
     })
 
-    it('shows the welcome window with its title when entering the desktop', () => {
+    it('shows the welcome window with its title when entering the desktop', async () => {
         const wrapper = mountGameView()
+        await flushPromises()
 
         expect(wrapper.get('main').text()).toContain('Sistema ClaraOS · Acceso permitido')
     })
 
-    it('shows each sentence of the welcome message on its own line', () => {
+    it('shows each sentence of the welcome message on its own line', async () => {
         const wrapper = mountGameView()
+        await flushPromises()
 
         const lines = wrapper.findAll('[role="dialog"] p').map((line) => line.text())
 
@@ -75,8 +77,9 @@ describe('GameView', () => {
         ])
     })
 
-    it('shows the accept button in the welcome card', () => {
+    it('shows the accept button in the welcome card', async () => {
         const wrapper = mountGameView()
+        await flushPromises()
 
         const accept = wrapper.findAll('[role="dialog"] button').find((button) => button.text() === 'Aceptar')
 
@@ -85,6 +88,7 @@ describe('GameView', () => {
 
     it('closes the welcome card when the accept button is clicked', async () => {
         const wrapper = mountGameView()
+        await flushPromises()
         const accept = wrapper.findAll('[role="dialog"] button').find((button) => button.text() === 'Aceptar')
 
         await accept.trigger('click')

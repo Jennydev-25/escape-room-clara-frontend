@@ -18,7 +18,7 @@ const currentPuzzle = ref(null)
 const isComingSoon = ref(false)
 const foldersKey = ref(0)
 const isTrashOpen = ref(false)
-const isWelcomeOpen = ref(true)
+const isWelcomeOpen = ref(false)
 const isLeaving = ref(false)
 const leavingProgress = ref(0)
 let leavingTimer
@@ -36,6 +36,12 @@ onMounted(() => {
     }, 1000)
 })
 onUnmounted(() => clearInterval(clockTimer))
+
+// el mensaje de bienvenida solo sale la primera vez
+onMounted(async () => {
+    const progress = await progressService.getProgress()
+    isWelcomeOpen.value = !progress.isWelcomeSeen()
+})
 
 // salir de ClaraOS: pantalla de carga con la barra subiendo como en App.vue
 function leaveClaraOS() {
