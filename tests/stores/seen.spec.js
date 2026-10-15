@@ -27,4 +27,16 @@ describe('useSeenStore', () => {
         expect(useSeenStore().isSeen('folder:tomas')).toBe(true)
     })
 
+    test('load should keep the keys that the service returns', async () => {
+        const fakeService = {
+            listSeen: () => Promise.resolve([{ getKey: () => 'folder:tomas' }])
+        }
+        const store = useSeenStore()
+
+        await store.load(fakeService)
+
+        expect(store.isSeen('folder:tomas')).toBe(true)
+        expect(store.isSeen('folder:fraude')).toBe(false)
+    })
+
 })
