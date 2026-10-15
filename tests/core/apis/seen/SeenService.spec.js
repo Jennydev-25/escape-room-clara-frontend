@@ -12,6 +12,14 @@ describe('Integration - Seen Service', () => {
         await expect(service.listSeen()).rejects.toThrow('¡Ups! Algo salió mal')
     })
 
+    test('markSeen should throw \'¡Ups! Algo salió mal\' when the uri is invalid', async () => {
+        const repository = new SeenRepository()
+        repository.uri = ''
+        const service = new SeenService(repository)
+
+        await expect(service.markSeen('folder:leeme')).rejects.toThrow('¡Ups! Algo salió mal')
+    })
+
 })
 
 describe('Unit - Seen Service', () => {
