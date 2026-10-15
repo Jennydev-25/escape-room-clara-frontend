@@ -292,6 +292,34 @@ describe('GameView', () => {
         expect(wrapper.get('main').text()).toContain('Tomás')
     })
 
+    it('closes the puzzle window when it asks to be closed', async () => {
+        const wrapper = mountGameView({
+            FolderService: {
+                listFolders: vi.fn().mockResolvedValue([{ getCode: () => 'leeme', getName: () => 'Léeme' }]),
+                getFolder: vi.fn().mockResolvedValue({ getPuzzles: () => [{ getId: () => 1, getTitle: () => 'Capítulo 1: La desaparición' }] }),
+            },
+            PuzzleService: { getPuzzle: vi.fn().mockResolvedValue({ getMinChapter: () => 1, getQuestion: () => 'Según la nota, ¿en qué no debes confiar nunca?' }) },
+        })
+        await flushPromises()
+        await wrapper.get('button[aria-label="Siguiente capítulo"]').trigger('click')
+        await flushPromises()
+
+        await wrapper.getComponent(PuzzleWindow).vm.$emit('close')
+
+        expect(wrapper.findComponent(PuzzleWindow).exists()).toBe(false)
+    })
+
+    it('closes the trash window when it asks to be closed', async () => {
+        const wrapper = mountGameView()
+        await flushPromises()
+        const trash = wrapper.findAll('main button').find((button) => button.text() === 'Papelera')
+        await trash.trigger('dblclick')
+
+        await wrapper.getComponent(TrashWindow).vm.$emit('close')
+
+        expect(wrapper.findComponent(TrashWindow).exists()).toBe(false)
+    })
+
     it('opens the trash window when the trash is double clicked', async () => {
         const wrapper = mountGameView()
         await flushPromises()
