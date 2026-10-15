@@ -24,4 +24,11 @@ describe('Integration - Progress Repository', () => {
         await expect(repository.updateNote({ freeNote: 'Mi nota' })).rejects.toThrow('¡Ups! Algo salió mal')
     })
 
+    test('markWelcomeSeen should throw \'¡Ups! Algo salió mal\' when the uri is invalid', async () => {
+        const repository = new ProgressRepository()
+        repository.uri = ''
+
+        await expect(repository.markWelcomeSeen()).rejects.toThrow('¡Ups! Algo salió mal')
+    })
+
 })
