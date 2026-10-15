@@ -14,4 +14,8 @@ export default class SeenService {
         return dtos.map((dto) => SeenModel.create(dto, seenMapper))
     }
 
+    async markSeen(key) {
+        await this.#repo.markSeen(key)
+    }
+
 }
