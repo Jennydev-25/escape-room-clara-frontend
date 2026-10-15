@@ -14,5 +14,10 @@ export const useSeenStore = defineStore('seen', () => {
         localStorage.setItem('seen', JSON.stringify(seen.value))
     }
 
-    return { isSeen, markSeen }
+    async function load(seenService) {
+        const items = await seenService.listSeen()
+        seen.value = items.map((item) => item.getKey())
+    }
+
+    return { isSeen, markSeen, load }
 })
