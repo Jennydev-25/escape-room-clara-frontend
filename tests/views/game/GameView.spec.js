@@ -268,6 +268,23 @@ describe('GameView', () => {
         expect(wrapper.findComponent(TrashWindow).exists()).toBe(true)
     })
 
+    it('saves that the trash and its discarded files are known when the trash is opened', async () => {
+        const markSeen = vi.fn().mockResolvedValue()
+        const discarded = [{ getId: () => 1, getName: () => 'salgo_fatal.png', getBody: () => '/papelera/salgo_fatal.png' }, { getId: () => 2, getName: () => 'ideas_sueltas.txt', getBody: () => '/papelera/ideas_sueltas.txt' }]
+        const wrapper = mountGameView({
+            TrashService: { listDiscardedFiles: vi.fn().mockResolvedValue(discarded) },
+            SeenService: { listSeen: vi.fn().mockResolvedValue([]), markSeen },
+        })
+        await flushPromises()
+        const trash = wrapper.findAll('main button').find((button) => button.text() === 'Papelera')
+
+        await trash.trigger('dblclick')
+
+        expect(markSeen).toHaveBeenCalledWith('trash')
+        expect(markSeen).toHaveBeenCalledWith('known:trash:1')
+        expect(markSeen).toHaveBeenCalledWith('known:trash:2')
+    })
+
     it.each([
         ['the keyboard', { detail: 0 }, false],
         ['a single tap on a touch screen', { detail: 1 }, true],
