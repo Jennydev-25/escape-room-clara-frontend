@@ -5,6 +5,7 @@ import { useRouter } from 'vue-router'
 import FolderList from '@/components/game/FolderList.vue'
 import PuzzleWindow from '@/components/game/PuzzleWindow.vue'
 import TrashWindow from '@/components/game/TrashWindow.vue'
+import WelcomeCard from '@/components/game/WelcomeCard.vue'
 import { shouldOpenOnClick } from '@/composables/game/shouldOpenOnClick'
 import LoadingScreen from '@/shared/LoadingScreen.vue'
 import wallpaper from '@/assets/images/game/desktop/wallpaper.webp'
@@ -17,6 +18,7 @@ const currentPuzzle = ref(null)
 const isComingSoon = ref(false)
 const foldersKey = ref(0)
 const isTrashOpen = ref(false)
+const isWelcomeOpen = ref(false)
 const isLeaving = ref(false)
 const leavingProgress = ref(0)
 let leavingTimer
@@ -34,6 +36,18 @@ onMounted(() => {
     }, 1000)
 })
 onUnmounted(() => clearInterval(clockTimer))
+
+// el mensaje de bienvenida solo sale la primera vez
+onMounted(async () => {
+    const progress = await progressService.getProgress()
+    isWelcomeOpen.value = !progress.isWelcomeSeen()
+})
+
+// al aceptar se cierra el mensaje y se guarda que ya lo vio
+function acceptWelcome() {
+    isWelcomeOpen.value = false
+    progressService.markWelcomeSeen()
+}
 
 // salir de ClaraOS: pantalla de carga con la barra subiendo como en App.vue
 function leaveClaraOS() {
@@ -168,6 +182,7 @@ function toggleFullscreen() {
             </button>
         </div>
 
+        <WelcomeCard v-if="isWelcomeOpen" @close="acceptWelcome" />
         <TrashWindow v-if="isTrashOpen" @close="isTrashOpen = false" />
         <PuzzleWindow v-if="currentPuzzle" v-bind="currentPuzzle" @close="currentPuzzle = null" @solved="onSolved" />
         <LoadingScreen v-if="isLeaving" title="Volviendo..." message="Saliendo del sistema de ClaraOS" :progress="leavingProgress" />

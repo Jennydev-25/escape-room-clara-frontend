@@ -10,13 +10,13 @@ import { clickWith } from '../../helpers/clickWith.js'
 
 const listFolders = vi.fn().mockResolvedValue([{ getCode: () => 'tomas', getName: () => 'Tomás' }])
 const getFolder = vi.fn().mockResolvedValue({ getPuzzles: () => [] })
-const getProgress = vi.fn().mockResolvedValue({ getCurrentChapter: () => 1 })
+const getProgress = vi.fn().mockResolvedValue({ getCurrentChapter: () => 1, isWelcomeSeen: () => false })
 const getPuzzle = vi.fn().mockResolvedValue({ getMinChapter: () => 1, getQuestion: () => null })
 const listDiscardedFiles = vi.fn().mockResolvedValue([])
 const mountGameView = (services = {}) => mount(GameView, {
     global: {
         plugins: [createPinia(), router],
-        provide: { FolderService: { listFolders, getFolder }, ProgressService: { getProgress }, PuzzleService: { getPuzzle }, TrashService: { listDiscardedFiles }, ...services },
+        provide: { FolderService: { listFolders, getFolder }, ProgressService: { getProgress, markWelcomeSeen: vi.fn().mockResolvedValue({}) }, PuzzleService: { getPuzzle }, TrashService: { listDiscardedFiles }, ...services },
     },
 })
 
@@ -54,6 +54,65 @@ describe('GameView', () => {
         const wrapper = mountGameView()
 
         expect(wrapper.get('footer').text()).toContain('ClaraOS · Bienvenida de nuevo, Clara')
+    })
+
+    it('shows the welcome window with its title when entering the desktop', async () => {
+        const wrapper = mountGameView()
+        await flushPromises()
+
+        expect(wrapper.get('main').text()).toContain('Sistema ClaraOS · Acceso permitido')
+    })
+
+    it('shows each sentence of the welcome message on its own line', async () => {
+        const wrapper = mountGameView()
+        await flushPromises()
+
+        const lines = wrapper.findAll('[role="dialog"] p').map((line) => line.text())
+
+        expect(lines).toEqual([
+            'Has accedido al portátil de Clara.',
+            'Revisa sus carpetas con calma: cada archivo puede esconder una pista.',
+            'Todo lo que ella dejó está aquí dentro.',
+            'Busca con cuidado: no sabes qué te vas a encontrar.',
+        ])
+    })
+
+    it('shows the accept button in the welcome card', async () => {
+        const wrapper = mountGameView()
+        await flushPromises()
+
+        const accept = wrapper.findAll('[role="dialog"] button').find((button) => button.text() === 'Aceptar')
+
+        expect(accept).toBeDefined()
+    })
+
+    it('closes the welcome card when the accept button is clicked', async () => {
+        const wrapper = mountGameView()
+        await flushPromises()
+        const accept = wrapper.findAll('[role="dialog"] button').find((button) => button.text() === 'Aceptar')
+
+        await accept.trigger('click')
+
+        expect(wrapper.find('[role="dialog"]').exists()).toBe(false)
+    })
+
+    it('marks the welcome as seen when the accept button is clicked', async () => {
+        const markWelcomeSeen = vi.fn().mockResolvedValue({})
+        const wrapper = mountGameView({ ProgressService: { getProgress, markWelcomeSeen } })
+        await flushPromises()
+        const accept = wrapper.findAll('[role="dialog"] button').find((button) => button.text() === 'Aceptar')
+
+        await accept.trigger('click')
+
+        expect(markWelcomeSeen).toHaveBeenCalledOnce()
+    })
+
+    it('does not show the welcome card when the welcome was already seen', async () => {
+        const seenProgress = vi.fn().mockResolvedValue({ getCurrentChapter: () => 1, isWelcomeSeen: () => true })
+        const wrapper = mountGameView({ ProgressService: { getProgress: seenProgress } })
+        await flushPromises()
+
+        expect(wrapper.find('[role="dialog"]').exists()).toBe(false)
     })
 
     it('shows a fullscreen button when the browser supports it', () => {

@@ -1,6 +1,6 @@
 export default class ProgressModel {
 
-    constructor(currentChapter, hudLetters, investigationSubmitted, timeSpentSeconds, freeNote, updatedAt, lastHudLetterAdded) {
+    constructor(currentChapter, hudLetters, investigationSubmitted, timeSpentSeconds, freeNote, updatedAt, lastHudLetterAdded, welcomeSeen) {
         this.currentChapter = currentChapter
         this.hudLetters = hudLetters
         this.investigationSubmitted = investigationSubmitted
@@ -8,6 +8,7 @@ export default class ProgressModel {
         this.freeNote = freeNote
         this.updatedAt = updatedAt
         this.lastHudLetterAdded = lastHudLetterAdded
+        this.welcomeSeen = welcomeSeen
     }
 
     getCurrentChapter() {
@@ -38,6 +39,10 @@ export default class ProgressModel {
         return this.lastHudLetterAdded
     }
 
+    isWelcomeSeen() {
+        return this.welcomeSeen
+    }
+
     static create(dto, mapper) {
         return new ProgressModel(
             mapper.currentChapter(dto),
@@ -46,7 +51,8 @@ export default class ProgressModel {
             mapper.timeSpentSeconds(dto),
             mapper.freeNote(dto),
             mapper.updatedAt(dto),
-            mapper.lastHudLetterAdded(dto)
+            mapper.lastHudLetterAdded(dto),
+            mapper.welcomeSeen(dto)
         )
     }
 
