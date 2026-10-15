@@ -13,10 +13,11 @@ const getFolder = vi.fn().mockResolvedValue({ getPuzzles: () => [] })
 const getProgress = vi.fn().mockResolvedValue({ getCurrentChapter: () => 1, isWelcomeSeen: () => false })
 const getPuzzle = vi.fn().mockResolvedValue({ getMinChapter: () => 1, getQuestion: () => null })
 const listDiscardedFiles = vi.fn().mockResolvedValue([])
+const listSeen = vi.fn().mockResolvedValue([])
 const mountGameView = (services = {}) => mount(GameView, {
     global: {
         plugins: [createPinia(), router],
-        provide: { FolderService: { listFolders, getFolder }, ProgressService: { getProgress, markWelcomeSeen: vi.fn().mockResolvedValue({}) }, PuzzleService: { getPuzzle }, TrashService: { listDiscardedFiles }, ...services },
+        provide: { FolderService: { listFolders, getFolder }, ProgressService: { getProgress, markWelcomeSeen: vi.fn().mockResolvedValue({}) }, PuzzleService: { getPuzzle }, TrashService: { listDiscardedFiles }, SeenService: { listSeen, markSeen: vi.fn().mockResolvedValue() }, ...services },
     },
 })
 
@@ -41,6 +42,13 @@ describe('GameView', () => {
         await flushPromises()
 
         expect(wrapper.get('main').text()).toContain('Tomás')
+    })
+
+    it('loads the seen keys of the player when entering the desktop', async () => {
+        mountGameView()
+        await flushPromises()
+
+        expect(listSeen).toHaveBeenCalled()
     })
 
     it('shows the ClaraOS desktop with the ClaraOS theme', () => {
