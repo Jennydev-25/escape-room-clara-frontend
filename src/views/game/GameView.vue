@@ -5,6 +5,7 @@ import { useRouter } from 'vue-router'
 import FolderList from '@/components/game/FolderList.vue'
 import PuzzleWindow from '@/components/game/PuzzleWindow.vue'
 import TrashWindow from '@/components/game/TrashWindow.vue'
+import WelcomeCard from '@/components/game/WelcomeCard.vue'
 import { shouldOpenOnClick } from '@/composables/game/shouldOpenOnClick'
 import LoadingScreen from '@/shared/LoadingScreen.vue'
 import wallpaper from '@/assets/images/game/desktop/wallpaper.webp'
@@ -168,6 +169,7 @@ function toggleFullscreen() {
             </button>
         </div>
 
+        <WelcomeCard />
         <TrashWindow v-if="isTrashOpen" @close="isTrashOpen = false" />
         <PuzzleWindow v-if="currentPuzzle" v-bind="currentPuzzle" @close="currentPuzzle = null" @solved="onSolved" />
         <LoadingScreen v-if="isLeaving" title="Volviendo..." message="Saliendo del sistema de ClaraOS" :progress="leavingProgress" />
