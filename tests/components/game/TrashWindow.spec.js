@@ -1,5 +1,6 @@
 import FileViewer from '@/components/game/FileViewer.vue'
 import TrashWindow from '@/components/game/TrashWindow.vue'
+import BaseWindow from '@/shared/BaseWindow.vue'
 import { useSeenStore } from '@/stores/seen'
 import { flushPromises, mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
@@ -51,6 +52,46 @@ describe('TrashWindow', () => {
 
         expect(markSeen).toHaveBeenCalledWith('file:/papelera/ideas_sueltas.txt')
         expect(wrapper.get('li button').text()).not.toContain('archivo nuevo')
+    })
+
+    it('does not mark a discarded file again when it was already opened', async () => {
+        listDiscardedFiles.mockResolvedValue([file('ideas_sueltas.txt', '/papelera/ideas_sueltas.txt')])
+        const wrapper = mountTrashWindow(['file:/papelera/ideas_sueltas.txt'])
+        await flushPromises()
+
+        await wrapper.get('li button').trigger('dblclick')
+
+        expect(markSeen).not.toHaveBeenCalled()
+    })
+
+    it('asks to be closed when the window is closed', async () => {
+        listDiscardedFiles.mockResolvedValue([])
+        const wrapper = mountTrashWindow()
+        await flushPromises()
+
+        await wrapper.findComponent(BaseWindow).vm.$emit('close')
+
+        expect(wrapper.emitted('close')).toHaveLength(1)
+    })
+
+    it('closes the file viewer when it asks to be closed', async () => {
+        listDiscardedFiles.mockResolvedValue([file('ideas_sueltas.txt', '/papelera/ideas_sueltas.txt')])
+        const wrapper = mountTrashWindow()
+        await flushPromises()
+        await wrapper.get('li button').trigger('dblclick')
+
+        await wrapper.findComponent(FileViewer).vm.$emit('close')
+
+        expect(wrapper.findComponent(FileViewer).exists()).toBe(false)
+    })
+
+    it('shows a button for files with an unknown extension', async () => {
+        listDiscardedFiles.mockResolvedValue([file('factura.pdf', '/papelera/factura.pdf')])
+
+        const wrapper = mountTrashWindow()
+        await flushPromises()
+
+        expect(wrapper.get('li button').text()).toBe('factura.pdf')
     })
 
     it('shows Papelera as the title and a button for each discarded file with its original name', async () => {
