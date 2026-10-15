@@ -19,12 +19,10 @@ describe('useSeenStore', () => {
         expect(store.isSeen('folder:fraude')).toBe(false)
     })
 
-    test('markSeen should keep the seen keys for the next visit', () => {
+    test('markSeen should not store the keys in the browser', () => {
         useSeenStore().markSeen('folder:tomas')
 
-        setActivePinia(createPinia())
-
-        expect(useSeenStore().isSeen('folder:tomas')).toBe(true)
+        expect(localStorage.getItem('seen')).toBeNull()
     })
 
     test('load should keep the keys that the service returns', async () => {
