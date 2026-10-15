@@ -38,6 +38,14 @@ describe('Integration - Progress Service', () => {
         await expect(service.updateNote({ freeNote: 'Mi nota' })).rejects.toThrow('¡Ups! Algo salió mal')
     })
 
+    test('markWelcomeSeen should throw \'¡Ups! Algo salió mal\' when the uri is invalid', async () => {
+        const repository = new ProgressRepository()
+        repository.uri = ''
+        const service = new ProgressService(repository)
+
+        await expect(service.markWelcomeSeen()).rejects.toThrow('¡Ups! Algo salió mal')
+    })
+
 })
 
 describe('Unit - Progress Service', () => {
@@ -85,6 +93,17 @@ describe('Unit - Progress Service', () => {
 
         expect(receivedData).toEqual({ freeNote: 'Nueva nota' })
         expect(progress.getFreeNote()).toBe('Nueva nota')
+    })
+
+    test('markWelcomeSeen should map the backend response to a ProgressModel with the welcome seen', async () => {
+        const fakeRepository = {
+            markWelcomeSeen: () => Promise.resolve({ ...progressDto, welcomeSeen: true })
+        }
+        const service = new ProgressService(fakeRepository)
+
+        const progress = await service.markWelcomeSeen()
+
+        expect(progress.isWelcomeSeen()).toBe(true)
     })
 
 })
