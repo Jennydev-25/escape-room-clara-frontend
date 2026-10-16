@@ -55,6 +55,43 @@ describe('InvestigatorCredentialCard', () => {
         expect(wrapper.find('img[alt="Avatar 3"]').exists()).toBe(true)
     })
 
+    it('zooms the avatar image so the transparent margin of the picture is cropped', () => {
+        const wrapper = mount(InvestigatorCredentialCard, {
+            props: { alias: 'marta_v', avatarId: 3 },
+        })
+        expect(wrapper.get('img[alt="Avatar 3"]').classes()).toContain('scale-130')
+    })
+
+    it('shows the avatar in a big circle', () => {
+        const wrapper = mount(InvestigatorCredentialCard, {
+            props: { alias: 'marta_v', avatarId: 3 },
+        })
+        const circle = wrapper.get('.investigator-credential-card__avatar-circle')
+        expect(circle.classes()).toContain('h-28')
+        expect(circle.classes()).toContain('w-28')
+    })
+
+    it('keeps the camera button outside the avatar circle', () => {
+        const wrapper = mount(InvestigatorCredentialCard, {
+            props: { alias: 'marta_v', avatarId: 3 },
+        })
+        expect(wrapper.find('.investigator-credential-card__avatar-circle').exists()).toBe(true)
+        expect(wrapper.find('.investigator-credential-card__avatar-circle [aria-label="Cambiar avatar"]').exists()).toBe(false)
+        expect(wrapper.find('.investigator-credential-card__avatar [aria-label="Cambiar avatar"]').exists()).toBe(true)
+    })
+
+    it('zooms the avatar options of the picker', async () => {
+        const wrapper = mount(InvestigatorCredentialCard, {
+            props: { alias: 'marta_v' },
+        })
+
+        await wrapper.find('[aria-label="Cambiar avatar"]').trigger('click')
+
+        wrapper.findAll('button[aria-label^="Avatar "] img').forEach((image) => {
+            expect(image.classes()).toContain('scale-130')
+        })
+    })
+
     it('renders a credential id with a 6-digit random number and the issue date', () => {
         const wrapper = mount(InvestigatorCredentialCard, {
             props: { alias: 'marta_v' },
