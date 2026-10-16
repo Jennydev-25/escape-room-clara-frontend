@@ -15,6 +15,9 @@ const avatarId = ref(null)
 // lo que el jugador escribe en el formulario de la cuenta
 const formFullName = ref('')
 const formAlias = ref('')
+const currentPassword = ref('')
+const newPassword = ref('')
+const confirmPassword = ref('')
 
 onMounted(async () => {
     const profile = await userService.getProfile()
@@ -54,6 +57,23 @@ async function saveProfile() {
         // se mantienen el nombre y el alias que ya estaban guardados
     }
 }
+
+// las contraseñas se vacían siempre, haya ido bien o no
+async function changePassword() {
+    try {
+        await userService.changePassword({
+            currentPassword: currentPassword.value,
+            newPassword: newPassword.value,
+            newPasswordConfirmation: confirmPassword.value,
+        })
+    } catch (error) {
+        // la contraseña anterior sigue siendo la válida
+    } finally {
+        currentPassword.value = ''
+        newPassword.value = ''
+        confirmPassword.value = ''
+    }
+}
 </script>
 
 <template>
@@ -77,7 +97,11 @@ async function saveProfile() {
                     class="flex-1"
                     v-model:fullName="formFullName"
                     v-model:alias="formAlias"
+                    v-model:currentPassword="currentPassword"
+                    v-model:newPassword="newPassword"
+                    v-model:confirmPassword="confirmPassword"
                     @submit="saveProfile"
+                    @submit-password="changePassword"
                 />
             </div>
         </div>
