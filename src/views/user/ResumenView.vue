@@ -22,6 +22,7 @@ const TIME_PART_DIGITS = 2
 
 // alias del jugador, el que guardó al registrarse
 const alias = ref('')
+const avatarId = ref(null)
 const currentChapter = ref(FIRST_CHAPTER)
 const timeSpentSeconds = ref(0)
 const unlockedFolders = ref([])
@@ -63,6 +64,7 @@ const timeSpent = computed(() => {
 onMounted(async () => {
     const [profile, progress, folders] = await Promise.all([userService.getProfile(), progressService.getProgress(), folderService.listFolders()])
     alias.value = profile.getAlias()
+    avatarId.value = profile.getAvatarId()
     currentChapter.value = progress.getCurrentChapter()
     timeSpentSeconds.value = progress.getTimeSpentSeconds()
     unlockedFolders.value = folders
@@ -70,7 +72,7 @@ onMounted(async () => {
 </script>
 
 <template>
-    <DashboardLayout :player-alias="alias">
+    <DashboardLayout :player-alias="alias" :avatar-id="avatarId">
         <h1 class="resumen-view__title font-display text-4xl text-on-surface">Hola de nuevo, {{ alias }}</h1>
         <p class="resumen-view__subtitle font-body text-base text-on-surface-variant">Aquí tienes un resumen de tu progreso en el caso. El portátil de Clara guardará todo lo que vayas reconstruyendo.</p>
 

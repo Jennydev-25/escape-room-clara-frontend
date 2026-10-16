@@ -11,6 +11,10 @@ defineProps({
         type: String,
         required: true,
     },
+    avatarId: {
+        type: Number,
+        default: null,
+    },
 })
 
 const router = useRouter()
@@ -31,7 +35,7 @@ const handleLogout = async () => {
 
 <template>
     <div class="dashboard-layout flex min-h-screen flex-col bg-surface font-body text-on-surface lg:h-screen lg:min-h-0 lg:overflow-hidden">
-        <DashboardHeader :player-alias="playerAlias" />
+        <DashboardHeader :player-alias="playerAlias" :avatar-id="avatarId" />
 
         <div class="dashboard-layout__status flex min-h-0 items-center justify-between border-b border-outline/30 bg-surface-container px-6 py-2 font-mono text-xs text-on-surface-variant">
             <span class="flex items-center gap-2">
