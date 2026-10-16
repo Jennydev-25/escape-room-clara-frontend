@@ -101,6 +101,38 @@ describe('ResumenView', () => {
         expect(wrapper.text()).toContain('00:00:59')
     })
 
+    it('shows the last folder the player has unlocked as the active one', async () => {
+        const folders = [{ getName: () => '00_LEEME' }, { getName: () => '01_TOMAS' }]
+        const wrapper = mountResumen({ FolderService: { listFolders: vi.fn().mockResolvedValue(folders) } })
+        await flushPromises()
+
+        expect(wrapper.text()).toContain('Carpeta activa01_TOMAS')
+    })
+
+    it('marks the case as in progress when the player has solved a chapter', async () => {
+        const wrapper = mountResumen({ ProgressService: { getProgress: vi.fn().mockResolvedValue({ getCurrentChapter: () => 3, getTimeSpentSeconds: () => 0 }) } })
+        await flushPromises()
+
+        expect(wrapper.text()).toContain('En progreso')
+        expect(wrapper.text()).not.toContain('Pendiente de inicio')
+    })
+
+    it('marks the case as in progress when the player has spent time in the first chapter', async () => {
+        const wrapper = mountResumen({ ProgressService: { getProgress: vi.fn().mockResolvedValue({ getCurrentChapter: () => 1, getTimeSpentSeconds: () => 30 }) } })
+        await flushPromises()
+
+        expect(wrapper.text()).toContain('En progreso')
+    })
+
+    it('marks the case as finished in green when the player has solved all the chapters', async () => {
+        const wrapper = mountResumen({ ProgressService: { getProgress: vi.fn().mockResolvedValue({ getCurrentChapter: () => 18, getTimeSpentSeconds: () => 0 }) } })
+        await flushPromises()
+
+        const badge = wrapper.get('.resumen-view__case-badge')
+        expect(badge.text()).toBe('Finalizado')
+        expect(badge.classes()).toContain('text-success')
+    })
+
     it('renders the case info tiles', () => {
         const wrapper = mountResumen()
 
