@@ -135,4 +135,20 @@ describe('ProfileView', () => {
 
         expect(userService.completeProfile).toHaveBeenCalledWith({ fullName: 'Marta Vega', alias: 'marta_v' })
     })
+
+    it.each([
+        ['alias', 'update:alias', 'nuevo_alias', { fullName: 'Marta Vega', alias: 'nuevo_alias' }],
+        ['full name', 'update:fullName', 'Clara Rey', { fullName: 'Clara Rey', alias: 'marta_v' }],
+    ])('keeps the saved value of the field the player leaves empty (only the %s typed)', async (_field, event, value, expected) => {
+        const userService = userServiceOf({ alias: 'marta_v', fullName: 'Marta Vega' })
+        const wrapper = mountProfile({ UserService: userService })
+        await flushPromises()
+        const accountCard = wrapper.findComponent(AccountCredentialsCard)
+
+        await accountCard.vm.$emit(event, value)
+        await accountCard.vm.$emit('submit')
+        await flushPromises()
+
+        expect(userService.completeProfile).toHaveBeenCalledWith(expected)
+    })
 })
