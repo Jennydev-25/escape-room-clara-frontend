@@ -47,6 +47,8 @@ async function saveProfile() {
     })
     fullName.value = profile.getFullName()
     alias.value = profile.getAlias()
+    formFullName.value = ''
+    formAlias.value = ''
 }
 </script>
 
