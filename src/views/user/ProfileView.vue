@@ -12,6 +12,10 @@ const fullName = ref('')
 const email = ref('')
 const avatarId = ref(null)
 
+// lo que el jugador escribe en el formulario de la cuenta
+const formFullName = ref('')
+const formAlias = ref('')
+
 onMounted(async () => {
     const profile = await userService.getProfile()
     alias.value = profile.getAlias()
@@ -34,6 +38,10 @@ async function saveAvatar(newAvatarId) {
         // se mantiene el avatar que ya estaba guardado
     }
 }
+
+async function saveProfile() {
+    await userService.completeProfile({ fullName: formFullName.value, alias: formAlias.value })
+}
 </script>
 
 <template>
@@ -53,7 +61,12 @@ async function saveAvatar(newAvatarId) {
                     @update:avatar-id="saveAvatar"
                 />
 
-                <AccountCredentialsCard class="flex-1" />
+                <AccountCredentialsCard
+                    class="flex-1"
+                    v-model:fullName="formFullName"
+                    v-model:alias="formAlias"
+                    @submit="saveProfile"
+                />
             </div>
         </div>
     </DashboardLayout>
