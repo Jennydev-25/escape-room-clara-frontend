@@ -8,7 +8,7 @@ import InvestigatorCredentialCard from '@/shared/dashboard/InvestigatorCredentia
 import AccountCredentialsCard from '@/shared/dashboard/AccountCredentialsCard.vue'
 
 // servicio de usuario falso que devuelve el perfil indicado (por defecto, un jugador sin nombre completo)
-const userServiceOf = ({ alias = 'jugador_01', fullName = '', email = 'jugador@correo.com', avatarId = null, updateProfile = vi.fn().mockResolvedValue({}), completeProfile = vi.fn().mockResolvedValue({}) } = {}) => ({
+const userServiceOf = ({ alias = 'jugador_01', fullName = '', email = 'jugador@correo.com', avatarId = null, updateProfile = vi.fn().mockResolvedValue({}), completeProfile = vi.fn().mockResolvedValue({ getAlias: () => alias, getFullName: () => fullName }) } = {}) => ({
     getProfile: vi.fn().mockResolvedValue({ getAlias: () => alias, getFullName: () => fullName, getEmail: () => email, getAvatarId: () => avatarId }),
     updateProfile,
     completeProfile,
