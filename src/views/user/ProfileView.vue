@@ -37,7 +37,7 @@ async function saveAvatar(newAvatarId) {
 </script>
 
 <template>
-    <DashboardLayout :player-alias="alias">
+    <DashboardLayout :player-alias="alias" :avatar-id="avatarId">
         <div class="profile-view flex min-h-0 flex-col lg:h-full">
             <h1 class="profile-view__title font-display text-4xl text-on-surface">Mi perfil</h1>
             <p class="profile-view__subtitle font-body text-base text-on-surface-variant">Registro oficial de tu credencial de investigador y los datos de tu cuenta.</p>
