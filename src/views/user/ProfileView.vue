@@ -8,11 +8,13 @@ const userService = inject('UserService')
 
 // alias del jugador, el que guardó al registrarse
 const alias = ref('')
+const fullName = ref('')
 const avatarId = ref(null)
 
 onMounted(async () => {
     const profile = await userService.getProfile()
     alias.value = profile.getAlias()
+    fullName.value = profile.getFullName()
 })
 </script>
 
@@ -25,6 +27,7 @@ onMounted(async () => {
             <div class="profile-view__cards mt-6 flex min-h-0 flex-1 flex-col gap-6 lg:flex-row">
                 <InvestigatorCredentialCard
                     class="w-full lg:max-w-sm"
+                    :full-name="fullName"
                     :alias="alias"
                     case-name="El último archivo de Clara"
                     status="Investigación en curso"

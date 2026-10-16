@@ -15,6 +15,10 @@ import avatar9 from '@/assets/images/avatars/avatar-9.png'
 const avatarImages = [avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7, avatar8, avatar9]
 
 const props = defineProps({
+    fullName: {
+        type: String,
+        default: '',
+    },
     alias: {
         type: String,
         required: true,
@@ -94,8 +98,8 @@ const saveAvatar = () => {
             </div>
 
             <div class="flex min-w-0 flex-col items-center text-center">
-                <p class="font-display truncate text-2xl text-on-surface">{{ alias }}</p>
-                <p class="font-body truncate text-sm text-on-surface-variant">Alias: {{ alias }}</p>
+                <p class="investigator-credential-card__name font-display truncate text-2xl text-on-surface">{{ fullName || alias }}</p>
+                <p v-if="fullName" class="font-body truncate text-sm text-on-surface-variant">Alias: {{ alias }}</p>
             </div>
         </div>
 
