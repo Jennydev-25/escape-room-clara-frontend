@@ -19,12 +19,6 @@ const mountResumen = (services = {}) => mount(ResumenView, {
 })
 
 describe('ResumenView', () => {
-    it('greets the player by their alias', () => {
-        const wrapper = mountResumen()
-
-        expect(wrapper.text()).toContain('Hola de nuevo, jugador_01')
-    })
-
     it('shows the real alias of the player in the greeting', async () => {
         const wrapper = mountResumen({ UserService: { getProfile: vi.fn().mockResolvedValue({ getAlias: () => 'marta_v' }) } })
         await flushPromises()

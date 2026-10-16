@@ -1,15 +1,25 @@
 <script setup>
 import { BookOpen, Clock, FolderOpen, Search } from '@lucide/vue'
+import { inject, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import DashboardLayout from '@/shared/dashboard/DashboardLayout.vue'
 import BaseButton from '@/shared/BaseButton.vue'
 
+const userService = inject('UserService')
 const router = useRouter()
+
+// alias del jugador, el que guardó al registrarse
+const alias = ref('')
+
+onMounted(async () => {
+    const profile = await userService.getProfile()
+    alias.value = profile.getAlias()
+})
 </script>
 
 <template>
-    <DashboardLayout player-alias="jugador_01">
-        <h1 class="resumen-view__title font-display text-4xl text-on-surface">Hola de nuevo, jugador_01</h1>
+    <DashboardLayout :player-alias="alias">
+        <h1 class="resumen-view__title font-display text-4xl text-on-surface">Hola de nuevo, {{ alias }}</h1>
         <p class="resumen-view__subtitle font-body text-base text-on-surface-variant">Aquí tienes un resumen de tu progreso en el caso. El portátil de Clara guardará todo lo que vayas reconstruyendo.</p>
 
         <section class="resumen-view__case-card relative mt-6 rounded-2xl border border-outline/30 bg-surface-container p-8">
