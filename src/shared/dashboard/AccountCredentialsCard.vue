@@ -3,6 +3,11 @@ import { ref } from 'vue'
 import PasswordField from '@/shared/PasswordField.vue'
 import BaseButton from '@/shared/BaseButton.vue'
 
+const fullName = defineModel('fullName', { type: String, default: '' })
+const alias = defineModel('alias', { type: String, default: '' })
+
+defineEmits(['submit'])
+
 const isEditing = ref(false)
 </script>
 
@@ -24,7 +29,7 @@ const isEditing = ref(false)
         </button>
 
         <div v-if="isEditing" class="account-credentials-card__columns grid grid-cols-2 gap-0">
-            <div class="account-credentials-card__access flex flex-col gap-4 pr-6">
+            <form class="account-credentials-card__access flex flex-col gap-4 pr-6" @submit.prevent="$emit('submit')">
                 <h2 class="font-display text-xl text-on-surface">Datos de acceso y credenciales</h2>
 
                 <div class="account-credentials-card__fields flex flex-col gap-4">
@@ -33,6 +38,7 @@ const isEditing = ref(false)
                         <input
                             id="credentials-full-name"
                             type="text"
+                            v-model="fullName"
                             class="w-full rounded-md border border-outline bg-surface px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
                         >
                     </div>
@@ -42,13 +48,14 @@ const isEditing = ref(false)
                         <input
                             id="credentials-alias"
                             type="text"
+                            v-model="alias"
                             class="w-full rounded-md border border-outline bg-surface px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
                         >
                     </div>
                 </div>
 
-                <BaseButton type="button" class="account-credentials-card__save mt-auto">Guardar cambios</BaseButton>
-            </div>
+                <BaseButton type="submit" class="account-credentials-card__save mt-auto">Guardar cambios</BaseButton>
+            </form>
 
             <div class="account-credentials-card__password-section flex flex-col gap-4 border-l border-outline/30 pl-6">
                 <h3 class="font-display text-xl text-on-surface">Cambiar contraseña</h3>
