@@ -1,19 +1,28 @@
 <script setup>
 import { BookOpen, Clock, FolderOpen, Search } from '@lucide/vue'
-import { inject, onMounted, ref } from 'vue'
+import { computed, inject, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import DashboardLayout from '@/shared/dashboard/DashboardLayout.vue'
 import BaseButton from '@/shared/BaseButton.vue'
 
+const progressService = inject('ProgressService')
 const userService = inject('UserService')
 const router = useRouter()
 
+const TOTAL_CHAPTERS = 17
+
 // alias del jugador, el que guardó al registrarse
 const alias = ref('')
+const currentChapter = ref(1)
+
+// al resolver un capítulo el progreso pasa al siguiente: el 18 significa que están los 17 resueltos
+const chapterShown = computed(() => Math.min(currentChapter.value, TOTAL_CHAPTERS))
+const percentCompleted = computed(() => Math.round(((currentChapter.value - 1) / TOTAL_CHAPTERS) * 100))
 
 onMounted(async () => {
-    const profile = await userService.getProfile()
+    const [profile, progress] = await Promise.all([userService.getProfile(), progressService.getProgress()])
     alias.value = profile.getAlias()
+    currentChapter.value = progress.getCurrentChapter()
 })
 </script>
 
@@ -34,13 +43,13 @@ onMounted(async () => {
             <div class="resumen-view__chapter mt-6 flex flex-col gap-1 font-label text-base uppercase tracking-wide text-on-surface-variant lg:flex-row lg:items-center lg:justify-between">
                 <span class="flex items-center gap-2">
                     <component :is="BookOpen" :size="16" />
-                    Capítulo 1 de 17
+                    Capítulo {{ chapterShown }} de {{ TOTAL_CHAPTERS }}
                 </span>
-                <span>0% completado</span>
+                <span>{{ percentCompleted }}% completado</span>
             </div>
 
             <div class="resumen-view__progress-bar mt-2 h-1.5 w-full overflow-hidden rounded-full bg-surface">
-                <div class="h-full rounded-full bg-primary" style="width: 0%" />
+                <div class="h-full rounded-full bg-primary" :style="{ width: `${percentCompleted}%` }" />
             </div>
 
             <div class="resumen-view__info-tiles mt-6 grid grid-cols-2 gap-4">
