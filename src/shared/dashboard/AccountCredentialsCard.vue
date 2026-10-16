@@ -6,9 +6,15 @@ import BaseButton from '@/shared/BaseButton.vue'
 const fullName = defineModel('fullName', { type: String, default: '' })
 const alias = defineModel('alias', { type: String, default: '' })
 
-defineEmits(['submit'])
+const emit = defineEmits(['submit'])
 
 const isEditing = ref(false)
+
+// avisa a la vista y vuelve al estado cerrado
+function submit() {
+    emit('submit')
+    isEditing.value = false
+}
 </script>
 
 <template>
@@ -29,7 +35,7 @@ const isEditing = ref(false)
         </button>
 
         <div v-if="isEditing" class="account-credentials-card__columns grid grid-cols-2 gap-0">
-            <form class="account-credentials-card__access flex flex-col gap-4 pr-6" @submit.prevent="$emit('submit')">
+            <form class="account-credentials-card__access flex flex-col gap-4 pr-6" @submit.prevent="submit">
                 <h2 class="font-display text-xl text-on-surface">Datos de acceso y credenciales</h2>
 
                 <div class="account-credentials-card__fields flex flex-col gap-4">
