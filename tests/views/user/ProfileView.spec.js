@@ -8,8 +8,9 @@ import InvestigatorCredentialCard from '@/shared/dashboard/InvestigatorCredentia
 import AccountCredentialsCard from '@/shared/dashboard/AccountCredentialsCard.vue'
 
 // servicio de usuario falso que devuelve el perfil indicado (por defecto, un jugador sin nombre completo)
-const userServiceOf = ({ alias = 'jugador_01', fullName = '' } = {}) => ({
-    getProfile: vi.fn().mockResolvedValue({ getAlias: () => alias, getFullName: () => fullName }),
+const userServiceOf = ({ alias = 'jugador_01', fullName = '', email = 'jugador@correo.com', avatarId = null, updateProfile = vi.fn().mockResolvedValue({}) } = {}) => ({
+    getProfile: vi.fn().mockResolvedValue({ getAlias: () => alias, getFullName: () => fullName, getEmail: () => email, getAvatarId: () => avatarId }),
+    updateProfile,
 })
 
 // monta el perfil con los servicios que se le indiquen
@@ -75,11 +76,38 @@ describe('ProfileView', () => {
         expect(wrapper.get('.dashboard-header__alias').text()).toBe('marta_v')
     })
 
-    it('updates the credential card avatar id when the picker emits a new one', async () => {
-        const wrapper = mountProfile()
+    it('shows the avatar the player has saved in the credential card', async () => {
+        const wrapper = mountProfile({ UserService: userServiceOf({ avatarId: 3 }) })
+        await flushPromises()
+
+        expect(wrapper.findComponent(InvestigatorCredentialCard).props('avatarId')).toBe(3)
+    })
+
+    it('saves the new avatar with the data of the player when the picker emits one', async () => {
+        const userService = userServiceOf({ alias: 'marta_v', email: 'marta@correo.com', avatarId: 3 })
+        const wrapper = mountProfile({ UserService: userService })
+        await flushPromises()
 
         await wrapper.findComponent(InvestigatorCredentialCard).vm.$emit('update:avatar-id', 5)
+        await flushPromises()
 
+        expect(userService.updateProfile).toHaveBeenCalledWith({
+            alias: 'marta_v',
+            email: 'marta@correo.com',
+            emailConfirmation: 'marta@correo.com',
+            avatarId: 5,
+        })
         expect(wrapper.findComponent(InvestigatorCredentialCard).props('avatarId')).toBe(5)
+    })
+
+    it('keeps the previous avatar when the new one cannot be saved', async () => {
+        const userService = userServiceOf({ avatarId: 3, updateProfile: vi.fn().mockRejectedValue(new Error('network')) })
+        const wrapper = mountProfile({ UserService: userService })
+        await flushPromises()
+
+        await wrapper.findComponent(InvestigatorCredentialCard).vm.$emit('update:avatar-id', 5)
+        await flushPromises()
+
+        expect(wrapper.findComponent(InvestigatorCredentialCard).props('avatarId')).toBe(3)
     })
 })
