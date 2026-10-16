@@ -76,4 +76,28 @@ describe('AccountCredentialsCard', () => {
         expect(wrapper.find('#credentials-full-name').exists()).toBe(false)
         expect(wrapper.get('button').text()).toContain('Editar mis datos')
     })
+
+    it.each([
+        ['currentPassword', '#credentials-current-password', 'actual_123'],
+        ['newPassword', '#credentials-new-password', 'nueva_1234'],
+        ['confirmPassword', '#credentials-confirm-password', 'nueva_1234'],
+    ])('emits update:%s when the password field is typed', async (model, selector, value) => {
+        const wrapper = mount(AccountCredentialsCard)
+
+        await wrapper.get('button').trigger('click')
+        await wrapper.get(selector).setValue(value)
+
+        expect(wrapper.emitted(`update:${model}`)[0]).toEqual([value])
+    })
+
+    it('emits submit-password and returns to the collapsed state when the password form is sent', async () => {
+        const wrapper = mount(AccountCredentialsCard)
+
+        await wrapper.get('button').trigger('click')
+        await wrapper.get('.account-credentials-card__password-section').trigger('submit.prevent')
+
+        expect(wrapper.emitted('submit-password')).toHaveLength(1)
+        expect(wrapper.find('#credentials-current-password').exists()).toBe(false)
+        expect(wrapper.get('button').text()).toContain('Editar mis datos')
+    })
 })
