@@ -104,10 +104,32 @@ describe('ResumenView', () => {
 
     it('shows the last folder the player has unlocked as the active one', async () => {
         const folders = [{ getName: () => '00_LEEME' }, { getName: () => '01_TOMAS' }]
-        const wrapper = mountResumen({ FolderService: { listFolders: vi.fn().mockResolvedValue(folders) } })
+        const wrapper = mountResumen({
+            FolderService: { listFolders: vi.fn().mockResolvedValue(folders) },
+            ProgressService: { getProgress: vi.fn().mockResolvedValue({ getCurrentChapter: () => 2, getTimeSpentSeconds: () => 0 }) },
+        })
         await flushPromises()
 
         expect(wrapper.text()).toContain('Carpeta activa01_TOMAS')
+    })
+
+    it('shows no active folder while the case has not started, even with the first folder unlocked', async () => {
+        const folders = [{ getName: () => '00_LEEME' }]
+        const wrapper = mountResumen({ FolderService: { listFolders: vi.fn().mockResolvedValue(folders) } })
+        await flushPromises()
+
+        expect(wrapper.text()).toContain('Carpeta activaNinguna')
+    })
+
+    it('shows the first folder as the active one once the player has spent time in the case', async () => {
+        const folders = [{ getName: () => '00_LEEME' }]
+        const wrapper = mountResumen({
+            FolderService: { listFolders: vi.fn().mockResolvedValue(folders) },
+            ProgressService: { getProgress: vi.fn().mockResolvedValue({ getCurrentChapter: () => 1, getTimeSpentSeconds: () => 30 }) },
+        })
+        await flushPromises()
+
+        expect(wrapper.text()).toContain('Carpeta activa00_LEEME')
     })
 
     it('marks the case as in progress when the player has solved a chapter', async () => {
