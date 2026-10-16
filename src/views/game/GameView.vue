@@ -77,6 +77,17 @@ function openTrash() {
     discardedFiles.value.forEach((file) => markSeen(`known:trash:${file.getId()}`))
 }
 
+// momento desde el que se cuenta el tiempo que aún no se ha guardado
+let lastSavedAt = Date.now()
+
+// guarda en el backend los segundos jugados desde la última vez, sin contar fracciones
+function saveTimePlayed() {
+    const seconds = Math.floor((Date.now() - lastSavedAt) / 1000)
+    if (seconds < 1) return
+    lastSavedAt += seconds * 1000
+    progressService.accumulateTime({ secondsToAdd: seconds })
+}
+
 // al aceptar se cierra el mensaje y se guarda que ya lo vio
 function acceptWelcome() {
     isWelcomeOpen.value = false
@@ -85,6 +96,7 @@ function acceptWelcome() {
 
 // salir de ClaraOS: pantalla de carga con la barra subiendo como en App.vue
 function leaveClaraOS() {
+    saveTimePlayed()
     isLeaving.value = true
     leavingTimer = setInterval(() => {
         if (leavingProgress.value < 90) leavingProgress.value += 15
@@ -120,6 +132,7 @@ function onSolved() {
     currentPuzzle.value = null
     foldersKey.value++
     loadDiscardedFiles()
+    saveTimePlayed()
 }
 
 // el navegador decide si deja pantalla completa (en iPhone no)
