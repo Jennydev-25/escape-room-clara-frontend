@@ -8,10 +8,11 @@ import InvestigatorCredentialCard from '@/shared/dashboard/InvestigatorCredentia
 import AccountCredentialsCard from '@/shared/dashboard/AccountCredentialsCard.vue'
 
 // servicio de usuario falso que devuelve el perfil indicado (por defecto, un jugador sin nombre completo)
-const userServiceOf = ({ alias = 'jugador_01', fullName = '', email = 'jugador@correo.com', avatarId = null, updateProfile = vi.fn().mockResolvedValue({}), completeProfile = vi.fn().mockResolvedValue({ getAlias: () => alias, getFullName: () => fullName }) } = {}) => ({
+const userServiceOf = ({ alias = 'jugador_01', fullName = '', email = 'jugador@correo.com', avatarId = null, updateProfile = vi.fn().mockResolvedValue({}), completeProfile = vi.fn().mockResolvedValue({ getAlias: () => alias, getFullName: () => fullName }), changePassword = vi.fn().mockResolvedValue() } = {}) => ({
     getProfile: vi.fn().mockResolvedValue({ getAlias: () => alias, getFullName: () => fullName, getEmail: () => email, getAvatarId: () => avatarId }),
     updateProfile,
     completeProfile,
+    changePassword,
 })
 
 // monta el perfil con los servicios que se le indiquen
@@ -199,5 +200,60 @@ describe('ProfileView', () => {
         expect(credentialCard.props('alias')).toBe('marta_v')
         expect(credentialCard.props('fullName')).toBe('Marta Vega')
         expect(errorHandler).not.toHaveBeenCalled()
+    })
+
+    // el jugador escribe las tres contraseñas en el formulario de la contraseña
+    const typePasswords = async (accountCard) => {
+        await accountCard.vm.$emit('update:currentPassword', 'actual_123')
+        await accountCard.vm.$emit('update:newPassword', 'nueva_1234')
+        await accountCard.vm.$emit('update:confirmPassword', 'nueva_1234')
+    }
+
+    it('changes the password with the three passwords typed in the account form', async () => {
+        const userService = userServiceOf()
+        const wrapper = mountProfile({ UserService: userService })
+        await flushPromises()
+        const accountCard = wrapper.findComponent(AccountCredentialsCard)
+
+        await typePasswords(accountCard)
+        await accountCard.vm.$emit('submit-password')
+        await flushPromises()
+
+        expect(userService.changePassword).toHaveBeenCalledWith({
+            currentPassword: 'actual_123',
+            newPassword: 'nueva_1234',
+            newPasswordConfirmation: 'nueva_1234',
+        })
+    })
+
+    it('empties the passwords after changing them', async () => {
+        const wrapper = mountProfile()
+        await flushPromises()
+        const accountCard = wrapper.findComponent(AccountCredentialsCard)
+
+        await typePasswords(accountCard)
+        expect(accountCard.props('currentPassword')).toBe('actual_123')
+        await accountCard.vm.$emit('submit-password')
+        await flushPromises()
+
+        expect(accountCard.props('currentPassword')).toBe('')
+        expect(accountCard.props('newPassword')).toBe('')
+        expect(accountCard.props('confirmPassword')).toBe('')
+    })
+
+    it('empties the passwords without breaking when the password cannot be changed', async () => {
+        const errorHandler = vi.fn()
+        const userService = userServiceOf({ changePassword: vi.fn().mockRejectedValue(new Error('wrong password')) })
+        const wrapper = mountProfile({ UserService: userService }, { errorHandler })
+        await flushPromises()
+        const accountCard = wrapper.findComponent(AccountCredentialsCard)
+
+        await typePasswords(accountCard)
+        expect(accountCard.props('currentPassword')).toBe('actual_123')
+        await accountCard.vm.$emit('submit-password')
+        await flushPromises()
+
+        expect(errorHandler).not.toHaveBeenCalled()
+        expect(accountCard.props('currentPassword')).toBe('')
     })
 })
