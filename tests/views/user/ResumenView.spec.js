@@ -65,12 +65,28 @@ describe('ResumenView', () => {
         expect(wrapper.text()).toContain('0% completado')
     })
 
-    it('shows the chapters the player has solved and the percentage completed', async () => {
+    it('shows the chapter the player is in and the percentage completed', async () => {
         const wrapper = mountResumen({ ProgressService: { getProgress: vi.fn().mockResolvedValue({ getCurrentChapter: () => 5, getTimeSpentSeconds: () => 0 }) } })
         await flushPromises()
 
-        expect(wrapper.text()).toContain('Capítulo 4 de 17')
+        expect(wrapper.text()).toContain('Capítulo 5 de 17')
         expect(wrapper.text()).toContain('24% completado')
+    })
+
+    it('starts the first chapter without any percentage once the player has spent time in the case', async () => {
+        const wrapper = mountResumen({ ProgressService: { getProgress: vi.fn().mockResolvedValue({ getCurrentChapter: () => 1, getTimeSpentSeconds: () => 30 }) } })
+        await flushPromises()
+
+        expect(wrapper.text()).toContain('Capítulo 1 de 17')
+        expect(wrapper.text()).toContain('0% completado')
+    })
+
+    it('moves to the second chapter with the first one completed when the player solves the first puzzle', async () => {
+        const wrapper = mountResumen({ ProgressService: { getProgress: vi.fn().mockResolvedValue({ getCurrentChapter: () => 2, getTimeSpentSeconds: () => 60 }) } })
+        await flushPromises()
+
+        expect(wrapper.text()).toContain('Capítulo 2 de 17')
+        expect(wrapper.text()).toContain('6% completado')
     })
 
     it('fills the progress bar according to the percentage completed', async () => {
