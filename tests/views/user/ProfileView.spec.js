@@ -7,13 +7,18 @@ import ProfileView from '@/views/user/ProfileView.vue'
 import InvestigatorCredentialCard from '@/shared/dashboard/InvestigatorCredentialCard.vue'
 import AccountCredentialsCard from '@/shared/dashboard/AccountCredentialsCard.vue'
 
+// servicio de usuario falso que devuelve el perfil indicado (por defecto, un jugador sin nombre completo)
+const userServiceOf = ({ alias = 'jugador_01', fullName = '' } = {}) => ({
+    getProfile: vi.fn().mockResolvedValue({ getAlias: () => alias, getFullName: () => fullName }),
+})
+
 // monta el perfil con los servicios que se le indiquen
 const mountProfile = (services = {}) => mount(ProfileView, {
     global: {
         plugins: [router, createPinia()],
         provide: {
             AuthService: { logout: vi.fn() },
-            UserService: { getProfile: vi.fn().mockResolvedValue({ getAlias: () => 'jugador_01' }) },
+            UserService: userServiceOf(),
             ...services,
         },
     },
@@ -43,21 +48,28 @@ describe('ProfileView', () => {
     })
 
     it('shows the real alias of the player in the credential card', async () => {
-        const wrapper = mountProfile({ UserService: { getProfile: vi.fn().mockResolvedValue({ getAlias: () => 'marta_v' }) } })
+        const wrapper = mountProfile({ UserService: userServiceOf({ alias: 'marta_v' }) })
         await flushPromises()
 
         expect(wrapper.findComponent(InvestigatorCredentialCard).props('alias')).toBe('marta_v')
     })
 
+    it('shows the real full name of the player in the credential card', async () => {
+        const wrapper = mountProfile({ UserService: userServiceOf({ fullName: 'Marta Vega' }) })
+        await flushPromises()
+
+        expect(wrapper.findComponent(InvestigatorCredentialCard).props('fullName')).toBe('Marta Vega')
+    })
+
     it('leaves the account credentials card empty for the player to fill', async () => {
-        const wrapper = mountProfile({ UserService: { getProfile: vi.fn().mockResolvedValue({ getAlias: () => 'marta_v' }) } })
+        const wrapper = mountProfile({ UserService: userServiceOf({ alias: 'marta_v' }) })
         await flushPromises()
 
         expect(wrapper.findComponent(AccountCredentialsCard).props('alias')).toBe('')
     })
 
     it('shows the real alias of the player in the header', async () => {
-        const wrapper = mountProfile({ UserService: { getProfile: vi.fn().mockResolvedValue({ getAlias: () => 'marta_v' }) } })
+        const wrapper = mountProfile({ UserService: userServiceOf({ alias: 'marta_v' }) })
         await flushPromises()
 
         expect(wrapper.get('.dashboard-header__alias').text()).toBe('marta_v')

@@ -10,6 +10,22 @@ describe('InvestigatorCredentialCard', () => {
         expect(wrapper.text()).toContain('marta_v')
     })
 
+    it('shows the full name as the title and the alias below it', () => {
+        const wrapper = mount(InvestigatorCredentialCard, {
+            props: { fullName: 'Marta Vega', alias: 'marta_v' },
+        })
+        expect(wrapper.get('.investigator-credential-card__name').text()).toBe('Marta Vega')
+        expect(wrapper.text()).toContain('Alias: marta_v')
+    })
+
+    it('shows the alias as the title, without repeating it, when the player has no full name yet', () => {
+        const wrapper = mount(InvestigatorCredentialCard, {
+            props: { alias: 'marta_v' },
+        })
+        expect(wrapper.get('.investigator-credential-card__name').text()).toBe('marta_v')
+        expect(wrapper.text()).not.toContain('Alias:')
+    })
+
     it('renders the assigned case and investigation status', () => {
         const wrapper = mount(InvestigatorCredentialCard, {
             props: {
