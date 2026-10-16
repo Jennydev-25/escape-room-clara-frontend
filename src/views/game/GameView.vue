@@ -55,9 +55,10 @@ onMounted(async () => {
 })
 
 // carga los archivos de la papelera para saber cuáles conoce ya el jugador
-onMounted(async () => {
+async function loadDiscardedFiles() {
     discardedFiles.value = await trashService.listDiscardedFiles()
-})
+}
+onMounted(loadDiscardedFiles)
 
 // se marca en pantalla y se guarda en el backend lo que el jugador acaba de ver
 function markSeen(key) {
@@ -114,10 +115,11 @@ async function openCurrentPuzzle() {
     currentPuzzle.value = { id: summaries[index].getId(), title: summaries[index].getTitle(), question: puzzles[index].getQuestion() }
 }
 
-// al acertar se cierra la ventana y se recargan las carpetas para ver las nuevas
+// al acertar se cierra la ventana y se recargan las carpetas y la papelera para ver lo nuevo
 function onSolved() {
     currentPuzzle.value = null
     foldersKey.value++
+    loadDiscardedFiles()
 }
 
 // el navegador decide si deja pantalla completa (en iPhone no)
