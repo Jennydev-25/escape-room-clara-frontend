@@ -10,6 +10,7 @@ const mountResumen = (services = {}) => mount(ResumenView, {
     global: {
         plugins: [router, createPinia()],
         provide: {
+            AuthService: { logout: vi.fn() },
             UserService: { getProfile: vi.fn().mockResolvedValue({ getAlias: () => 'jugador_01' }) },
             ProgressService: { getProgress: vi.fn().mockResolvedValue({ getCurrentChapter: () => 1, getTimeSpentSeconds: () => 0 }) },
             FolderService: { listFolders: vi.fn().mockResolvedValue([]) },
