@@ -151,4 +151,21 @@ describe('ProfileView', () => {
 
         expect(userService.completeProfile).toHaveBeenCalledWith(expected)
     })
+
+    it('shows the new full name and alias in the credential card and in the header after saving', async () => {
+        const completeProfile = vi.fn().mockResolvedValue({ getAlias: () => 'clara_r', getFullName: () => 'Clara Rey' })
+        const wrapper = mountProfile({ UserService: userServiceOf({ alias: 'marta_v', fullName: 'Marta Vega', completeProfile }) })
+        await flushPromises()
+        const accountCard = wrapper.findComponent(AccountCredentialsCard)
+
+        await accountCard.vm.$emit('update:fullName', 'Clara Rey')
+        await accountCard.vm.$emit('update:alias', 'clara_r')
+        await accountCard.vm.$emit('submit')
+        await flushPromises()
+
+        const credentialCard = wrapper.findComponent(InvestigatorCredentialCard)
+        expect(credentialCard.props('fullName')).toBe('Clara Rey')
+        expect(credentialCard.props('alias')).toBe('clara_r')
+        expect(wrapper.get('.dashboard-header__alias').text()).toBe('clara_r')
+    })
 })
