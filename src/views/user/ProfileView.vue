@@ -9,13 +9,31 @@ const userService = inject('UserService')
 // alias del jugador, el que guardó al registrarse
 const alias = ref('')
 const fullName = ref('')
+const email = ref('')
 const avatarId = ref(null)
 
 onMounted(async () => {
     const profile = await userService.getProfile()
     alias.value = profile.getAlias()
     fullName.value = profile.getFullName()
+    email.value = profile.getEmail()
+    avatarId.value = profile.getAvatarId()
 })
+
+// el back guarda el avatar junto con los datos actuales del jugador; si falla, se queda el anterior
+async function saveAvatar(newAvatarId) {
+    try {
+        await userService.updateProfile({
+            alias: alias.value,
+            email: email.value,
+            emailConfirmation: email.value,
+            avatarId: newAvatarId,
+        })
+        avatarId.value = newAvatarId
+    } catch (error) {
+        // se mantiene el avatar que ya estaba guardado
+    }
+}
 </script>
 
 <template>
@@ -32,7 +50,7 @@ onMounted(async () => {
                     case-name="El último archivo de Clara"
                     status="Investigación en curso"
                     :avatar-id="avatarId"
-                    @update:avatar-id="avatarId = $event"
+                    @update:avatar-id="saveAvatar"
                 />
 
                 <AccountCredentialsCard class="flex-1" />
