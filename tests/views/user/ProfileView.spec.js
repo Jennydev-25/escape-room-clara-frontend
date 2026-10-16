@@ -5,7 +5,6 @@ import router from '@/router'
 import { useAuthStore } from '@/stores/auth'
 import ProfileView from '@/views/user/ProfileView.vue'
 import InvestigatorCredentialCard from '@/shared/dashboard/InvestigatorCredentialCard.vue'
-import AccountCredentialsCard from '@/shared/dashboard/AccountCredentialsCard.vue'
 
 // servicio de usuario falso que devuelve el perfil indicado (por defecto, un jugador sin nombre completo)
 const userServiceOf = ({ alias = 'jugador_01', fullName = '', email = 'jugador@correo.com', avatarId = null, updateProfile = vi.fn().mockResolvedValue({}) } = {}) => ({
@@ -60,13 +59,6 @@ describe('ProfileView', () => {
         await flushPromises()
 
         expect(wrapper.findComponent(InvestigatorCredentialCard).props('fullName')).toBe('Marta Vega')
-    })
-
-    it('leaves the account credentials card empty for the player to fill', async () => {
-        const wrapper = mountProfile({ UserService: userServiceOf({ alias: 'marta_v' }) })
-        await flushPromises()
-
-        expect(wrapper.findComponent(AccountCredentialsCard).props('alias')).toBe('')
     })
 
     it('shows the real alias of the player in the header', async () => {

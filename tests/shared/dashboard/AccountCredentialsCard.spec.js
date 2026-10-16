@@ -3,20 +3,22 @@ import { mount } from '@vue/test-utils'
 import AccountCredentialsCard from '@/shared/dashboard/AccountCredentialsCard.vue'
 
 describe('AccountCredentialsCard', () => {
-    it('renders the current account values in the fields', async () => {
-        const wrapper = mount(AccountCredentialsCard, {
-            props: {
-                fullName: 'Marta Vega',
-                alias: 'marta_v',
-                email: 'marta@example.com',
-            },
-        })
+    it('leaves the full name and the alias empty for the player to fill', async () => {
+        const wrapper = mount(AccountCredentialsCard)
 
         await wrapper.get('button').trigger('click')
 
-        expect(wrapper.get('#credentials-full-name').element.value).toBe('Marta Vega')
-        expect(wrapper.get('#credentials-alias').element.value).toBe('marta_v')
-        expect(wrapper.get('#credentials-email').element.value).toBe('marta@example.com')
+        expect(wrapper.get('#credentials-full-name').element.value).toBe('')
+        expect(wrapper.get('#credentials-alias').element.value).toBe('')
+    })
+
+    it('does not offer to change the email', async () => {
+        const wrapper = mount(AccountCredentialsCard)
+
+        await wrapper.get('button').trigger('click')
+
+        expect(wrapper.find('#credentials-email').exists()).toBe(false)
+        expect(wrapper.text()).not.toContain('Correo electrónico')
     })
 
     it('hides the credential fields until "Editar mis datos" is clicked', () => {
