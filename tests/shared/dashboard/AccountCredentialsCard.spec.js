@@ -66,4 +66,14 @@ describe('AccountCredentialsCard', () => {
 
         expect(wrapper.emitted('submit')).toHaveLength(1)
     })
+
+    it('returns to the collapsed state when the form is sent', async () => {
+        const wrapper = mount(AccountCredentialsCard)
+
+        await wrapper.get('button').trigger('click')
+        await wrapper.get('form').trigger('submit.prevent')
+
+        expect(wrapper.find('#credentials-full-name').exists()).toBe(false)
+        expect(wrapper.get('button').text()).toContain('Editar mis datos')
+    })
 })
