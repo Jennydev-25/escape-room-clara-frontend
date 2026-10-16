@@ -55,9 +55,10 @@ onMounted(async () => {
 })
 
 // carga los archivos de la papelera para saber cuáles conoce ya el jugador
-onMounted(async () => {
+async function loadDiscardedFiles() {
     discardedFiles.value = await trashService.listDiscardedFiles()
-})
+}
+onMounted(loadDiscardedFiles)
 
 // se marca en pantalla y se guarda en el backend lo que el jugador acaba de ver
 function markSeen(key) {
@@ -76,6 +77,17 @@ function openTrash() {
     discardedFiles.value.forEach((file) => markSeen(`known:trash:${file.getId()}`))
 }
 
+// momento desde el que se cuenta el tiempo que aún no se ha guardado
+let lastSavedAt = Date.now()
+
+// guarda en el backend los segundos jugados desde la última vez, sin contar fracciones
+function saveTimePlayed() {
+    const seconds = Math.floor((Date.now() - lastSavedAt) / 1000)
+    if (seconds < 1) return
+    lastSavedAt += seconds * 1000
+    progressService.accumulateTime({ secondsToAdd: seconds })
+}
+
 // al aceptar se cierra el mensaje y se guarda que ya lo vio
 function acceptWelcome() {
     isWelcomeOpen.value = false
@@ -84,6 +96,7 @@ function acceptWelcome() {
 
 // salir de ClaraOS: pantalla de carga con la barra subiendo como en App.vue
 function leaveClaraOS() {
+    saveTimePlayed()
     isLeaving.value = true
     leavingTimer = setInterval(() => {
         if (leavingProgress.value < 90) leavingProgress.value += 15
@@ -114,10 +127,12 @@ async function openCurrentPuzzle() {
     currentPuzzle.value = { id: summaries[index].getId(), title: summaries[index].getTitle(), question: puzzles[index].getQuestion() }
 }
 
-// al acertar se cierra la ventana y se recargan las carpetas para ver las nuevas
+// al acertar se cierra la ventana y se recargan las carpetas y la papelera para ver lo nuevo
 function onSolved() {
     currentPuzzle.value = null
     foldersKey.value++
+    loadDiscardedFiles()
+    saveTimePlayed()
 }
 
 // el navegador decide si deja pantalla completa (en iPhone no)
