@@ -12,6 +12,7 @@ const router = useRouter()
 
 const TOTAL_CHAPTERS = 17
 const FIRST_CHAPTER = 1
+const NO_CHAPTERS_SOLVED = 0
 const PERCENT_FULL = 100
 const SECONDS_PER_MINUTE = 60
 const SECONDS_PER_HOUR = 3600
@@ -23,9 +24,9 @@ const currentChapter = ref(FIRST_CHAPTER)
 const timeSpentSeconds = ref(0)
 const activeFolderName = ref('Ninguna')
 
-// al resolver un capítulo el progreso pasa al siguiente: el 18 significa que están los 17 resueltos
-const chapterShown = computed(() => Math.min(currentChapter.value, TOTAL_CHAPTERS))
-const percentCompleted = computed(() => Math.round(((currentChapter.value - FIRST_CHAPTER) / TOTAL_CHAPTERS) * PERCENT_FULL))
+// al resolver un capítulo el progreso pasa al siguiente: el 1 es "ninguno resuelto" y el 18 "los 17 resueltos"
+const chaptersSolved = computed(() => currentChapter.value - FIRST_CHAPTER)
+const percentCompleted = computed(() => Math.round((chaptersSolved.value / TOTAL_CHAPTERS) * PERCENT_FULL))
 
 // estado del caso: sin empezar, en curso o finalizado, con el color de su distintivo
 const STATUSES = {
@@ -34,8 +35,8 @@ const STATUSES = {
     finished: { label: 'Finalizado', badge: 'border-success/40 text-success', dot: 'bg-success' },
 }
 const status = computed(() => {
-    if (currentChapter.value > TOTAL_CHAPTERS) return STATUSES.finished
-    if (currentChapter.value > FIRST_CHAPTER || timeSpentSeconds.value > 0) return STATUSES.inProgress
+    if (chaptersSolved.value >= TOTAL_CHAPTERS) return STATUSES.finished
+    if (chaptersSolved.value > NO_CHAPTERS_SOLVED || timeSpentSeconds.value > 0) return STATUSES.inProgress
     return STATUSES.pending
 })
 
@@ -77,7 +78,7 @@ onMounted(async () => {
             <div class="resumen-view__chapter mt-6 flex flex-col gap-1 font-label text-base uppercase tracking-wide text-on-surface-variant lg:flex-row lg:items-center lg:justify-between">
                 <span class="flex items-center gap-2">
                     <component :is="BookOpen" :size="16" />
-                    Capítulo {{ chapterShown }} de {{ TOTAL_CHAPTERS }}
+                    Capítulo {{ chaptersSolved }} de {{ TOTAL_CHAPTERS }}
                 </span>
                 <span>{{ percentCompleted }}% completado</span>
             </div>
