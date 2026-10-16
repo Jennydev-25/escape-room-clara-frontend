@@ -14,15 +14,25 @@ const TOTAL_CHAPTERS = 17
 // alias del jugador, el que guardó al registrarse
 const alias = ref('')
 const currentChapter = ref(1)
+const timeSpentSeconds = ref(0)
 
 // al resolver un capítulo el progreso pasa al siguiente: el 18 significa que están los 17 resueltos
 const chapterShown = computed(() => Math.min(currentChapter.value, TOTAL_CHAPTERS))
 const percentCompleted = computed(() => Math.round(((currentChapter.value - 1) / TOTAL_CHAPTERS) * 100))
 
+// tiempo jugado como hh:mm:ss
+const timeSpent = computed(() => {
+    const hours = Math.floor(timeSpentSeconds.value / 3600)
+    const minutes = Math.floor((timeSpentSeconds.value % 3600) / 60)
+    const seconds = timeSpentSeconds.value % 60
+    return [hours, minutes, seconds].map((part) => String(part).padStart(2, '0')).join(':')
+})
+
 onMounted(async () => {
     const [profile, progress] = await Promise.all([userService.getProfile(), progressService.getProgress()])
     alias.value = profile.getAlias()
     currentChapter.value = progress.getCurrentChapter()
+    timeSpentSeconds.value = progress.getTimeSpentSeconds()
 })
 </script>
 
@@ -57,7 +67,7 @@ onMounted(async () => {
                     <component :is="Clock" :size="28" class="text-primary" />
                     <div>
                         <p class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant">Tiempo en el caso</p>
-                        <p class="font-mono text-xl text-on-surface">00:00:00</p>
+                        <p class="font-mono text-xl text-on-surface">{{ timeSpent }}</p>
                     </div>
                 </div>
 
