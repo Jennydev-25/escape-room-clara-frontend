@@ -5,34 +5,55 @@ import { useRouter } from 'vue-router'
 import DashboardLayout from '@/shared/dashboard/DashboardLayout.vue'
 import BaseButton from '@/shared/BaseButton.vue'
 
+const folderService = inject('FolderService')
 const progressService = inject('ProgressService')
 const userService = inject('UserService')
 const router = useRouter()
 
 const TOTAL_CHAPTERS = 17
+const FIRST_CHAPTER = 1
+const PERCENT_FULL = 100
+const SECONDS_PER_MINUTE = 60
+const SECONDS_PER_HOUR = 3600
+const TIME_PART_DIGITS = 2
 
 // alias del jugador, el que guardó al registrarse
 const alias = ref('')
-const currentChapter = ref(1)
+const currentChapter = ref(FIRST_CHAPTER)
 const timeSpentSeconds = ref(0)
+const activeFolderName = ref('Ninguna')
 
 // al resolver un capítulo el progreso pasa al siguiente: el 18 significa que están los 17 resueltos
 const chapterShown = computed(() => Math.min(currentChapter.value, TOTAL_CHAPTERS))
-const percentCompleted = computed(() => Math.round(((currentChapter.value - 1) / TOTAL_CHAPTERS) * 100))
+const percentCompleted = computed(() => Math.round(((currentChapter.value - FIRST_CHAPTER) / TOTAL_CHAPTERS) * PERCENT_FULL))
+
+// estado del caso: sin empezar, en curso o finalizado, con el color de su distintivo
+const STATUSES = {
+    pending: { label: 'Pendiente de inicio', badge: 'border-outline/30 text-on-surface-variant', dot: 'bg-on-surface-variant' },
+    inProgress: { label: 'En progreso', badge: 'border-primary/40 text-primary', dot: 'bg-primary' },
+    finished: { label: 'Finalizado', badge: 'border-success/40 text-success', dot: 'bg-success' },
+}
+const status = computed(() => {
+    if (currentChapter.value > TOTAL_CHAPTERS) return STATUSES.finished
+    if (currentChapter.value > FIRST_CHAPTER || timeSpentSeconds.value > 0) return STATUSES.inProgress
+    return STATUSES.pending
+})
 
 // tiempo jugado como hh:mm:ss
 const timeSpent = computed(() => {
-    const hours = Math.floor(timeSpentSeconds.value / 3600)
-    const minutes = Math.floor((timeSpentSeconds.value % 3600) / 60)
-    const seconds = timeSpentSeconds.value % 60
-    return [hours, minutes, seconds].map((part) => String(part).padStart(2, '0')).join(':')
+    const hours = Math.floor(timeSpentSeconds.value / SECONDS_PER_HOUR)
+    const minutes = Math.floor((timeSpentSeconds.value % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE)
+    const seconds = timeSpentSeconds.value % SECONDS_PER_MINUTE
+    return [hours, minutes, seconds].map((part) => String(part).padStart(TIME_PART_DIGITS, '0')).join(':')
 })
 
 onMounted(async () => {
-    const [profile, progress] = await Promise.all([userService.getProfile(), progressService.getProgress()])
+    const [profile, progress, folders] = await Promise.all([userService.getProfile(), progressService.getProgress(), folderService.listFolders()])
     alias.value = profile.getAlias()
     currentChapter.value = progress.getCurrentChapter()
     timeSpentSeconds.value = progress.getTimeSpentSeconds()
+    // el back las devuelve de la más antigua a la más reciente
+    if (folders.length > 0) activeFolderName.value = folders[folders.length - 1].getName()
 })
 </script>
 
@@ -42,9 +63,12 @@ onMounted(async () => {
         <p class="resumen-view__subtitle font-body text-base text-on-surface-variant">Aquí tienes un resumen de tu progreso en el caso. El portátil de Clara guardará todo lo que vayas reconstruyendo.</p>
 
         <section class="resumen-view__case-card relative mt-6 rounded-2xl border border-outline/30 bg-surface-container p-8">
-            <span class="resumen-view__case-badge mb-4 inline-flex items-center gap-1.5 rounded-full border border-outline/30 px-3 py-1 font-label text-[10px] uppercase tracking-widest text-on-surface-variant lg:absolute lg:right-6 lg:top-6 lg:mb-0">
-                <span class="h-1.5 w-1.5 rounded-full bg-on-surface-variant" />
-                Pendiente de inicio
+            <span
+                class="resumen-view__case-badge mb-4 inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-label text-[10px] uppercase tracking-widest lg:absolute lg:right-6 lg:top-6 lg:mb-0"
+                :class="status.badge"
+            >
+                <span class="h-1.5 w-1.5 rounded-full" :class="status.dot" />
+                {{ status.label }}
             </span>
 
             <p class="font-label text-xs uppercase tracking-widest text-primary">Sumario de la investigación</p>
@@ -75,7 +99,7 @@ onMounted(async () => {
                     <component :is="FolderOpen" :size="28" class="text-primary" />
                     <div>
                         <p class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant">Carpeta activa</p>
-                        <p class="font-mono text-xl uppercase text-on-surface">Ninguna</p>
+                        <p class="font-mono text-xl uppercase text-on-surface">{{ activeFolderName }}</p>
                     </div>
                 </div>
             </div>
