@@ -45,4 +45,25 @@ describe('AccountCredentialsCard', () => {
         expect(wrapper.find('#credentials-full-name').exists()).toBe(false)
         expect(wrapper.get('button').text()).toContain('Editar mis datos')
     })
+
+    it.each([
+        ['fullName', '#credentials-full-name', 'Clara Rey'],
+        ['alias', '#credentials-alias', 'jugador_01'],
+    ])('emits update:%s when the field is typed', async (model, selector, value) => {
+        const wrapper = mount(AccountCredentialsCard)
+
+        await wrapper.get('button').trigger('click')
+        await wrapper.get(selector).setValue(value)
+
+        expect(wrapper.emitted(`update:${model}`)[0]).toEqual([value])
+    })
+
+    it('emits submit when the form is sent', async () => {
+        const wrapper = mount(AccountCredentialsCard)
+
+        await wrapper.get('button').trigger('click')
+        await wrapper.get('form').trigger('submit.prevent')
+
+        expect(wrapper.emitted('submit')).toHaveLength(1)
+    })
 })
