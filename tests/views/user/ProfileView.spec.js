@@ -5,11 +5,13 @@ import router from '@/router'
 import { useAuthStore } from '@/stores/auth'
 import ProfileView from '@/views/user/ProfileView.vue'
 import InvestigatorCredentialCard from '@/shared/dashboard/InvestigatorCredentialCard.vue'
+import AccountCredentialsCard from '@/shared/dashboard/AccountCredentialsCard.vue'
 
 // servicio de usuario falso que devuelve el perfil indicado (por defecto, un jugador sin nombre completo)
-const userServiceOf = ({ alias = 'jugador_01', fullName = '', email = 'jugador@correo.com', avatarId = null, updateProfile = vi.fn().mockResolvedValue({}) } = {}) => ({
+const userServiceOf = ({ alias = 'jugador_01', fullName = '', email = 'jugador@correo.com', avatarId = null, updateProfile = vi.fn().mockResolvedValue({}), completeProfile = vi.fn().mockResolvedValue({}) } = {}) => ({
     getProfile: vi.fn().mockResolvedValue({ getAlias: () => alias, getFullName: () => fullName, getEmail: () => email, getAvatarId: () => avatarId }),
     updateProfile,
+    completeProfile,
 })
 
 // monta el perfil con los servicios que se le indiquen
@@ -118,5 +120,19 @@ describe('ProfileView', () => {
         await flushPromises()
 
         expect(wrapper.findComponent(InvestigatorCredentialCard).props('avatarId')).toBe(3)
+    })
+
+    it('saves the full name and the alias typed in the account form', async () => {
+        const userService = userServiceOf()
+        const wrapper = mountProfile({ UserService: userService })
+        await flushPromises()
+        const accountCard = wrapper.findComponent(AccountCredentialsCard)
+
+        await accountCard.vm.$emit('update:fullName', 'Marta Vega')
+        await accountCard.vm.$emit('update:alias', 'marta_v')
+        await accountCard.vm.$emit('submit')
+        await flushPromises()
+
+        expect(userService.completeProfile).toHaveBeenCalledWith({ fullName: 'Marta Vega', alias: 'marta_v' })
     })
 })
