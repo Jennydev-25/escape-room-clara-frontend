@@ -15,8 +15,9 @@ const userServiceOf = ({ alias = 'jugador_01', fullName = '', email = 'jugador@c
 })
 
 // monta el perfil con los servicios que se le indiquen
-const mountProfile = (services = {}) => mount(ProfileView, {
+const mountProfile = (services = {}, config = {}) => mount(ProfileView, {
     global: {
+        config,
         plugins: [router, createPinia()],
         provide: {
             AuthService: { logout: vi.fn() },
@@ -181,5 +182,22 @@ describe('ProfileView', () => {
 
         expect(accountCard.props('fullName')).toBe('')
         expect(accountCard.props('alias')).toBe('')
+    })
+
+    it('keeps the previous full name and alias when they cannot be saved', async () => {
+        const errorHandler = vi.fn()
+        const userService = userServiceOf({ alias: 'marta_v', fullName: 'Marta Vega', completeProfile: vi.fn().mockRejectedValue(new Error('network')) })
+        const wrapper = mountProfile({ UserService: userService }, { errorHandler })
+        await flushPromises()
+        const accountCard = wrapper.findComponent(AccountCredentialsCard)
+
+        await accountCard.vm.$emit('update:alias', 'clara_r')
+        await accountCard.vm.$emit('submit')
+        await flushPromises()
+
+        const credentialCard = wrapper.findComponent(InvestigatorCredentialCard)
+        expect(credentialCard.props('alias')).toBe('marta_v')
+        expect(credentialCard.props('fullName')).toBe('Marta Vega')
+        expect(errorHandler).not.toHaveBeenCalled()
     })
 })
