@@ -39,16 +39,20 @@ async function saveAvatar(newAvatarId) {
     }
 }
 
-// un campo vacío conserva el valor que ya tenía el jugador
+// un campo vacío conserva el valor que ya tenía el jugador; si falla, se queda lo anterior
 async function saveProfile() {
-    const profile = await userService.completeProfile({
-        fullName: formFullName.value || fullName.value,
-        alias: formAlias.value || alias.value,
-    })
-    fullName.value = profile.getFullName()
-    alias.value = profile.getAlias()
-    formFullName.value = ''
-    formAlias.value = ''
+    try {
+        const profile = await userService.completeProfile({
+            fullName: formFullName.value || fullName.value,
+            alias: formAlias.value || alias.value,
+        })
+        fullName.value = profile.getFullName()
+        alias.value = profile.getAlias()
+        formFullName.value = ''
+        formAlias.value = ''
+    } catch (error) {
+        // se mantienen el nombre y el alias que ya estaban guardados
+    }
 }
 </script>
 
