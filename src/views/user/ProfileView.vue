@@ -39,8 +39,12 @@ async function saveAvatar(newAvatarId) {
     }
 }
 
+// un campo vacío conserva el valor que ya tenía el jugador
 async function saveProfile() {
-    await userService.completeProfile({ fullName: formFullName.value, alias: formAlias.value })
+    await userService.completeProfile({
+        fullName: formFullName.value || fullName.value,
+        alias: formAlias.value || alias.value,
+    })
 }
 </script>
 
