@@ -60,15 +60,15 @@ describe('ResumenView', () => {
     it('renders the chapter progress row', () => {
         const wrapper = mountResumen()
 
-        expect(wrapper.text()).toContain('Capítulo 1 de 17')
+        expect(wrapper.text()).toContain('Capítulo 0 de 17')
         expect(wrapper.text()).toContain('0% completado')
     })
 
-    it('shows the chapter the player is in and the percentage completed', async () => {
+    it('shows the chapters the player has solved and the percentage completed', async () => {
         const wrapper = mountResumen({ ProgressService: { getProgress: vi.fn().mockResolvedValue({ getCurrentChapter: () => 5, getTimeSpentSeconds: () => 0 }) } })
         await flushPromises()
 
-        expect(wrapper.text()).toContain('Capítulo 5 de 17')
+        expect(wrapper.text()).toContain('Capítulo 4 de 17')
         expect(wrapper.text()).toContain('24% completado')
     })
 
