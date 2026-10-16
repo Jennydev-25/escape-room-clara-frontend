@@ -5,14 +5,26 @@ import BaseButton from '@/shared/BaseButton.vue'
 
 const fullName = defineModel('fullName', { type: String, default: '' })
 const alias = defineModel('alias', { type: String, default: '' })
+const currentPassword = defineModel('currentPassword', { type: String, default: '' })
+const newPassword = defineModel('newPassword', { type: String, default: '' })
+const confirmPassword = defineModel('confirmPassword', { type: String, default: '' })
 
-const emit = defineEmits(['submit'])
+// la misma longitud mínima que pide el back
+const MIN_PASSWORD_LENGTH = 8
+
+const emit = defineEmits(['submit', 'submit-password'])
 
 const isEditing = ref(false)
 
 // avisa a la vista y vuelve al estado cerrado
 function submit() {
     emit('submit')
+    isEditing.value = false
+}
+
+// igual con el formulario de la contraseña
+function submitPassword() {
+    emit('submit-password')
     isEditing.value = false
 }
 </script>
@@ -63,28 +75,28 @@ function submit() {
                 <BaseButton type="submit" class="account-credentials-card__save mt-auto">Guardar cambios</BaseButton>
             </form>
 
-            <div class="account-credentials-card__password-section flex flex-col gap-4 border-l border-outline/30 pl-6">
+            <form class="account-credentials-card__password-section flex flex-col gap-4 border-l border-outline/30 pl-6" @submit.prevent="submitPassword">
                 <h3 class="font-display text-xl text-on-surface">Cambiar contraseña</h3>
 
                 <div class="account-credentials-card__password flex flex-col gap-4">
                     <div class="flex flex-col gap-1">
                         <label for="credentials-current-password" class="font-label text-xs uppercase tracking-wide text-on-surface-variant">Contraseña actual</label>
-                        <PasswordField id="credentials-current-password" />
+                        <PasswordField id="credentials-current-password" required v-model="currentPassword" />
                     </div>
 
                     <div class="flex flex-col gap-1">
                         <label for="credentials-new-password" class="font-label text-xs uppercase tracking-wide text-on-surface-variant">Nueva contraseña</label>
-                        <PasswordField id="credentials-new-password" />
+                        <PasswordField id="credentials-new-password" required :minlength="MIN_PASSWORD_LENGTH" v-model="newPassword" />
                     </div>
 
                     <div class="flex flex-col gap-1">
                         <label for="credentials-confirm-password" class="font-label text-xs uppercase tracking-wide text-on-surface-variant">Confirmar nueva contraseña</label>
-                        <PasswordField id="credentials-confirm-password" />
+                        <PasswordField id="credentials-confirm-password" required :minlength="MIN_PASSWORD_LENGTH" v-model="confirmPassword" />
                     </div>
                 </div>
 
-                <BaseButton type="button" class="account-credentials-card__update-password mt-auto">Actualizar contraseña</BaseButton>
-            </div>
+                <BaseButton type="submit" class="account-credentials-card__update-password mt-auto">Actualizar contraseña</BaseButton>
+            </form>
         </div>
     </section>
 </template>
