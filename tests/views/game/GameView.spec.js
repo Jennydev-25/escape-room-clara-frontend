@@ -17,7 +17,7 @@ const listSeen = vi.fn().mockResolvedValue([])
 const mountGameView = (services = {}) => mount(GameView, {
     global: {
         plugins: [createPinia(), router],
-        provide: { FolderService: { listFolders, getFolder }, ProgressService: { getProgress, markWelcomeSeen: vi.fn().mockResolvedValue({}) }, PuzzleService: { getPuzzle }, TrashService: { listDiscardedFiles }, SeenService: { listSeen, markSeen: vi.fn().mockResolvedValue() }, ...services },
+        provide: { FolderService: { listFolders, getFolder }, ProgressService: { getProgress, markWelcomeSeen: vi.fn().mockResolvedValue({}), accumulateTime: vi.fn().mockResolvedValue({}) }, PuzzleService: { getPuzzle }, TrashService: { listDiscardedFiles }, SeenService: { listSeen, markSeen: vi.fn().mockResolvedValue() }, ...services },
     },
 })
 
@@ -427,6 +427,87 @@ describe('GameView', () => {
         const exit = findExitButton(wrapper)
 
         expect(exit).toBeDefined()
+    })
+
+    describe('time played', () => {
+
+        // solo se falsea la fecha para poder avanzar el reloj sin bloquear las promesas
+        const startAt = () => {
+            vi.useFakeTimers({ toFake: ['Date'] })
+            vi.setSystemTime(new Date(2026, 9, 16, 10, 0, 0))
+        }
+        const passSeconds = (seconds) => vi.setSystemTime(new Date(Date.now() + seconds * 1000))
+        const progressWith = (accumulateTime) => ({ getProgress, markWelcomeSeen: vi.fn().mockResolvedValue({}), accumulateTime })
+
+        it('saves the seconds played when leaving ClaraOS', async () => {
+            startAt()
+            const accumulateTime = vi.fn().mockResolvedValue({})
+            const wrapper = mountGameView({ ProgressService: progressWith(accumulateTime) })
+            await flushPromises()
+
+            passSeconds(90)
+            await findExitButton(wrapper).trigger('click')
+
+            expect(accumulateTime).toHaveBeenCalledWith({ secondsToAdd: 90 })
+        })
+
+        it('saves the seconds played when a puzzle is solved', async () => {
+            startAt()
+            const accumulateTime = vi.fn().mockResolvedValue({})
+            const wrapper = mountGameView({
+                ProgressService: progressWith(accumulateTime),
+                FolderService: {
+                    listFolders: vi.fn().mockResolvedValue([{ getCode: () => 'leeme', getName: () => 'Léeme' }]),
+                    getFolder: vi.fn().mockResolvedValue({ getPuzzles: () => [{ getId: () => 1, getTitle: () => 'Capítulo 1: La desaparición' }] }),
+                },
+                PuzzleService: { getPuzzle: vi.fn().mockResolvedValue({ getMinChapter: () => 1, getQuestion: () => 'Según la nota, ¿en qué no debes confiar nunca?' }) },
+            })
+            await flushPromises()
+            await wrapper.get('button[aria-label="Siguiente capítulo"]').trigger('click')
+            await flushPromises()
+
+            passSeconds(45)
+            wrapper.getComponent(PuzzleWindow).vm.$emit('solved')
+            await flushPromises()
+
+            expect(accumulateTime).toHaveBeenCalledWith({ secondsToAdd: 45 })
+        })
+
+        it('does not save the time when less than a second has passed', async () => {
+            startAt()
+            const accumulateTime = vi.fn().mockResolvedValue({})
+            const wrapper = mountGameView({ ProgressService: progressWith(accumulateTime) })
+            await flushPromises()
+
+            await findExitButton(wrapper).trigger('click')
+
+            expect(accumulateTime).not.toHaveBeenCalled()
+        })
+
+        it('counts only the time since the last save', async () => {
+            startAt()
+            const accumulateTime = vi.fn().mockResolvedValue({})
+            const wrapper = mountGameView({
+                ProgressService: progressWith(accumulateTime),
+                FolderService: {
+                    listFolders: vi.fn().mockResolvedValue([{ getCode: () => 'leeme', getName: () => 'Léeme' }]),
+                    getFolder: vi.fn().mockResolvedValue({ getPuzzles: () => [{ getId: () => 1, getTitle: () => 'Capítulo 1: La desaparición' }] }),
+                },
+                PuzzleService: { getPuzzle: vi.fn().mockResolvedValue({ getMinChapter: () => 1, getQuestion: () => 'Según la nota, ¿en qué no debes confiar nunca?' }) },
+            })
+            await flushPromises()
+            await wrapper.get('button[aria-label="Siguiente capítulo"]').trigger('click')
+            await flushPromises()
+            passSeconds(45)
+            wrapper.getComponent(PuzzleWindow).vm.$emit('solved')
+            await flushPromises()
+
+            passSeconds(20)
+            await findExitButton(wrapper).trigger('click')
+
+            expect(accumulateTime).toHaveBeenLastCalledWith({ secondsToAdd: 20 })
+        })
+
     })
 
     it('shows the loading screen with Volviendo... when leaving ClaraOS', async () => {
