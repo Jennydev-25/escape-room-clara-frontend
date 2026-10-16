@@ -64,6 +64,29 @@ describe('ResumenView', () => {
         expect(wrapper.text()).toContain('0% completado')
     })
 
+    it('shows the chapter the player is in and the percentage completed', async () => {
+        const wrapper = mountResumen({ ProgressService: { getProgress: vi.fn().mockResolvedValue({ getCurrentChapter: () => 5, getTimeSpentSeconds: () => 0 }) } })
+        await flushPromises()
+
+        expect(wrapper.text()).toContain('Capítulo 5 de 17')
+        expect(wrapper.text()).toContain('24% completado')
+    })
+
+    it('fills the progress bar according to the percentage completed', async () => {
+        const wrapper = mountResumen({ ProgressService: { getProgress: vi.fn().mockResolvedValue({ getCurrentChapter: () => 5, getTimeSpentSeconds: () => 0 }) } })
+        await flushPromises()
+
+        expect(wrapper.get('.resumen-view__progress-bar div').attributes('style')).toContain('width: 24%')
+    })
+
+    it('shows 100% and the last chapter when the player has solved all the chapters', async () => {
+        const wrapper = mountResumen({ ProgressService: { getProgress: vi.fn().mockResolvedValue({ getCurrentChapter: () => 18, getTimeSpentSeconds: () => 0 }) } })
+        await flushPromises()
+
+        expect(wrapper.text()).toContain('Capítulo 17 de 17')
+        expect(wrapper.text()).toContain('100% completado')
+    })
+
     it('renders the case info tiles', () => {
         const wrapper = mountResumen()
 
