@@ -11,6 +11,7 @@ const userService = inject('UserService')
 const router = useRouter()
 
 const TOTAL_CHAPTERS = 17
+const NO_FOLDER = 'Ninguna'
 const FIRST_CHAPTER = 1
 const NO_CHAPTERS_SOLVED = 0
 const PERCENT_FULL = 100
@@ -22,7 +23,7 @@ const TIME_PART_DIGITS = 2
 const alias = ref('')
 const currentChapter = ref(FIRST_CHAPTER)
 const timeSpentSeconds = ref(0)
-const activeFolderName = ref('Ninguna')
+const unlockedFolders = ref([])
 
 // al resolver un capítulo el progreso pasa al siguiente: el 1 es "ninguno resuelto" y el 18 "los 17 resueltos"
 const chaptersSolved = computed(() => currentChapter.value - FIRST_CHAPTER)
@@ -40,6 +41,12 @@ const status = computed(() => {
     return STATUSES.pending
 })
 
+// carpeta activa: la última desbloqueada (el back las devuelve de la más antigua a la más reciente), y ninguna hasta que empieza el caso
+const activeFolderName = computed(() => {
+    if (status.value === STATUSES.pending || unlockedFolders.value.length === 0) return NO_FOLDER
+    return unlockedFolders.value[unlockedFolders.value.length - 1].getName()
+})
+
 // tiempo jugado como hh:mm:ss
 const timeSpent = computed(() => {
     const hours = Math.floor(timeSpentSeconds.value / SECONDS_PER_HOUR)
@@ -53,8 +60,7 @@ onMounted(async () => {
     alias.value = profile.getAlias()
     currentChapter.value = progress.getCurrentChapter()
     timeSpentSeconds.value = progress.getTimeSpentSeconds()
-    // el back las devuelve de la más antigua a la más reciente
-    if (folders.length > 0) activeFolderName.value = folders[folders.length - 1].getName()
+    unlockedFolders.value = folders
 })
 </script>
 
