@@ -13,6 +13,7 @@ const router = useRouter()
 const TOTAL_CHAPTERS = 17
 const NO_FOLDER = 'Ninguna'
 const FIRST_CHAPTER = 1
+const NO_CHAPTER = 0
 const NO_CHAPTERS_SOLVED = 0
 const PERCENT_FULL = 100
 const SECONDS_PER_MINUTE = 60
@@ -25,7 +26,7 @@ const currentChapter = ref(FIRST_CHAPTER)
 const timeSpentSeconds = ref(0)
 const unlockedFolders = ref([])
 
-// al resolver un capítulo el progreso pasa al siguiente: el 1 es "ninguno resuelto" y el 18 "los 17 resueltos"
+// al resolver un capítulo el progreso pasa al siguiente: el 1 es "ninguno resuelto" y el 18 "los 17 resueltos" (el porcentaje cuenta los resueltos)
 const chaptersSolved = computed(() => currentChapter.value - FIRST_CHAPTER)
 const percentCompleted = computed(() => Math.round((chaptersSolved.value / TOTAL_CHAPTERS) * PERCENT_FULL))
 
@@ -35,15 +36,19 @@ const STATUSES = {
     inProgress: { label: 'En progreso', badge: 'border-primary/40 text-primary', dot: 'bg-primary' },
     finished: { label: 'Finalizado', badge: 'border-success/40 text-success', dot: 'bg-success' },
 }
+const hasStarted = computed(() => chaptersSolved.value > NO_CHAPTERS_SOLVED || timeSpentSeconds.value > 0)
 const status = computed(() => {
     if (chaptersSolved.value >= TOTAL_CHAPTERS) return STATUSES.finished
-    if (chaptersSolved.value > NO_CHAPTERS_SOLVED || timeSpentSeconds.value > 0) return STATUSES.inProgress
+    if (hasStarted.value) return STATUSES.inProgress
     return STATUSES.pending
 })
 
-// carpeta activa: la última desbloqueada (el back las devuelve de la más antigua a la más reciente), y ninguna hasta que empieza el caso
+// capítulo en el que está: el 0 hasta que empieza el caso y, al resolver el último, se queda en el 17
+const chapterShown = computed(() => (hasStarted.value ? Math.min(currentChapter.value, TOTAL_CHAPTERS) : NO_CHAPTER))
+
+// carpeta activa: la última desbloqueada y ninguna hasta que empieza el caso
 const activeFolderName = computed(() => {
-    if (status.value === STATUSES.pending || unlockedFolders.value.length === 0) return NO_FOLDER
+    if (!hasStarted.value || unlockedFolders.value.length === 0) return NO_FOLDER
     return unlockedFolders.value[unlockedFolders.value.length - 1].getName()
 })
 
@@ -84,7 +89,7 @@ onMounted(async () => {
             <div class="resumen-view__chapter mt-6 flex flex-col gap-1 font-label text-base uppercase tracking-wide text-on-surface-variant lg:flex-row lg:items-center lg:justify-between">
                 <span class="flex items-center gap-2">
                     <component :is="BookOpen" :size="16" />
-                    Capítulo {{ chaptersSolved }} de {{ TOTAL_CHAPTERS }}
+                    Capítulo {{ chapterShown }} de {{ TOTAL_CHAPTERS }}
                 </span>
                 <span>{{ percentCompleted }}% completado</span>
             </div>
