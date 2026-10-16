@@ -5,13 +5,18 @@ import router from '@/router'
 import { useAuthStore } from '@/stores/auth'
 import ResumenView from '@/views/user/ResumenView.vue'
 
+// servicio de usuario falso que devuelve el perfil indicado (por defecto, un jugador sin avatar)
+const userServiceOf = ({ alias = 'jugador_01', avatarId = null } = {}) => ({
+    getProfile: vi.fn().mockResolvedValue({ getAlias: () => alias, getAvatarId: () => avatarId }),
+})
+
 // monta el resumen con los servicios que se le indiquen
 const mountResumen = (services = {}) => mount(ResumenView, {
     global: {
         plugins: [router, createPinia()],
         provide: {
             AuthService: { logout: vi.fn() },
-            UserService: { getProfile: vi.fn().mockResolvedValue({ getAlias: () => 'jugador_01' }) },
+            UserService: userServiceOf(),
             ProgressService: { getProgress: vi.fn().mockResolvedValue({ getCurrentChapter: () => 1, getTimeSpentSeconds: () => 0 }) },
             FolderService: { listFolders: vi.fn().mockResolvedValue([]) },
             ...services,
@@ -21,17 +26,24 @@ const mountResumen = (services = {}) => mount(ResumenView, {
 
 describe('ResumenView', () => {
     it('shows the real alias of the player in the greeting', async () => {
-        const wrapper = mountResumen({ UserService: { getProfile: vi.fn().mockResolvedValue({ getAlias: () => 'marta_v' }) } })
+        const wrapper = mountResumen({ UserService: userServiceOf({ alias: 'marta_v' }) })
         await flushPromises()
 
         expect(wrapper.text()).toContain('Hola de nuevo, marta_v')
     })
 
     it('shows the real alias of the player in the header', async () => {
-        const wrapper = mountResumen({ UserService: { getProfile: vi.fn().mockResolvedValue({ getAlias: () => 'marta_v' }) } })
+        const wrapper = mountResumen({ UserService: userServiceOf({ alias: 'marta_v' }) })
         await flushPromises()
 
         expect(wrapper.get('.dashboard-header__alias').text()).toBe('marta_v')
+    })
+
+    it('shows the avatar the player has saved in the header', async () => {
+        const wrapper = mountResumen({ UserService: userServiceOf({ avatarId: 3 }) })
+        await flushPromises()
+
+        expect(wrapper.get('.dashboard-header__avatar img').attributes('alt')).toBe('Avatar 3')
     })
 
     it('renders the resumen subtitle', () => {

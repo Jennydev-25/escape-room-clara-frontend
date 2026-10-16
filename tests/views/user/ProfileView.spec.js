@@ -83,6 +83,23 @@ describe('ProfileView', () => {
         expect(wrapper.findComponent(InvestigatorCredentialCard).props('avatarId')).toBe(3)
     })
 
+    it('shows the avatar the player has saved in the header', async () => {
+        const wrapper = mountProfile({ UserService: userServiceOf({ avatarId: 3 }) })
+        await flushPromises()
+
+        expect(wrapper.get('.dashboard-header__avatar img').attributes('alt')).toBe('Avatar 3')
+    })
+
+    it('changes the avatar of the header when the player saves a new one', async () => {
+        const wrapper = mountProfile({ UserService: userServiceOf({ avatarId: 3 }) })
+        await flushPromises()
+
+        await wrapper.findComponent(InvestigatorCredentialCard).vm.$emit('update:avatar-id', 5)
+        await flushPromises()
+
+        expect(wrapper.get('.dashboard-header__avatar img').attributes('alt')).toBe('Avatar 5')
+    })
+
     it('saves the new avatar with the data of the player when the picker emits one', async () => {
         const userService = userServiceOf({ alias: 'marta_v', email: 'marta@correo.com', avatarId: 3 })
         const wrapper = mountProfile({ UserService: userService })

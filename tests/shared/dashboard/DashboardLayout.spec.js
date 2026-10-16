@@ -4,6 +4,7 @@ import { createPinia, setActivePinia } from 'pinia'
 import router from '@/router'
 import { useAuthStore } from '@/stores/auth'
 import DashboardLayout from '@/shared/dashboard/DashboardLayout.vue'
+import DashboardHeader from '@/shared/dashboard/DashboardHeader.vue'
 
 describe('DashboardLayout', () => {
     it('renders the default slot content', () => {
@@ -14,6 +15,15 @@ describe('DashboardLayout', () => {
         })
 
         expect(wrapper.find('p').text()).toBe('contenido de prueba')
+    })
+
+    it('passes the avatar of the player to the header', () => {
+        const wrapper = mount(DashboardLayout, {
+            global: { plugins: [router, createPinia()] },
+            props: { playerAlias: 'marta_v', avatarId: 3 },
+        })
+
+        expect(wrapper.findComponent(DashboardHeader).props('avatarId')).toBe(3)
     })
 
     it('renders the classified status next to the open session label', () => {
