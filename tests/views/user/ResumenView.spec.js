@@ -1,23 +1,46 @@
 import { describe, it, expect, vi } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
 import { createPinia } from 'pinia'
 import router from '@/router'
 import { useAuthStore } from '@/stores/auth'
 import ResumenView from '@/views/user/ResumenView.vue'
 
+// monta el resumen con los servicios que se le indiquen
+const mountResumen = (services = {}) => mount(ResumenView, {
+    global: {
+        plugins: [router, createPinia()],
+        provide: {
+            UserService: { getProfile: vi.fn().mockResolvedValue({ getAlias: () => 'jugador_01' }) },
+            ProgressService: { getProgress: vi.fn().mockResolvedValue({ getCurrentChapter: () => 1, getTimeSpentSeconds: () => 0 }) },
+            FolderService: { listFolders: vi.fn().mockResolvedValue([]) },
+            ...services,
+        },
+    },
+})
+
 describe('ResumenView', () => {
     it('greets the player by their alias', () => {
-        const wrapper = mount(ResumenView, {
-            global: { plugins: [router, createPinia()] },
-        })
+        const wrapper = mountResumen()
 
         expect(wrapper.text()).toContain('Hola de nuevo, jugador_01')
     })
 
+    it('shows the real alias of the player in the greeting', async () => {
+        const wrapper = mountResumen({ UserService: { getProfile: vi.fn().mockResolvedValue({ getAlias: () => 'marta_v' }) } })
+        await flushPromises()
+
+        expect(wrapper.text()).toContain('Hola de nuevo, marta_v')
+    })
+
+    it('shows the real alias of the player in the header', async () => {
+        const wrapper = mountResumen({ UserService: { getProfile: vi.fn().mockResolvedValue({ getAlias: () => 'marta_v' }) } })
+        await flushPromises()
+
+        expect(wrapper.get('.dashboard-header__alias').text()).toBe('marta_v')
+    })
+
     it('renders the resumen subtitle', () => {
-        const wrapper = mount(ResumenView, {
-            global: { plugins: [router, createPinia()] },
-        })
+        const wrapper = mountResumen()
 
         expect(wrapper.text()).toContain('Aquí tienes un resumen de tu progreso en el caso. El portátil de Clara guardará todo lo que vayas reconstruyendo.')
     })
@@ -26,18 +49,14 @@ describe('ResumenView', () => {
         useAuthStore().setSession('jwt-token', 'refresh-token')
         await router.push('/resumen')
 
-        const wrapper = mount(ResumenView, {
-            global: { plugins: [router, createPinia()] },
-        })
+        const wrapper = mountResumen()
 
         const activeLink = wrapper.find('[aria-current="page"]')
         expect(activeLink.text()).toBe('Resumen')
     })
 
     it('renders the case summary card heading', () => {
-        const wrapper = mount(ResumenView, {
-            global: { plugins: [router, createPinia()] },
-        })
+        const wrapper = mountResumen()
 
         expect(wrapper.text()).toContain('Sumario de la investigación')
         expect(wrapper.text()).toContain('Comenzar investigación')
@@ -45,18 +64,14 @@ describe('ResumenView', () => {
     })
 
     it('renders the chapter progress row', () => {
-        const wrapper = mount(ResumenView, {
-            global: { plugins: [router, createPinia()] },
-        })
+        const wrapper = mountResumen()
 
         expect(wrapper.text()).toContain('Capítulo 1 de 17')
         expect(wrapper.text()).toContain('0% completado')
     })
 
     it('renders the case info tiles', () => {
-        const wrapper = mount(ResumenView, {
-            global: { plugins: [router, createPinia()] },
-        })
+        const wrapper = mountResumen()
 
         expect(wrapper.text()).toContain('Tiempo en el caso')
         expect(wrapper.text()).toContain('00:00:00')
@@ -65,9 +80,7 @@ describe('ResumenView', () => {
     })
 
     it('renders the start investigation button', () => {
-        const wrapper = mount(ResumenView, {
-            global: { plugins: [router, createPinia()] },
-        })
+        const wrapper = mountResumen()
 
         const button = wrapper.findAll('button').find((b) => b.text().includes('Comenzar'))
         expect(button.exists()).toBe(true)
@@ -75,9 +88,7 @@ describe('ResumenView', () => {
 
     it('goes to the game desktop when the start button is clicked', async () => {
         const push = vi.spyOn(router, 'push').mockResolvedValue()
-        const wrapper = mount(ResumenView, {
-            global: { plugins: [router, createPinia()] },
-        })
+        const wrapper = mountResumen()
 
         const button = wrapper.findAll('button').find((b) => b.text().includes('Comenzar'))
         await button.trigger('click')
