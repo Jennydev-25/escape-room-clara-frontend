@@ -4,21 +4,6 @@ import PasswordField from '@/shared/PasswordField.vue'
 import BaseButton from '@/shared/BaseButton.vue'
 
 const isEditing = ref(false)
-
-defineProps({
-    fullName: {
-        type: String,
-        default: '',
-    },
-    alias: {
-        type: String,
-        default: '',
-    },
-    email: {
-        type: String,
-        default: '',
-    },
-})
 </script>
 
 <template>
@@ -48,7 +33,6 @@ defineProps({
                         <input
                             id="credentials-full-name"
                             type="text"
-                            :value="fullName"
                             class="w-full rounded-md border border-outline bg-surface px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
                         >
                     </div>
@@ -58,17 +42,6 @@ defineProps({
                         <input
                             id="credentials-alias"
                             type="text"
-                            :value="alias"
-                            class="w-full rounded-md border border-outline bg-surface px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
-                        >
-                    </div>
-
-                    <div class="flex flex-col gap-1">
-                        <label for="credentials-email" class="font-label text-xs uppercase tracking-wide text-on-surface-variant">Correo electrónico</label>
-                        <input
-                            id="credentials-email"
-                            type="email"
-                            :value="email"
                             class="w-full rounded-md border border-outline bg-surface px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
                         >
                     </div>
