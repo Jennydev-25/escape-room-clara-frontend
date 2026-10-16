@@ -168,4 +168,18 @@ describe('ProfileView', () => {
         expect(credentialCard.props('alias')).toBe('clara_r')
         expect(wrapper.get('.dashboard-header__alias').text()).toBe('clara_r')
     })
+
+    it('empties the account form after saving', async () => {
+        const wrapper = mountProfile()
+        await flushPromises()
+        const accountCard = wrapper.findComponent(AccountCredentialsCard)
+
+        await accountCard.vm.$emit('update:fullName', 'Clara Rey')
+        await accountCard.vm.$emit('update:alias', 'clara_r')
+        await accountCard.vm.$emit('submit')
+        await flushPromises()
+
+        expect(accountCard.props('fullName')).toBe('')
+        expect(accountCard.props('alias')).toBe('')
+    })
 })
