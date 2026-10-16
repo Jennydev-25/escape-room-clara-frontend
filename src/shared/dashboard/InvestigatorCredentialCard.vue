@@ -43,10 +43,14 @@ const props = defineProps({
 
 const emit = defineEmits(['update:avatar-id'])
 
-const avatarSrc = computed(() => (props.avatarId ? avatarImages[props.avatarId - 1] : null))
+// el avatar 1 es el primero de la lista
+const FIRST_AVATAR_ID = 1
+
+const avatarSrc = computed(() => (props.avatarId ? avatarImages[props.avatarId - FIRST_AVATAR_ID] : null))
 
 const issueDate = '10/2026'
-const credentialNumber = String(Math.floor(Math.random() * 1000000)).padStart(6, '0')
+const CREDENTIAL_NUMBER_DIGITS = 6
+const credentialNumber = String(Math.floor(Math.random() * 10 ** CREDENTIAL_NUMBER_DIGITS)).padStart(CREDENTIAL_NUMBER_DIGITS, '0')
 
 const isAvatarPickerOpen = ref(false)
 
@@ -66,7 +70,7 @@ const selectAvatar = (index) => {
 
 const saveAvatar = () => {
     if (selectedAvatarIndex.value !== null) {
-        emit('update:avatar-id', selectedAvatarIndex.value + 1)
+        emit('update:avatar-id', selectedAvatarIndex.value + FIRST_AVATAR_ID)
     }
     closeAvatarPicker()
 }
@@ -78,14 +82,16 @@ const saveAvatar = () => {
         <p class="font-label text-center text-xs uppercase tracking-widest text-primary">Credencial de investigador</p>
 
         <div class="investigator-credential-card__identity mt-6 flex items-center justify-center gap-4">
-            <div class="investigator-credential-card__avatar relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-surface-container-high text-on-surface-variant">
-                <img
-                    v-if="avatarSrc"
-                    :src="avatarSrc"
-                    :alt="`Avatar ${avatarId}`"
-                    class="investigator-credential-card__avatar-image h-full w-full rounded-full object-cover"
-                >
-                <component v-else :is="UserRound" :size="40" />
+            <div class="investigator-credential-card__avatar relative h-28 w-28 shrink-0">
+                <div class="investigator-credential-card__avatar-circle flex h-28 w-28 items-center justify-center overflow-hidden rounded-full bg-surface-container-high text-on-surface-variant">
+                    <img
+                        v-if="avatarSrc"
+                        :src="avatarSrc"
+                        :alt="`Avatar ${avatarId}`"
+                        class="investigator-credential-card__avatar-image h-full w-full scale-130 object-cover"
+                    >
+                    <component v-else :is="UserRound" class="h-1/2 w-1/2" />
+                </div>
                 <button
                     v-if="showAvatarPicker"
                     type="button"
@@ -93,7 +99,7 @@ const saveAvatar = () => {
                     aria-label="Cambiar avatar"
                     @click="openAvatarPicker"
                 >
-                    <component :is="Camera" :size="14" />
+                    <component :is="Camera" class="h-3.5 w-3.5" />
                 </button>
             </div>
 
@@ -123,13 +129,13 @@ const saveAvatar = () => {
                     v-for="(image, index) in avatarImages"
                     :key="index"
                     type="button"
-                    :aria-label="`Avatar ${index + 1}`"
+                    :aria-label="`Avatar ${index + FIRST_AVATAR_ID}`"
                     :aria-pressed="selectedAvatarIndex === index"
                     class="aspect-square w-full max-w-20 overflow-hidden rounded-full border-2 transition-colors hover:border-primary"
                     :class="selectedAvatarIndex === index ? 'border-primary' : 'border-transparent'"
                     @click="selectAvatar(index)"
                 >
-                    <img :src="image" :alt="`Avatar ${index + 1}`" class="h-full w-full object-cover">
+                    <img :src="image" :alt="`Avatar ${index + FIRST_AVATAR_ID}`" class="h-full w-full scale-130 object-cover">
                 </button>
             </div>
 
