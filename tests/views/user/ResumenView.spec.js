@@ -87,6 +87,20 @@ describe('ResumenView', () => {
         expect(wrapper.text()).toContain('100% completado')
     })
 
+    it('shows the time spent in the case as hours, minutes and seconds', async () => {
+        const wrapper = mountResumen({ ProgressService: { getProgress: vi.fn().mockResolvedValue({ getCurrentChapter: () => 1, getTimeSpentSeconds: () => 3725 }) } })
+        await flushPromises()
+
+        expect(wrapper.text()).toContain('01:02:05')
+    })
+
+    it('keeps two digits for each part of the time spent', async () => {
+        const wrapper = mountResumen({ ProgressService: { getProgress: vi.fn().mockResolvedValue({ getCurrentChapter: () => 1, getTimeSpentSeconds: () => 59 }) } })
+        await flushPromises()
+
+        expect(wrapper.text()).toContain('00:00:59')
+    })
+
     it('renders the case info tiles', () => {
         const wrapper = mountResumen()
 
