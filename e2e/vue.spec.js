@@ -29,3 +29,13 @@ test.describe('home', () => {
     await expect(page.getByLabel('Contraseña')).toBeVisible()
   })
 })
+
+test.describe('rutas protegidas', () => {
+  for (const ruta of ['/perfil', '/resumen', '/escritorio']) {
+    test(`${ruta} sin sesión devuelve a la home`, async ({ page }) => {
+      await page.goto(ruta)
+
+      await expect(page).toHaveURL('/')
+    })
+  }
+})
