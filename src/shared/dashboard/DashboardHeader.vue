@@ -1,16 +1,27 @@
 <script setup>
+import { computed } from 'vue'
 import { UserRound } from '@lucide/vue'
 
-defineProps({
+// las imágenes de los avatares, por la ruta de su archivo (avatar-1.png ... avatar-9.png)
+const avatarImages = import.meta.glob('@/assets/images/avatars/*.png', { eager: true, import: 'default' })
+const AVATAR_FOLDER = '/src/assets/images/avatars/'
+
+const props = defineProps({
     playerAlias: {
         type: String,
         required: true,
+    },
+    avatarId: {
+        type: Number,
+        default: null,
     },
     subtitle: {
         type: String,
         default: 'Terminal de investigación',
     },
 })
+
+const avatarSrc = computed(() => avatarImages[`${AVATAR_FOLDER}avatar-${props.avatarId}.png`])
 </script>
 
 <template>
@@ -31,8 +42,14 @@ defineProps({
         </div>
         <div class="flex shrink-0 items-center gap-3">
             <span class="dashboard-header__alias hidden font-label text-sm uppercase tracking-wide text-on-surface sm:inline">{{ playerAlias }}</span>
-            <span class="flex h-9 w-9 items-center justify-center rounded-full bg-surface-container-high text-on-surface-variant">
-                <component :is="UserRound" :size="18" />
+            <span class="dashboard-header__avatar flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-surface-container-high text-on-surface-variant">
+                <img
+                    v-if="avatarSrc"
+                    :src="avatarSrc"
+                    :alt="`Avatar ${avatarId}`"
+                    class="h-full w-full scale-130 object-cover"
+                >
+                <component :is="UserRound" v-else class="h-1/2 w-1/2" />
             </span>
         </div>
     </header>

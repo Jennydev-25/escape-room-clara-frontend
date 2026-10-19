@@ -18,4 +18,8 @@ export default class ProgressRepository extends BaseRepository {
         return this.authPatch('/progress/note', noteData)
     }
 
+    async markWelcomeSeen() {
+        return this.authPatch('/progress/welcome')
+    }
+
 }

@@ -19,12 +19,31 @@ describe('useSeenStore', () => {
         expect(store.isSeen('folder:fraude')).toBe(false)
     })
 
-    test('markSeen should keep the seen keys for the next visit', () => {
+    test('markSeen should not add the same key twice', () => {
+        const store = useSeenStore()
+
+        store.markSeen('folder:tomas')
+        store.markSeen('folder:tomas')
+
+        expect(store.seen).toEqual(['folder:tomas'])
+    })
+
+    test('markSeen should not store the keys in the browser', () => {
         useSeenStore().markSeen('folder:tomas')
 
-        setActivePinia(createPinia())
+        expect(localStorage.getItem('seen')).toBeNull()
+    })
 
-        expect(useSeenStore().isSeen('folder:tomas')).toBe(true)
+    test('setSeen should keep the given keys and mark the store as loaded', () => {
+        const store = useSeenStore()
+        expect(store.isLoaded).toBe(false)
+
+        store.setSeen(['folder:tomas', 'known:1'])
+
+        expect(store.isSeen('folder:tomas')).toBe(true)
+        expect(store.isSeen('known:1')).toBe(true)
+        expect(store.isSeen('folder:fraude')).toBe(false)
+        expect(store.isLoaded).toBe(true)
     })
 
 })

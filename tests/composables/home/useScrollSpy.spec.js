@@ -62,4 +62,16 @@ describe('useScrollSpy', () => {
 
         expect(observerOptions).toEqual({ rootMargin: '-40% 0px -40% 0px' })
     })
+
+    it('keeps the active section when none of the observed sections is visible', async () => {
+        const wrapper = mountScrollSpy(['el-caso', 'sobre-el-juego', 'contacto'])
+        const contactoEl = document.getElementById('contacto')
+        observerCallback([{ isIntersecting: true, target: contactoEl }])
+        await nextTick()
+
+        observerCallback([{ isIntersecting: false, target: document.getElementById('el-caso') }])
+        await nextTick()
+
+        expect(wrapper.vm.activeId).toBe('contacto')
+    })
 })

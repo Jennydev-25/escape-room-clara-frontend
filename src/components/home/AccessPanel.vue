@@ -1,5 +1,7 @@
 <script setup>
 import { inject, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import CompleteProfileForm from '@/components/auth/CompleteProfileForm.vue'
 import LoginForm from '@/components/auth/LoginForm.vue'
 import RegisterForm from '@/components/auth/RegisterForm.vue'
 import { useAuthStore } from '@/stores/auth'
@@ -14,7 +16,13 @@ const registerEmail = ref('')
 const registerPassword = ref('')
 const registerConfirmPassword = ref('')
 
+const fullName = ref('')
+const alias = ref('')
+const isCompletingProfile = ref(false)
+
+const router = useRouter()
 const authService = inject('AuthService')
+const userService = inject('UserService')
 const authStore = useAuthStore()
 const status = ref(null)
 
@@ -27,6 +35,19 @@ async function handleRegisterSubmit({ recaptchaToken }) {
             recaptchaToken,
         })
         status.value = { type: 'success', message: register.getMessage() }
+
+        const login = await authService.login(registerEmail.value, registerPassword.value)
+        authStore.setSession(login.getToken(), login.getRefreshToken())
+        isCompletingProfile.value = true
+    } catch (error) {
+        status.value = { type: 'error', message: error.message }
+    }
+}
+
+async function handleCompleteProfileSubmit() {
+    try {
+        await userService.completeProfile({ fullName: fullName.value, alias: alias.value })
+        router.push('/resumen')
     } catch (error) {
         status.value = { type: 'error', message: error.message }
     }
@@ -37,6 +58,7 @@ async function handleLoginSubmit() {
         const login = await authService.login(loginEmail.value, loginPassword.value)
         authStore.setSession(login.getToken(), login.getRefreshToken())
         close()
+        router.push('/resumen')
     } catch (error) {
         status.value = { type: 'error', message: error.message }
     }
@@ -110,8 +132,14 @@ function close() {
       </p>
 
       <div class="access-panel__content mt-6">
+        <CompleteProfileForm
+          v-if="isCompletingProfile"
+          v-model:fullName="fullName"
+          v-model:alias="alias"
+          @submit="handleCompleteProfileSubmit"
+        />
         <LoginForm
-          v-if="tab === 'login'"
+          v-else-if="tab === 'login'"
           v-model:email="loginEmail"
           v-model:password="loginPassword"
           @submit="handleLoginSubmit"

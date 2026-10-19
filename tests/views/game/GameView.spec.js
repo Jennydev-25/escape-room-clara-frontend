@@ -6,16 +6,18 @@ import GameView from '@/views/game/GameView.vue'
 import { flushPromises, mount } from '@vue/test-utils'
 import { createPinia } from 'pinia'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { clickWith } from '../../helpers/clickWith.js'
 
 const listFolders = vi.fn().mockResolvedValue([{ getCode: () => 'tomas', getName: () => 'Tomás' }])
 const getFolder = vi.fn().mockResolvedValue({ getPuzzles: () => [] })
-const getProgress = vi.fn().mockResolvedValue({ getCurrentChapter: () => 1 })
+const getProgress = vi.fn().mockResolvedValue({ getCurrentChapter: () => 1, isWelcomeSeen: () => false })
 const getPuzzle = vi.fn().mockResolvedValue({ getMinChapter: () => 1, getQuestion: () => null })
 const listDiscardedFiles = vi.fn().mockResolvedValue([])
+const listSeen = vi.fn().mockResolvedValue([])
 const mountGameView = (services = {}) => mount(GameView, {
     global: {
         plugins: [createPinia(), router],
-        provide: { FolderService: { listFolders, getFolder }, ProgressService: { getProgress }, PuzzleService: { getPuzzle }, TrashService: { listDiscardedFiles }, ...services },
+        provide: { FolderService: { listFolders, getFolder }, ProgressService: { getProgress, markWelcomeSeen: vi.fn().mockResolvedValue({}), accumulateTime: vi.fn().mockResolvedValue({}) }, PuzzleService: { getPuzzle }, TrashService: { listDiscardedFiles }, SeenService: { listSeen, markSeen: vi.fn().mockResolvedValue() }, ...services },
     },
 })
 
@@ -42,6 +44,13 @@ describe('GameView', () => {
         expect(wrapper.get('main').text()).toContain('Tomás')
     })
 
+    it('loads the seen keys of the player when entering the desktop', async () => {
+        mountGameView()
+        await flushPromises()
+
+        expect(listSeen).toHaveBeenCalled()
+    })
+
     it('shows the ClaraOS desktop with the ClaraOS theme', () => {
         const wrapper = mountGameView()
 
@@ -53,6 +62,65 @@ describe('GameView', () => {
         const wrapper = mountGameView()
 
         expect(wrapper.get('footer').text()).toContain('ClaraOS · Bienvenida de nuevo, Clara')
+    })
+
+    it('shows the welcome window with its title when entering the desktop', async () => {
+        const wrapper = mountGameView()
+        await flushPromises()
+
+        expect(wrapper.get('main').text()).toContain('Sistema ClaraOS · Acceso permitido')
+    })
+
+    it('shows each sentence of the welcome message on its own line', async () => {
+        const wrapper = mountGameView()
+        await flushPromises()
+
+        const lines = wrapper.findAll('[role="dialog"] p').map((line) => line.text())
+
+        expect(lines).toEqual([
+            'Has accedido al portátil de Clara.',
+            'Revisa sus carpetas con calma: cada archivo puede esconder una pista.',
+            'Todo lo que ella dejó está aquí dentro.',
+            'Busca con cuidado: no sabes qué te vas a encontrar.',
+        ])
+    })
+
+    it('shows the accept button in the welcome card', async () => {
+        const wrapper = mountGameView()
+        await flushPromises()
+
+        const accept = wrapper.findAll('[role="dialog"] button').find((button) => button.text() === 'Aceptar')
+
+        expect(accept).toBeDefined()
+    })
+
+    it('closes the welcome card when the accept button is clicked', async () => {
+        const wrapper = mountGameView()
+        await flushPromises()
+        const accept = wrapper.findAll('[role="dialog"] button').find((button) => button.text() === 'Aceptar')
+
+        await accept.trigger('click')
+
+        expect(wrapper.find('[role="dialog"]').exists()).toBe(false)
+    })
+
+    it('marks the welcome as seen when the accept button is clicked', async () => {
+        const markWelcomeSeen = vi.fn().mockResolvedValue({})
+        const wrapper = mountGameView({ ProgressService: { getProgress, markWelcomeSeen } })
+        await flushPromises()
+        const accept = wrapper.findAll('[role="dialog"] button').find((button) => button.text() === 'Aceptar')
+
+        await accept.trigger('click')
+
+        expect(markWelcomeSeen).toHaveBeenCalledOnce()
+    })
+
+    it('does not show the welcome card when the welcome was already seen', async () => {
+        const seenProgress = vi.fn().mockResolvedValue({ getCurrentChapter: () => 1, isWelcomeSeen: () => true })
+        const wrapper = mountGameView({ ProgressService: { getProgress: seenProgress } })
+        await flushPromises()
+
+        expect(wrapper.find('[role="dialog"]').exists()).toBe(false)
     })
 
     it('shows a fullscreen button when the browser supports it', () => {
@@ -74,7 +142,7 @@ describe('GameView', () => {
         document.documentElement.requestFullscreen = vi.fn()
         const wrapper = mountGameView()
 
-        await wrapper.get('footer button').trigger('click')
+        await wrapper.get('button[aria-label="Pantalla completa"]').trigger('click')
 
         expect(document.documentElement.requestFullscreen).toHaveBeenCalledOnce()
     })
@@ -85,7 +153,7 @@ describe('GameView', () => {
         document.exitFullscreen = vi.fn()
         const wrapper = mountGameView()
 
-        await wrapper.get('footer button').trigger('click')
+        await wrapper.get('button[aria-label="Salir de pantalla completa"]').trigger('click')
 
         expect(document.exitFullscreen).toHaveBeenCalledOnce()
     })
@@ -119,6 +187,40 @@ describe('GameView', () => {
         const trash = wrapper.findAll('main button').find((button) => button.text() === 'Papelera')
 
         expect(trash).toBeDefined()
+    })
+
+    describe('trash mark', () => {
+
+        const discarded = [{ getId: () => 1, getBody: () => '/papelera/salgo_fatal.png' }, { getId: () => 2, getBody: () => '/papelera/ideas_sueltas.txt' }]
+
+        // monta el escritorio con la papelera y las claves vistas que se le indiquen
+        const mountWithTrash = async (seenKeys) => {
+            const wrapper = mountGameView({
+                TrashService: { listDiscardedFiles: vi.fn().mockResolvedValue(discarded) },
+                SeenService: { listSeen: vi.fn().mockResolvedValue(seenKeys.map((key) => ({ getKey: () => key }))), markSeen: vi.fn() },
+            })
+            await flushPromises()
+            return wrapper.findAll('main button').find((button) => button.text().startsWith('Papelera'))
+        }
+
+        it('marks the trash when discarded files arrive after it was opened', async () => {
+            const trash = await mountWithTrash(['trash', 'known:trash:1'])
+
+            expect(trash.text()).toContain('con archivos nuevos')
+        })
+
+        it('does not mark the trash the first time, before the player has opened it', async () => {
+            const trash = await mountWithTrash([])
+
+            expect(trash.text()).toBe('Papelera')
+        })
+
+        it('does not mark the trash when the player already knows all its files', async () => {
+            const trash = await mountWithTrash(['trash', 'known:trash:1', 'known:trash:2'])
+
+            expect(trash.text()).toBe('Papelera')
+        })
+
     })
 
     it('shows the next chapter button in the taskbar', () => {
@@ -190,6 +292,58 @@ describe('GameView', () => {
         expect(wrapper.get('main').text()).toContain('Tomás')
     })
 
+    it('marks the trash when a solved puzzle brings new discarded files', async () => {
+        const listDiscardedFiles = vi.fn()
+            .mockResolvedValueOnce([{ getId: () => 1, getBody: () => '/papelera/salgo_fatal.png' }])
+            .mockResolvedValue([{ getId: () => 1, getBody: () => '/papelera/salgo_fatal.png' }, { getId: () => 2, getBody: () => '/papelera/ideas_sueltas.txt' }])
+        const wrapper = mountGameView({
+            FolderService: {
+                listFolders: vi.fn().mockResolvedValue([{ getCode: () => 'leeme', getName: () => 'Léeme' }]),
+                getFolder: vi.fn().mockResolvedValue({ getPuzzles: () => [{ getId: () => 1, getTitle: () => 'Capítulo 1: La desaparición' }] }),
+            },
+            PuzzleService: { getPuzzle: vi.fn().mockResolvedValue({ getMinChapter: () => 1, getQuestion: () => 'Según la nota, ¿en qué no debes confiar nunca?' }) },
+            TrashService: { listDiscardedFiles },
+            SeenService: { listSeen: vi.fn().mockResolvedValue(['trash', 'known:trash:1'].map((key) => ({ getKey: () => key }))), markSeen: vi.fn() },
+        })
+        await flushPromises()
+        await wrapper.get('button[aria-label="Siguiente capítulo"]').trigger('click')
+        await flushPromises()
+
+        wrapper.getComponent(PuzzleWindow).vm.$emit('solved')
+        await flushPromises()
+
+        const trash = wrapper.findAll('main button').find((button) => button.text().startsWith('Papelera'))
+        expect(trash.text()).toContain('con archivos nuevos')
+    })
+
+    it('closes the puzzle window when it asks to be closed', async () => {
+        const wrapper = mountGameView({
+            FolderService: {
+                listFolders: vi.fn().mockResolvedValue([{ getCode: () => 'leeme', getName: () => 'Léeme' }]),
+                getFolder: vi.fn().mockResolvedValue({ getPuzzles: () => [{ getId: () => 1, getTitle: () => 'Capítulo 1: La desaparición' }] }),
+            },
+            PuzzleService: { getPuzzle: vi.fn().mockResolvedValue({ getMinChapter: () => 1, getQuestion: () => 'Según la nota, ¿en qué no debes confiar nunca?' }) },
+        })
+        await flushPromises()
+        await wrapper.get('button[aria-label="Siguiente capítulo"]').trigger('click')
+        await flushPromises()
+
+        await wrapper.getComponent(PuzzleWindow).vm.$emit('close')
+
+        expect(wrapper.findComponent(PuzzleWindow).exists()).toBe(false)
+    })
+
+    it('closes the trash window when it asks to be closed', async () => {
+        const wrapper = mountGameView()
+        await flushPromises()
+        const trash = wrapper.findAll('main button').find((button) => button.text() === 'Papelera')
+        await trash.trigger('dblclick')
+
+        await wrapper.getComponent(TrashWindow).vm.$emit('close')
+
+        expect(wrapper.findComponent(TrashWindow).exists()).toBe(false)
+    })
+
     it('opens the trash window when the trash is double clicked', async () => {
         const wrapper = mountGameView()
         await flushPromises()
@@ -198,6 +352,38 @@ describe('GameView', () => {
         await trash.trigger('dblclick')
 
         expect(wrapper.findComponent(TrashWindow).exists()).toBe(true)
+    })
+
+    it('saves that the trash and its discarded files are known when the trash is opened', async () => {
+        const markSeen = vi.fn().mockResolvedValue()
+        const discarded = [{ getId: () => 1, getName: () => 'salgo_fatal.png', getBody: () => '/papelera/salgo_fatal.png' }, { getId: () => 2, getName: () => 'ideas_sueltas.txt', getBody: () => '/papelera/ideas_sueltas.txt' }]
+        const wrapper = mountGameView({
+            TrashService: { listDiscardedFiles: vi.fn().mockResolvedValue(discarded) },
+            SeenService: { listSeen: vi.fn().mockResolvedValue([]), markSeen },
+        })
+        await flushPromises()
+        const trash = wrapper.findAll('main button').find((button) => button.text() === 'Papelera')
+
+        await trash.trigger('dblclick')
+
+        expect(markSeen).toHaveBeenCalledWith('trash')
+        expect(markSeen).toHaveBeenCalledWith('known:trash:1')
+        expect(markSeen).toHaveBeenCalledWith('known:trash:2')
+    })
+
+    it('does not save the trash again when it was already known', async () => {
+        const markSeen = vi.fn().mockResolvedValue()
+        const discarded = [{ getId: () => 1, getName: () => 'salgo_fatal.png', getBody: () => '/papelera/salgo_fatal.png' }]
+        const wrapper = mountGameView({
+            TrashService: { listDiscardedFiles: vi.fn().mockResolvedValue(discarded) },
+            SeenService: { listSeen: vi.fn().mockResolvedValue(['trash', 'known:trash:1'].map((key) => ({ getKey: () => key }))), markSeen },
+        })
+        await flushPromises()
+        const trash = wrapper.findAll('main button').find((button) => button.text() === 'Papelera')
+
+        await trash.trigger('dblclick')
+
+        expect(markSeen).not.toHaveBeenCalled()
     })
 
     it.each([
@@ -211,7 +397,7 @@ describe('GameView', () => {
         await flushPromises()
         const trash = wrapper.findAll('main button').find((button) => button.text() === 'Papelera')
 
-        await trash.trigger('click', clickOptions)
+        await clickWith(trash, clickOptions)
 
         expect(wrapper.findComponent(TrashWindow).exists()).toBe(true)
     })
@@ -241,6 +427,87 @@ describe('GameView', () => {
         const exit = findExitButton(wrapper)
 
         expect(exit).toBeDefined()
+    })
+
+    describe('time played', () => {
+
+        // solo se falsea la fecha para poder avanzar el reloj sin bloquear las promesas
+        const startAt = () => {
+            vi.useFakeTimers({ toFake: ['Date'] })
+            vi.setSystemTime(new Date(2026, 9, 16, 10, 0, 0))
+        }
+        const passSeconds = (seconds) => vi.setSystemTime(new Date(Date.now() + seconds * 1000))
+        const progressWith = (accumulateTime) => ({ getProgress, markWelcomeSeen: vi.fn().mockResolvedValue({}), accumulateTime })
+
+        it('saves the seconds played when leaving ClaraOS', async () => {
+            startAt()
+            const accumulateTime = vi.fn().mockResolvedValue({})
+            const wrapper = mountGameView({ ProgressService: progressWith(accumulateTime) })
+            await flushPromises()
+
+            passSeconds(90)
+            await findExitButton(wrapper).trigger('click')
+
+            expect(accumulateTime).toHaveBeenCalledWith({ secondsToAdd: 90 })
+        })
+
+        it('saves the seconds played when a puzzle is solved', async () => {
+            startAt()
+            const accumulateTime = vi.fn().mockResolvedValue({})
+            const wrapper = mountGameView({
+                ProgressService: progressWith(accumulateTime),
+                FolderService: {
+                    listFolders: vi.fn().mockResolvedValue([{ getCode: () => 'leeme', getName: () => 'Léeme' }]),
+                    getFolder: vi.fn().mockResolvedValue({ getPuzzles: () => [{ getId: () => 1, getTitle: () => 'Capítulo 1: La desaparición' }] }),
+                },
+                PuzzleService: { getPuzzle: vi.fn().mockResolvedValue({ getMinChapter: () => 1, getQuestion: () => 'Según la nota, ¿en qué no debes confiar nunca?' }) },
+            })
+            await flushPromises()
+            await wrapper.get('button[aria-label="Siguiente capítulo"]').trigger('click')
+            await flushPromises()
+
+            passSeconds(45)
+            wrapper.getComponent(PuzzleWindow).vm.$emit('solved')
+            await flushPromises()
+
+            expect(accumulateTime).toHaveBeenCalledWith({ secondsToAdd: 45 })
+        })
+
+        it('does not save the time when less than a second has passed', async () => {
+            startAt()
+            const accumulateTime = vi.fn().mockResolvedValue({})
+            const wrapper = mountGameView({ ProgressService: progressWith(accumulateTime) })
+            await flushPromises()
+
+            await findExitButton(wrapper).trigger('click')
+
+            expect(accumulateTime).not.toHaveBeenCalled()
+        })
+
+        it('counts only the time since the last save', async () => {
+            startAt()
+            const accumulateTime = vi.fn().mockResolvedValue({})
+            const wrapper = mountGameView({
+                ProgressService: progressWith(accumulateTime),
+                FolderService: {
+                    listFolders: vi.fn().mockResolvedValue([{ getCode: () => 'leeme', getName: () => 'Léeme' }]),
+                    getFolder: vi.fn().mockResolvedValue({ getPuzzles: () => [{ getId: () => 1, getTitle: () => 'Capítulo 1: La desaparición' }] }),
+                },
+                PuzzleService: { getPuzzle: vi.fn().mockResolvedValue({ getMinChapter: () => 1, getQuestion: () => 'Según la nota, ¿en qué no debes confiar nunca?' }) },
+            })
+            await flushPromises()
+            await wrapper.get('button[aria-label="Siguiente capítulo"]').trigger('click')
+            await flushPromises()
+            passSeconds(45)
+            wrapper.getComponent(PuzzleWindow).vm.$emit('solved')
+            await flushPromises()
+
+            passSeconds(20)
+            await findExitButton(wrapper).trigger('click')
+
+            expect(accumulateTime).toHaveBeenLastCalledWith({ secondsToAdd: 20 })
+        })
+
     })
 
     it('shows the loading screen with Volviendo... when leaving ClaraOS', async () => {

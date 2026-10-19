@@ -46,4 +46,21 @@ describe('ProgressModel', () => {
         expect(progress.getLastHudLetterAdded()).toEqual('B')
     })
 
+    test('create should expose if the welcome was already seen', () => {
+        const dto = {
+            currentChapter: 2,
+            hudLetters: 'AB',
+            investigationSubmitted: false,
+            timeSpentSeconds: 120,
+            freeNote: 'Mi nota',
+            updatedAt: '2026-10-12T15:00:00',
+            lastHudLetterAdded: 'B',
+            welcomeSeen: true
+        }
+
+        const progress = ProgressModel.create(dto, progressMapper)
+
+        expect(progress.isWelcomeSeen()).toEqual(true)
+    })
+
 })

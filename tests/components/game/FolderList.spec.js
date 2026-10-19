@@ -1,12 +1,23 @@
 import FolderList from '@/components/game/FolderList.vue'
 import FolderWindow from '@/components/game/FolderWindow.vue'
 import { flushPromises, mount } from '@vue/test-utils'
-import { createPinia } from 'pinia'
+import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { useSeenStore } from '@/stores/seen'
+import { clickWith } from '../../helpers/clickWith.js'
 
 const listFolders = vi.fn()
 const getFolder = vi.fn()
-const mountFolderList = () => mount(FolderList, { global: { plugins: [createPinia()], provide: { FolderService: { listFolders, getFolder } } } })
+const getPuzzle = vi.fn()
+const markSeen = vi.fn()
+
+// rellena el store con las claves ya vistas del jugador, como haría GameView (null = aún sin cargar)
+const mountFolderList = (seenKeys = []) => {
+    const pinia = createPinia()
+    setActivePinia(pinia)
+    if (seenKeys) useSeenStore().setSeen(seenKeys)
+    return mount(FolderList, { global: { plugins: [pinia], provide: { FolderService: { listFolders, getFolder }, PuzzleService: { getPuzzle }, SeenService: { markSeen } } } })
+}
 
 const folder = (code, name) => ({ getCode: () => code, getName: () => name })
 const folderWithPuzzles = (...ids) => ({ getName: () => 'Tomás', getPuzzles: () => ids.map((id) => ({ getId: () => id })) })
@@ -17,7 +28,9 @@ describe('FolderList', () => {
         listFolders.mockReset()
         getFolder.mockReset()
         getFolder.mockResolvedValue(folderWithPuzzles())
-        localStorage.clear()
+        getPuzzle.mockReset()
+        getPuzzle.mockResolvedValue({ getFiles: () => [] })
+        markSeen.mockReset()
     })
 
     afterEach(() => {
@@ -38,15 +51,24 @@ describe('FolderList', () => {
     })
 
     it('marks as new only the folders that have not been opened yet', async () => {
-        localStorage.setItem('seen', JSON.stringify(['folder:fraude']))
         listFolders.mockResolvedValue([folder('tomas', 'Tomás'), folder('fraude', 'Fraude')])
 
-        const wrapper = mountFolderList()
+        const wrapper = mountFolderList(['folder:fraude'])
         await flushPromises()
         const [tomas, fraude] = wrapper.findAll('button')
 
         expect(tomas.text()).toContain('con contenido nuevo')
         expect(fraude.text()).not.toContain('con contenido nuevo')
+    })
+
+    it('does not mark any folder as new until the seen keys are loaded', async () => {
+        listFolders.mockResolvedValue([folder('tomas', 'Tomás')])
+
+        const wrapper = mountFolderList(null)
+        await flushPromises()
+
+        expect(wrapper.get('button').text()).not.toContain('con contenido nuevo')
+        expect(wrapper.find('.animate-ping').exists()).toBe(false)
     })
 
     it('removes the new mark and remembers the folder when it is opened', async () => {
@@ -57,26 +79,24 @@ describe('FolderList', () => {
         await wrapper.get('button').trigger('click')
 
         expect(wrapper.get('button').text()).not.toContain('con contenido nuevo')
-        expect(JSON.parse(localStorage.getItem('seen'))).toContain('folder:tomas')
+        expect(markSeen).toHaveBeenCalledWith('folder:tomas')
     })
 
     it('marks an opened folder when it has files the player does not know yet', async () => {
-        localStorage.setItem('seen', JSON.stringify(['folder:tomas', 'known:1']))
         listFolders.mockResolvedValue([folder('tomas', 'Tomás')])
         getFolder.mockResolvedValue(folderWithPuzzles(1, 2))
 
-        const wrapper = mountFolderList()
+        const wrapper = mountFolderList(['folder:tomas', 'known:1'])
         await flushPromises()
 
         expect(wrapper.get('button').text()).toContain('con archivos nuevos')
     })
 
     it('does not mark an opened folder when all its files are known', async () => {
-        localStorage.setItem('seen', JSON.stringify(['folder:tomas', 'known:1', 'known:2']))
         listFolders.mockResolvedValue([folder('tomas', 'Tomás')])
         getFolder.mockResolvedValue(folderWithPuzzles(1, 2))
 
-        const wrapper = mountFolderList()
+        const wrapper = mountFolderList(['folder:tomas', 'known:1', 'known:2'])
         await flushPromises()
 
         expect(wrapper.get('button').text()).not.toContain('nuevo')
@@ -90,7 +110,19 @@ describe('FolderList', () => {
 
         await wrapper.get('button').trigger('click')
 
-        expect(JSON.parse(localStorage.getItem('seen'))).toEqual(expect.arrayContaining(['known:1', 'known:2']))
+        expect(markSeen).toHaveBeenCalledWith('known:1')
+        expect(markSeen).toHaveBeenCalledWith('known:2')
+    })
+
+    it('does not tell the backend again about a folder that was already seen', async () => {
+        listFolders.mockResolvedValue([folder('tomas', 'Tomás')])
+        getFolder.mockResolvedValue(folderWithPuzzles(1))
+        const wrapper = mountFolderList(['folder:tomas', 'known:1'])
+        await flushPromises()
+
+        await wrapper.get('button').trigger('click')
+
+        expect(markSeen).not.toHaveBeenCalled()
     })
 
     it('shows an error message when the folders cannot be loaded', async () => {
@@ -129,10 +161,10 @@ describe('FolderList', () => {
         const wrapper = mountFolderList()
         await flushPromises()
 
-        await wrapper.get('button').trigger('click', { detail: 1 })
+        await clickWith(wrapper.get('button'), { detail: 1 })
 
         expect(wrapper.findComponent(FolderWindow).exists()).toBe(false)
-        expect(localStorage.getItem('seen')).toBeNull()
+        expect(markSeen).not.toHaveBeenCalled()
     })
 
     it('opens a folder with a double click', async () => {
@@ -151,7 +183,7 @@ describe('FolderList', () => {
         const wrapper = mountFolderList()
         await flushPromises()
 
-        await wrapper.get('button').trigger('click', { detail: 1 })
+        await clickWith(wrapper.get('button'), { detail: 1 })
 
         expect(wrapper.findComponent(FolderWindow).props('code')).toBe('tomas')
     })

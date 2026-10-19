@@ -13,6 +13,28 @@ describe('DashboardHeader', () => {
         expect(wrapper.text()).toContain('marta_v')
     })
 
+    it('shows the avatar of the player next to the alias', () => {
+        const wrapper = mount(DashboardHeader, {
+            global: { plugins: [router] },
+            props: { playerAlias: 'marta_v', avatarId: 3 },
+        })
+
+        const image = wrapper.get('.dashboard-header__avatar img')
+
+        expect(image.attributes('alt')).toBe('Avatar 3')
+        expect(image.classes()).toContain('scale-130')
+    })
+
+    it('shows the user icon when the player has no avatar yet', () => {
+        const wrapper = mount(DashboardHeader, {
+            global: { plugins: [router] },
+            props: { playerAlias: 'marta_v' },
+        })
+
+        expect(wrapper.find('.dashboard-header__avatar img').exists()).toBe(false)
+        expect(wrapper.find('.dashboard-header__avatar svg').exists()).toBe(true)
+    })
+
     it('links the logo to the home route', () => {
         const wrapper = mount(DashboardHeader, {
             global: { plugins: [router] },

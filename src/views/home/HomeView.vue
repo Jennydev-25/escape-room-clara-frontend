@@ -16,9 +16,7 @@ function abrirAcceso(tab) {
 }
 
 onMounted(() => {
-    if (bgVideo.value) {
-        bgVideo.value.playbackRate = 0.4
-    }
+    bgVideo.value.playbackRate = 0.4
 })
 </script>
 
