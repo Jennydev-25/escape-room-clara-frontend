@@ -75,6 +75,16 @@ describe('FileViewer', () => {
         expect(wrapper.get('img').attributes('style')).toContain('zoom: 0.75')
     })
 
+    it('emits close when the window close button is clicked', async () => {
+        getFileUrl.mockResolvedValue('blob:tomas')
+        const wrapper = mountFileViewer('/tomas/tomas_elorza.png')
+        await flushPromises()
+
+        await wrapper.get('button[aria-label="Cerrar"]').trigger('click')
+
+        expect(wrapper.emitted('close')).toHaveLength(1)
+    })
+
     it.each([
         ['Alejar', 5, 'zoom: 0.5'],
         ['Acercar', 10, 'zoom: 3'],

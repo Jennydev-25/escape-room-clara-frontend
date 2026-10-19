@@ -37,6 +37,17 @@ describe('RegisterForm', () => {
         expect(renderWidget).toHaveBeenCalledWith(wrapper.find('#register-recaptcha').element)
     })
 
+    it('renders the recaptcha widget only once when the password field is focused again', async () => {
+        const wrapper = mount(RegisterForm)
+
+        await wrapper.find('#register-password').trigger('focus')
+        await flushPromises()
+        await wrapper.find('#register-password').trigger('focus')
+        await flushPromises()
+
+        expect(renderWidget).toHaveBeenCalledTimes(1)
+    })
+
     it('emits the recaptcha token on submit', async () => {
         getToken.mockReturnValue('mocked-token')
         const wrapper = mount(RegisterForm)

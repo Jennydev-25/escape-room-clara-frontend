@@ -103,4 +103,42 @@ describe('PuzzleWindow', () => {
         expect(wrapper.text()).toContain('Vuelve a leer la nota con calma.')
     })
 
+    it('folds the hint again when the same hint is clicked twice', async () => {
+        getHint.mockResolvedValue({ getText: () => 'Vuelve a leer la nota con calma.' })
+        const wrapper = mountPuzzleWindow()
+        await wrapper.get('button[aria-label="Pistas"]').trigger('click')
+        const hint = wrapper.findAll('button').find((button) => button.text() === 'Pista 1')
+        await hint.trigger('click')
+        await flushPromises()
+
+        await hint.trigger('click')
+
+        expect(hint.attributes('aria-expanded')).toBe('false')
+        expect(wrapper.text()).not.toContain('Vuelve a leer la nota con calma.')
+    })
+
+    it('does not ask the backend again for a hint that was already opened', async () => {
+        getHint.mockClear()
+        getHint.mockResolvedValue({ getText: () => 'Vuelve a leer la nota con calma.' })
+        const wrapper = mountPuzzleWindow()
+        await wrapper.get('button[aria-label="Pistas"]').trigger('click')
+        const hint = wrapper.findAll('button').find((button) => button.text() === 'Pista 1')
+        await hint.trigger('click')
+        await flushPromises()
+        await hint.trigger('click')
+
+        await hint.trigger('click')
+
+        expect(getHint).toHaveBeenCalledTimes(1)
+        expect(wrapper.text()).toContain('Vuelve a leer la nota con calma.')
+    })
+
+    it('emits close when the window close button is clicked', async () => {
+        const wrapper = mountPuzzleWindow()
+
+        await wrapper.get('button[aria-label="Cerrar"]').trigger('click')
+
+        expect(wrapper.emitted('close')).toHaveLength(1)
+    })
+
 })

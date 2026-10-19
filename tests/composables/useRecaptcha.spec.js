@@ -85,4 +85,25 @@ describe('useRecaptcha', () => {
         expect(renderSpy).toHaveBeenCalledWith(container, expect.objectContaining({ sitekey: expect.any(String) }))
         expect(widgetId).toBe(3)
     })
+
+    it('returns the token that the user solved for the given widget', () => {
+        const getResponse = vi.fn(() => 'solved-token')
+        window.grecaptcha = { getResponse }
+        const { getToken } = useRecaptcha()
+
+        const token = getToken(7)
+
+        expect(getResponse).toHaveBeenCalledWith(7)
+        expect(token).toBe('solved-token')
+    })
+
+    it('resets the given widget', () => {
+        const resetWidget = vi.fn()
+        window.grecaptcha = { reset: resetWidget }
+        const { reset } = useRecaptcha()
+
+        reset(7)
+
+        expect(resetWidget).toHaveBeenCalledWith(7)
+    })
 })
