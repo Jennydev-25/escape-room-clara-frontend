@@ -52,31 +52,11 @@ export default defineConfig({
       },
     },
     {
-      name: 'firefox',
+      name: 'mobile',
       use: {
-        ...devices['Desktop Firefox'],
+        ...devices['Pixel 5'],
       },
     },
-    {
-      name: 'webkit',
-      use: {
-        ...devices['Desktop Safari'],
-      },
-    },
-
-    /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: {
-    //     ...devices['Pixel 5'],
-    //   },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: {
-    //     ...devices['iPhone 12'],
-    //   },
-    // },
 
     /* Test against branded browsers. */
     // {
