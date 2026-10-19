@@ -1,3 +1,4 @@
+import process from 'node:process'
 import { test, expect } from '@playwright/test'
 
 test.describe('home', () => {
@@ -38,4 +39,24 @@ test.describe('rutas protegidas', () => {
       await expect(page).toHaveURL('/')
     })
   }
+})
+
+// Flujo completo contra el backend real: solo se ejecuta si se pasan las credenciales de un jugador de prueba
+test.describe('flujo del jugador', () => {
+  test.skip(!process.env.E2E_EMAIL || !process.env.E2E_PASSWORD, 'Faltan E2E_EMAIL y E2E_PASSWORD')
+
+  test('inicia sesión, ve su resumen y entra al escritorio de ClaraOS', async ({ page }) => {
+    await page.goto('/')
+    await page.getByRole('button', { name: 'Investigar' }).click()
+    await page.getByRole('tab', { name: 'Iniciar sesión' }).click()
+    await page.getByLabel('Email').fill(process.env.E2E_EMAIL)
+    await page.getByLabel('Contraseña').fill(process.env.E2E_PASSWORD)
+    await page.getByRole('button', { name: 'Iniciar sesión' }).last().click()
+
+    await expect(page).toHaveURL(/\/resumen/)
+    await page.getByRole('button', { name: 'Comenzar' }).click()
+
+    await expect(page).toHaveURL(/\/escritorio/)
+    await expect(page.getByRole('heading', { name: 'Escritorio de ClaraOS', includeHidden: true })).toBeAttached()
+  })
 })
